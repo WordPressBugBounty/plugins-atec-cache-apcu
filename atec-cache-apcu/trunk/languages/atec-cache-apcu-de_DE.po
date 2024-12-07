@@ -1,0 +1,431 @@
+# Copyright (C) 2024 Chris Ahrweiler
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: atec Cache APCu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-05-25T12:27:15+00:00\n"
+"PO-Revision-Date: 2024-05-25T12:27:15+00:00\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: atec-cache-apcu\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# ## ### GENERAL
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Size"
+msgstr "Größe"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Key"
+msgstr "Schlüssel"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Post a review"
+msgstr "Bewertung abgeben"
+
+# ## ### PLUGIN SPECIFIC
+
+msgid "grouped"
+msgstr "gruppiert"
+
+msgid "cleared"
+msgstr "gelöscht"
+
+msgid "Empty PCache"
+msgstr "PCache leeren"
+
+msgid "Cached pages and posts"
+msgstr "Zwischengespeicherte Seiten und Beiträge"
+
+msgid "Empty page cache"
+msgstr "Seiten-Cache leer"
+
+msgid "No page cache data available"
+msgstr "Keine Seiten-Cache-Daten verfügbar"
+
+msgid "Enable page cache"
+msgstr "Seiten-Cache aktivieren"
+
+msgid "Show debug"
+msgstr "„Debug“ anzeigen"
+
+msgid "Cache indicator and browser console log"
+msgstr "Cache-Anzeige und Browser-Konsolenprotokoll"
+
+msgid "The „Show debug“ feature is for temporary use. It will show a small APCu cache icon in the upper left corner, when the page is served from the page cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing."
+msgstr "Die Funktion „Debug anzeigen“ ist für die vorübergehende Verwendung vorgesehen. In der oberen linken Ecke wird ein kleines APCu Cache-Symbol angezeigt, wenn die Seite aus dem Seiten-Cache bereitgestellt wird. Darüber hinaus finden Sie weitere Details in Ihrer Browserkonsole. Bitte leeren Sie den Seiten-Cache, sobald Sie mit dem Testen fertig sind."
+
+msgid "The page cache caches pages, posts, categories and single product pages (WooCommerce)."
+msgstr "Der Seiten-Cache speichert Seiten, Beiträge, Kategorien und einzelne Produktseiten (WooCommerce)."
+
+msgid "Do not use multiple page cache plugins simultaneously."
+msgstr "Aktivieren Sie den APCu Seiten-Cache nicht zusammen mit anderen Seiten-Cache-Plugins."
+
+msgid "Auto clear"
+msgstr "Automatisch löschen"
+
+msgid "Clear cache, after plugin & theme changes"
+msgstr "Cache leeren - nach Plugin / Theme Aktualisierung"
+
+msgid "Page Cache"
+msgstr "Seiten-Cache"
+
+msgid "APCu Page Cache"
+msgstr "APCu Seiten-Cache"
+
+msgid "Page cache requires APCu object cache"
+msgstr "Seiten-Cache erfordert APCu Objekt-Cache"
+
+msgid "Current size"
+msgstr "Aktuelle Größe"
+
+msgid "You now have a persistent WP object cache"
+msgstr "Sie verfügen jetzt über einen persistenten WP Objekt-Cache"
+
+msgid "This is the main feature of the plugin and will speed up your site"
+msgstr "Dies ist die Hauptfunktion des Plugins und wird Ihre Website beschleunigen"
+
+msgid "No object cache data available"
+msgstr "Keine Objekt-Cache-Daten verfügbar"
+
+msgid "The page cache is an additional feature of this plugin"
+msgstr "Der Seiten-Cache ist eine zusätzliche Funktion dieses Plugins"
+
+msgid "It will give your page an additonal boost, by delivering pages from APCu cache"
+msgstr "Es verleiht Ihrer Seite einen zusätzlichen Schub, indem Seiten aus dem APCu-Cache bereitgestellt werden"
+
+msgid "APCu not enabled – Page cache disabled"
+msgstr "APCu nicht aktiviert – Seiten-Cache deaktiviert"
+
+msgid "Outdated atec-cache-APCu object-cache.php deleted"
+msgstr "Veraltete atec-cache-APCu object-cache.php gelöscht"
+
+msgid "TARGET file already exists"
+msgstr "ZIEL-Datei existiert bereits"
+
+msgid "SOURCE"
+msgstr "QUELLE"
+
+msgid "TARGET"
+msgstr "ZIEL"
+
+msgid "Object-cache installation failed"
+msgstr "Die Installation des Objekt-Caches ist fehlgeschlagen"
+
+msgid "Object-cache installation successful"
+msgstr "Objekt-Cache Installation erfolgreich"
+
+msgid "Can not find object-cache.php in your wp-content folder. Please deactivate/activate this plugin. Installing the object-cache.php is part of the activation process."
+msgstr "Die Datei object-cache.php konnte nicht im 'wp-content'-Ordner gefunden werden. Diese Datei ist erforderlich, um einen persistenten APCu-Objekt-Cache zu implementieren. Bitte deaktivieren/reaktivieren Sie dieses Plugin. Die Installation der object-cache.php ist Teil des Aktivierungsprozesses."
+
+msgid "APCu extension is not enabled but it is required for this plugin to work. Once you have activated APCu, please reactivate this plugin to install the object cache."
+msgstr "Die APCu-Erweiterung ist nicht aktiviert, wird aber benötigt, damit dieses Plugin funktioniert. Nachdem Sie APCu-Erweiterung aktiviert haben, aktivieren Sie dieses Plugin bitte erneut, um den Objekt-Cache zu installieren."
+
+msgid "LiteSpeed-server and -cache plugin detected"
+msgstr "LiteSpeed Server und LSCWP-Cache Plugin gefunden"
+
+msgid "Page cache is NOT active"
+msgstr "Seiten-Cache ist NICHT aktiv"
+
+msgid "The page cache saves pages, posts and categories – no product/shop pages (WooCommerce)."
+msgstr "Der Seiten-Cache speichert Seiten, Beiträge, Kategorien und Schlagwortseiten – aber keine Produkt- oder Shopseiten (WooCommerce)."
+
+msgid "Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one"
+msgstr "Bitte nutzen Sie den LiteSpeed Seiten-Cache nicht zusammen mit dem APCu Seiten-Cache – entscheiden Sie sich für einen der beiden."
+
+msgid "„Show debug“"
+msgstr "„Debug-Anzeige“"
+
+msgid "The „Show debug“ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing."
+msgstr "Die „Debug-Anzeige“ ist zum Plugin-Test gedacht, also nur für temporäre Nutzung. In der oberen linken Ecke wird ein kleiner grüner Kreis angezeigt, wenn die Seite aus dem Cache ausgeliefert wurde."
+
+# ## ### CACHE
+msgid "status is not available"
+msgstr "Status ist nicht vorhanden"
+
+msgid "OPcache usage is beyond 90%. Please consider increasing the „memory_consumption“ option"
+msgstr "OPcache Gebrauch ist über 90%. Erhöhen Sie die „memory_consumption“ Einstellung bei Bedarf"
+
+msgid "APCu usage is beyond 90%. Please consider increasing „apc.shm_size“ option"
+msgstr "APCu Gebrauch ist über 90%. Erhöhen Sie die „apc.shm_size“ Einstellung bei Bedarf"
+
+msgid "cache"
+msgstr "Cache"
+
+msgid "Extension"
+msgstr "Erweiterung"
+
+msgid "Extensions"
+msgstr "Erweiterungen"
+
+msgid "extension is NOT installed/enabled"
+msgstr "Erweiterung ist NICHT installiert/aktiviert"
+
+msgid "cache data could NOT be retrieved"
+msgstr "Cache-Daten konnten NICHT abgerufen werden"
+
+msgid "not available"
+msgstr "nicht verfügbar"
+
+msgid "Persistent"
+msgstr "Persistenter"
+
+msgid "object cache"
+msgstr "Objekt-Cache"
+
+msgid "Object Cache"
+msgstr "Objekt-Cache"
+
+msgid "is writeable"
+msgstr "ist beschreibbar"
+
+msgid "Statistics"
+msgstr "Statistik"
+
+msgid "successful"
+msgstr "erfolgreich"
+
+msgid "failed"
+msgstr "fehlgeschlagen"
+
+msgid "Empty cache"
+msgstr "Cache leeren"
+
+msgid "Flush"
+msgstr "Leeren"
+
+msgid "Flushing"
+msgstr "Ausleeren des"
+
+msgid "Memory"
+msgstr "Speicher"
+
+msgid "Used"
+msgstr "Benutzt"
+
+msgid "Usage"
+msgstr "Benutzt"
+
+msgid "Items"
+msgstr "Einträge"
+
+msgid "items"
+msgstr "Einträge"
+
+msgid "Hits"
+msgstr "Treffer"
+
+msgid "Misses"
+msgstr "Fehlschläge"
+
+msgid "Hitrate"
+msgstr "Trefferrate"
+
+msgid "Not in use"
+msgstr "Nicht in Gebrauch"
+
+msgid "Max. files"
+msgstr "Max. Dateien"
+
+msgid "String buffer"
+msgstr "String Puffer"
+
+msgid "Revalidate"
+msgstr "Validieren"
+
+msgid "Recommended settings"
+msgstr "Empfohlene Einstellung"
+
+# ## ### WPC-TOOLS
+msgid "Enabled"
+msgstr "Aktiviert"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "enabled"
+msgstr "aktiviert"
+
+msgid "disabled"
+msgstr "deaktiviert"
+
+# ## ### FOOTER
+
+msgid "plugins"
+msgstr "Plugins"
+
+msgid "Execution time"
+msgstr "Ausführungszeit"
+
+msgid "Dashboard"
+msgstr "Übersicht"
+
+# ## ### GROUP
+
+msgid "APCu object and page cache"
+msgstr "APCu-Objekt- und Seiten-Cache"
+
+msgid "atec Cache Info & Statistics (OPcache, WP-object-cache, JIT, APCu, Memcached, Redis, SQLite-object-cache)"
+msgstr "atec Cache Info & Statistik (OPcache, WP-object-cache, JIT, APCu, Memcached, Redis, SQLite-object-cache)"
+
+msgid "Custom code snippets for WP"
+msgstr "Benutzerdefinierte Codeausschnitte für WP"
+
+msgid "DDoS block (Distributed Denial of Service Attacks)"
+msgstr "DDoS-Blockierung (Distributed Denial of Service-Angriffe)"
+
+msgid "Show debug log in admin bar"
+msgstr "Debug-Protokoll in der Admin-Leiste anzeigen"
+
+msgid "Dir Scan & Statistics (Number of files and size per directory)"
+msgstr "Verzeichnisscan und Statistik (Anzahl der Dateien und Größe pro Verzeichnis)"
+
+msgid "Add custom meta tags to the head section"
+msgstr "Benutzerdefinierte Meta-Tags zum Kopfbereich hinzufügen"
+
+msgid "Lightweight performance tuning plugin"
+msgstr "Leichgewichtiges Plugin zur Leistungsoptimierung"
+
+msgid "Custom translation strings for polylang plugin"
+msgstr "Benutzerdefinierte Übersetzungszeichenfolgen für das Polylang-Plugin"
+
+msgid "Measure plugins & theme execution time"
+msgstr "Plugins und Theme-Ausführungszeit messen"
+
+msgid "Add custom SMTP mail settings to WP_Mail"
+msgstr "Benutzerdefinierte SMTP-Mail-Einstellungen zu WP_Mail hinzufügen"
+
+msgid "System Information (OS, server, memory, PHP and database details, php.ini, wp-config, .htaccess and PHP extensions)"
+msgstr "Systeminformationen (Betriebssystem, Server, Speicher, PHP- und Datenbankdetails, php.ini, wp-config, .htaccess und PHP-Erweiterungen)"
+
+msgid "Web map, conform with privacy regulations"
+msgstr "Webkarte, DSGVO konform"
+
+msgid "Published"
+msgstr "Veröffentlicht"
+
+msgid "In review"
+msgstr "In Rezension"
+
+msgid "In progress"
+msgstr "In der Entwicklung"
+
+msgid "Preview"
+msgstr "Vorschau"
+
+msgid "Installed"
+msgstr "Installiert"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "All our plugins are optimized for speed, size and CPU footprint (frontend & backend)"
+msgstr "Alle unsere Plugins sind hinsichtlich Geschwindigkeit, Größe und CPU-Fußabdruck (Frontend und Backend) optimiert"
+
+msgid "Also, they share the same `atec-WP-plugin´ framework – so that shared code will only load once, even with multiple plugins enabled"
+msgstr "Außerdem teilen sie sich das gleiche `atec-WP-plugin´-Framework, sodass gemeinsam genutzter Code nur einmal geladen wird, selbst wenn mehrere Plugins aktiviert sind."
+
+msgid "With an average of 1 ms CPU time, we consider our plugins to be super fast. Other plugins typically require much more time (Polylang ≈ 45 ms, WooCommerce ≈ 500 ms)"
+msgstr "Mit einer durchschnittlichen Ausführungszeit von 1 ms sind die `atec-WP-Plugins´ super schnell. Andere Plugins sind deutlich langsamer (Polylang ≈ 45 ms, WooCommerce ≈ 500 ms)"
+
+msgid "All atec-plugins in the WordPress directory"
+msgstr "Alle atec-Plugins im WordPress-Verzeichnis"
+
+msgid "Install and auto update `atec´ plugins"
+msgstr "`atec´ Plugins verwalten (automatisch aktualisieren)"
+
+# ## ### SERVER
+msgid "Operating system"
+msgstr "Betriebssystem"
+
+msgid "Architecture"
+msgstr "Architektur"
+
+msgid "Date/Time"
+msgstr "Datum/Uhrzeit"
+
+msgid "free"
+msgstr "frei"
+
+msgid "Location"
+msgstr "Standort"
+
+msgid "root"
+msgstr "Wurzel"
+
+msgid "size"
+msgstr "Größe"
+
+msgid "Versions"
+msgstr "Versionen"
+
+msgid "usage (peak)"
+msgstr "Nutzung (Spitze)"
+
+msgid "Database"
+msgstr "Datenbank"
+
+msgid "driver"
+msgstr "Treiber"
+
+msgid "user"
+msgstr "Benutzer"
+
+# ## ### LICENSE
+
+msgid "PRO license activated"
+msgstr "PRO Lizenz aktiviert"
+
+msgid "Get your PRO „Lifetime-Site-License“"
+msgstr "PRO Lizenz kaufen"
+
+msgid "„Lifetime-Site-License“"
+msgstr "„Lebenszeit-Site-Lizenz“"
+
+msgid "Thank you for activating your „Lifetime-Site-License“."
+msgstr "„Lebenszeit-Site-Lizenz“"
+
+msgid "Get your „Lifetime-Site-License“ for ALL our plugins."
+msgstr "„Lebenszeit-Site-Lizenz“"
+
+msgid "A single license code will unlock the PRO features of ALL our plugins, site-wide"
+msgstr "Ein einziger Lizenz-Code schaltet alle PRO-Funktionen aller atec-Plugins für Ihre Website frei"
+
+msgid "Just pay via PayPal and send us the domain name of your site"
+msgstr "Zahlen Sie einfach per PayPal und schicken Sie uns den Domain-Namen Ihrer Website"
+
+msgid "You will get your license code via email"
+msgstr "Sie erhalten Ihren Lizenz-Code per Email"
+
+msgid "No registration required."
+msgstr "Keine Registrierung erforderlich."
+
+msgid "License code is valid for your site"
+msgstr "Der Lizenz-Code ist für Ihre Site gültig"
+
+msgid "License code not valid"
+msgstr "Der Lizenz-Code ist ungültig"
+
+msgid "GET YOUR LICENSE NOW"
+msgstr "LIZENZ KAUFEN"
+
+msgid "License code"
+msgstr "Lizenz-Code"
+

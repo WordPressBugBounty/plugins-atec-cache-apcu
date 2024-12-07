@@ -1,0 +1,147 @@
+# Copyright (C) 2024 Chris Ahrweiler
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: atec Cache APCu 1.5.2\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-05-25T12:27:15+00:00\n"
+"PO-Revision-Date: 2024-05-25T12:27:15+00:00\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: atec_wpca\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#. Description of the plugin
+msgid "APCu object and page cache"
+msgstr "Кэш страниц и объектов APCu"
+
+msgid "grouped"
+msgstr "сгруппировано"
+
+msgid "Key"
+msgstr "Ключ"
+
+msgid "Value"
+msgstr "Значение"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "cleared"
+msgstr "очищено"
+
+msgid "Empty PCache"
+msgstr "Очистить PCache"
+
+msgid "Cached pages and posts"
+msgstr "Кэшированные страницы и посты"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Title"
+msgstr "Заглавие"
+
+msgid "Empty page cache"
+msgstr "Очистить кэш страниц"
+
+msgid "No page cache data available"
+msgstr "Нет данных о кэше страниц"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Enable page cache"
+msgstr "Кэш страниц"
+
+msgid "Show debug"
+msgstr "Отладка"
+
+msgid "Cache indicator and browser console log"
+msgstr "Индикатор работы кэша в браузере"
+
+msgid "The „Show debug“ feature is for temporary use. It will show a small APCu cache icon in the upper left corner, when the page is served from the page cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing."
+msgstr "Функция „Отладка“ предназначена для временного использования. Она активирует показ маленького значка в верхнем левом углу экрана в случае загрузки страницы из кэша. Так же, будут доступны дополнительные отладочные сообщения в консоли браузера. Необходимо сбросить/очистить кэш страниц по завершении тестирования и отключении данной функции."
+
+msgid "The page cache caches pages, posts, categories and single product pages (WooCommerce)."
+msgstr "Кэш страниц кэширует страницы, посты, категории и страницы продуктов (WooCommerce)."
+
+msgid "Do not enable the APCu page cache together with other page cache plugins such as „WP Rocket“, „W3 Total Cache“, „WP Super Cache“ or the like."
+msgstr "Не активируйте кэш страниц APCu одновременно с другими кэширующими плагинами, такими как „WP Rocket“, „W3 Total Cache“, „WP Super Cache“ и пр."
+
+msgid "Auto clear"
+msgstr "Автоматический сброс"
+
+msgid "Clear cache, after plugin & theme changes"
+msgstr "Сброс кэша при изменении настроек темы или плагина"
+
+msgid "Page Cache"
+msgstr "Кэш страниц"
+
+msgid "APCu Page Cache"
+msgstr "APCu Кэш страниц"
+
+msgid "Page cache requires APCu object cache"
+msgstr "Кэш страниц требует наличия объектного кэша APCu"
+
+msgid "Current size"
+msgstr "Размер"
+
+msgid "You now have a persistent WP object cache"
+msgstr "Постоянный кэш объектов WordPress активен"
+
+msgid "This is the main feature of the plugin and will speed up your site"
+msgstr "Это основной функционал плагина, направленный на ускорение сайта"
+
+msgid "No object cache data available"
+msgstr "Нет данных о кэше объектов"
+
+msgid "The page cache is an additional feature of this plugin"
+msgstr "Кэш страниц является дополнительным функционалом данного плагина"
+
+msgid "It will give your page an additonal boost, by delivering pages from APCu cache"
+msgstr "Использование кэша страниц даст дополнительный рост скорости посредством использования APCu"
+
+msgid "APCu not enabled – Page cache disabled"
+msgstr "APCu не активирован - Кэш страниц отключен"
+
+msgid "Outdated atec-cache-APCu object-cache.php deleted"
+msgstr "Обнаружен устаревший файл atec-cache-APCu object-cache.php"
+
+msgid "TARGET file already exists"
+msgstr "Файл уже существует"
+
+msgid "SOURCE"
+msgstr "SOURCE"
+
+msgid "TARGET"
+msgstr "TARGET"
+
+msgid "Object-cache installation failed"
+msgstr "Установка Object-cache не удалась"
+
+msgid "Object-cache installation successful"
+msgstr "Успешная установка Object-cache"
+
+msgid "Can not find object-cache.php in your wp-content folder. Please deactivate/activate this plugin. Installing the object-cache.php is part of the activation process."
+msgstr "Не найден object-cache.php а директории wp-content. Деактивируйте а затем вновь активируйте плагин. Установка файла object-cache.php является частью процесса активации."
+
+msgid "APCu extension is not enabled but it is required for this plugin to work. Once you have activated APCu, please reactivate this plugin to install the object cache."
+msgstr "Расширение APCu не активно, но оно необходимо для работы данного плагина. Как только Вы активируете APCu, деактивируйте, а затем активируйте это плагин для установки кэша объектов."
+
+msgid "LiteSpeed-server and -cache plugin detected"
+msgstr "Онаружены LiteSpeed-server и -cache plugin"
+
+msgid "Please use LiteSpeed cache in favor of APCu page cache"
+msgstr "Используйте LiteSpeed кэш вместо кэша страниц APCu"
+
+msgid "Page cache is NOT active"
+msgstr "Кэш страниц отключен"
+
