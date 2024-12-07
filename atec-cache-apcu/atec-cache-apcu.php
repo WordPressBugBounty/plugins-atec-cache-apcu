@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) { exit; }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu object-cache and the only APCu based page-cache plugin available.
-* Version: 2.1.10
+* Version: 2.1.11
 * Requires at least: 5.2
 * Tested up to: 6.7.1
 * Tested up to PHP: 8.4.1
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) { exit; }
 * Text Domain:  atec-cache-apcu
 */
 
-wp_cache_set('atec_wpca_version','2.1.10');
+wp_cache_set('atec_wpca_version','2.1.11');
 
 $atec_wpca_apcu_enabled=extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings=get_option('atec_WPCA_settings',[]);
@@ -51,7 +51,10 @@ if (is_admin())
 			$yes='dashicons dashicons-yes-alt'; 
 			$style='padding-top: 5px; font-size: 16px; color:green;';
 			$icon=plugin_dir_url( __FILE__ ) . 'assets/img/atec-group/atec_wpca_icon.svg';
+			// @codingStandardsIgnoreStart
+			// Image is not an attachement
 			$content.=' | <sub><img alt="Plugin icon" src="'.esc_url($icon).'" style="height: 20px; vertical-align: bottom;"> APCu-OCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
+			// @codingStandardsIgnoreEnd
 			if (atec_wpca_settings('cache')) $content.=' APCu-PCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
 			$content.='</sub>';
 			return $content; 
@@ -64,10 +67,13 @@ if (is_admin())
 			{
 				$link = get_admin_url().'admin.php?page=atec_wpca&flush=APCu_PCache&nav=Cache&_wpnonce='.esc_attr(wp_create_nonce('atec_wpca_nonce'));
 				$style = 'vertical-align: bottom; margin:9px 4px 9px 0;';
-					$args = array('id' => 'atec_wpca_admin_bar', 'title' => '
+				// @codingStandardsIgnoreStart
+				// Image is not an attachement
+				$args = array('id' => 'atec_wpca_admin_bar', 'title' => '
 					<span title="'.__('Flush PCache','atec-cache-apcu').'" style="font-size:12px;">
 						<img src="'. plugins_url( '/assets/img/atec_wpca_icon_admin.svg', __FILE__ ) .'" style="height:14px; '.esc_attr($style).'">Flush
 					</span>', 'href' => $link );
+				// @codingStandardsIgnoreEnd
 				$wp_admin_bar->add_node($args);
 			}
 			add_action('admin_bar_menu', 'atec_wpca_admin_bar', PHP_INT_MAX);	
@@ -83,7 +89,7 @@ if (is_admin())
 		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'atec_wpca_add_action_info' );
 	}
 
-	if (!defined('ATEC_WP_MEMORY_ADMIN_BAR'))
+	if (!defined('ATEC_WP_MEMORY_ADMIN_BAR') && get_option('atec_admin_bar',true))
 	{
 		if (!class_exists('ATEC_wp_memory')) @require_once('includes/atec-wp-memory.php');
 		add_action('admin_bar_menu', 'atec_wp_memory_admin_bar', PHP_INT_MAX);

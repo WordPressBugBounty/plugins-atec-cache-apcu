@@ -20,8 +20,11 @@ private function getGeo($ip): string
 private function tblHeader($icon,$title,$arr): void
 {
 	echo '
-	<div class="atec-mb-5">
-		<div style="padding: 0 0 5px 10px;"><img class="atec-sys-icon" src="', esc_url($this->createIcon($icon)), '"><span class="atec-label">', esc_attr($title), '</span></div>';
+	<div class="atec-mb-5">';
+		// @codingStandardsIgnoreStart
+		// Image is not an attachement
+		echo '<div style="padding: 0 0 5px 10px;"><img class="atec-sys-icon" src="', esc_url($this->createIcon($icon)), '"><span class="atec-label">', esc_attr($title), '</span></div>';
+		// @codingStandardsIgnoreEnd		
 		atec_table_header_tiny($arr,'','atec-mb-10');
 		echo '
 		<tr>';
@@ -102,7 +105,10 @@ echo '
 					case 'Linux': $icon='linux'; break;
 					case 'Ubuntu': $icon='ubuntu'; break;
 				}
+				// @codingStandardsIgnoreStart
+				// Image is not an attachement
 				if ($icon!=='') echo '<img class="atec-sys-icon" src="', esc_url($this->createIcon($icon)), '">';
+				// @codingStandardsIgnoreEnd
 				echo esc_attr($php_uname['s']), 
 			'</td>
 			<td>', esc_attr($php_uname['r']), '</td>
@@ -133,12 +139,19 @@ echo '
 				if (str_contains($lowSoft,'apache')) $icon='apache';
 				else	if (str_contains($lowSoft,'nginx')) $icon='nginx';
 						else if (str_contains($lowSoft,'litespeed')) $icon='litespeed';
+				// @codingStandardsIgnoreStart
+				// Image is not an attachement
 				if ($icon!=='') echo '<img class="atec-sys-icon" src="', esc_url($this->createIcon($icon)), '">';
+				// @codingStandardsIgnoreEnd
 				echo esc_html($serverSoftware),'
 			</td>
-			<td>', 
-				'<img class="atec-sys-icon" src="', esc_url($this->createIcon('curl')), '">', 'ver.&nbsp;', esc_attr(function_exists( 'curl_version')?$curl['version'].' | '.str_replace('(SecureTransport)','',$curl['ssl_version']):'n/a'),
-			'</td>';
+			<td>';
+				// @codingStandardsIgnoreStart
+				// Image is not an attachement
+ 				echo '<img class="atec-sys-icon" src="', esc_url($this->createIcon('curl')), '">', 'ver.&nbsp;', esc_attr(function_exists( 'curl_version')?$curl['version'].' | '.str_replace('(SecureTransport)','',$curl['ssl_version']):'n/a');
+				 // @codingStandardsIgnoreEnd			
+				echo '
+				</td>';
 		$this->tblFooter();
 		
 	echo '</div>

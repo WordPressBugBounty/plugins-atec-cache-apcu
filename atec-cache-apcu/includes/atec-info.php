@@ -12,15 +12,7 @@ $readme			= $wp_filesystem->get_contents($readmePath);
 
 echo '
 <div class="atec-mb-0">
-	<div class="atec-dilb">';	atec_little_block('Info'); echo '</div>';
-	// if (!is_null($url))
-	// {
-	// 	echo '
-	// 	<div class="atec-dilb atec-right">
-	// 		<span class="atec-dilb atec-bg-w atec-border-tiny atec-box-30">'; atec_readme_button_close($url,$nonce); echo '</span>
-	// 	</div>';
-	// }
-echo '
+	<div class="atec-dilb">';	atec_little_block('Info'); echo '</div>
 </div>
 
 <div style="font-size: 1.125em; max-width: 100%; padding-top: 20px;" id="readme" class="atec-mmt-10 atec-mb-0 atec-border atec-bg-w6 atec-anywrap">';
@@ -35,7 +27,10 @@ else
 	$readme = preg_replace('/===(\s+)(.*)(\s+)===\n/', '', $readme);
 	$readme = preg_replace('/==(\s+)(.*)(\s+)==\n/', "<strong>$2</strong><br>", $readme);
 
+	// @codingStandardsIgnoreStart
+	// Image is not an attachement
 	echo '<h4 class="atec-m-0"><img style="height: 24px;" class="atec-vat nav-icon" src="', esc_url($iconPath), '">', esc_attr(trim($matches[2])), '</h4>', 
+	// @codingStandardsIgnoreEnd
 	esc_html($readme);
 	atec_reg_inline_script('readme','readme=jQuery("#readme"); html=readme.html(); html = html.replaceAll("&lt;", "<"); html = html.replaceAll("&gt;", ">"); readme.html(html);', true);
 }

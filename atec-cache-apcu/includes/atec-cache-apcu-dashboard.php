@@ -4,7 +4,8 @@ if (!class_exists('ATEC_wpc_tools')) @require_once(__DIR__.'/atec-wpc-tools.php'
 if (!class_exists('ATEC_wp_memory')) @require_once(__DIR__.'/atec-wp-memory.php');
 
 class ATEC_wpcu_results { function __construct() {
-	
+
+atec_check_admin_bar();
 atec_admin_debug('Cache APCu','wpca');
 
 $wpc_tools=new ATEC_wpc_tools();
@@ -115,46 +116,7 @@ echo '
 						}
 					echo '
 					</div>';
-	    	
-					// echo '    
-					// 	<div class="atec-border-white">
-		    		// 		<h4>APCu '.esc_attr__('Page Cache','atec-cache-apcu').' '; $wpc_tools->enabled($atec_wpca_pcache);
-		    		// 		echo ($atec_wpca_pcache?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="APCu_PCache_flush" href="'.esc_url($url).'&flush=APCu_PCache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('Flush','atec-cache-apcu').'</a>':''),
-					// 		'</h4><hr>';
-							
-					// 		$c=0;
-		    		// 		if ($atec_wpca_apcu_enabled)
-		    		// 		{    
-			    	// 			$apcu_cache=apcu_cache_info(true);
-			    	// 			if ($apcu_cache)
-			    	// 			{
-				    // 				$apcu_it=new APCUIterator();
-				    // 				if (!empty($apcu_it))
-				    // 				{
-					//     				$size=0;
-					// 					$reg_apcu = '/atec_WPCA_([\w\d]+)_([f|p|c|t|a]+)_([\d|\|]+)/';
-					// 					foreach ($apcu_it as $entry) 
-					// 					{							
-					// 						preg_match($reg_apcu, $entry['key'], $match);
-					// 						if (isset($match[3])) { $c++; $size+=$entry['mem_size']; } 
-					// 					}
-                    //                 	echo'<table class="atec-table atec-table-tiny atec-table-td-first">
-					// 						<tbody>
-					// 							<tr><td>'.esc_attr__('Items','atec-cache-apcu').':</td><td>',esc_attr(number_format($c)),'</td></tr>
-					// 							<tr><td>'.esc_attr__('Size','atec-cache-apcu').':</td><td>',esc_attr(size_format($size)),'</td></tr>
-	    			// 							</tbody>
-					// 					</table>';
-				    // 				}
-				    // 				else { $wpc_tools->error('',__('No page cache data available','atec-cache-apcu')); }
-					// 				if (!$atec_wpca_pcache) { atec_error_msg(__('Page cache is NOT active','atec-cache-apcu')); }
-			    	// 			}
-		    		// 		}
-					// 		else { atec_error_msg(__('Page cache requires APCu object cache','atec-cache-apcu')); }
-					// 		if ($c==0) atec_reg_inline_script('APCu_PCache_flush', 'jQuery("#APCu_PCache_flush").hide();', true);
-	    			// 	echo '
-					// 	</div>
-					// </div>';
-		}
+	    }
 	
 	echo '
 		</div>

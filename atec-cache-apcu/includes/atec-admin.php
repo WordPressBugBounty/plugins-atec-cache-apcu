@@ -7,7 +7,9 @@ function atec_plugin_settings(array $links): array
 	if (!function_exists('atec_load_pll')) { @require_once('atec-translation.php'); }
 	atec_load_pll(__DIR__,'admin','admin');
 
-	$atec_group_settings_arr=['backup'=>'wpb','cache-apcu'=>'wpca','code'=>'wpc','deploy'=>'wpdp','meta'=>'wpm','optimize'=>'wpo','page-cache'=>'wppc','poly-addon'=>'wppo','web-map-service'=>'wms','smtp-mail'=>'wpsm'];
+	$atec_group_settings_arr=[
+		'backup'=>'wpb','cache-apcu'=>'wpca','code'=>'wpc','deploy'=>'wpdp','meta'=>'wpm','optimize'=>'wpo',
+		'page-cache'=>'wppc','poly-addon'=>'wppo','shell'=>'wpsh','web-map-service'=>'wms','smtp-mail'=>'wpsm'];
 	preg_match('/plugin=atec-([\w\-]+)/', $links['deactivate'], $match);
 	if (isset($match[1]) && isset($atec_group_settings_arr[$match[1]]))
 	{

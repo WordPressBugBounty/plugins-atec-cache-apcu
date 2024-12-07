@@ -1,8 +1,11 @@
-.atec-ckbx { display: inline-block; font-size: 24px !important; white-space: nowrap; height: 20px; width: 2.4em; margin-right: 5px; }
+.atec-ckbx { display: inline-block; font-size: 24px; white-space: nowrap; height: 20px; width: 2.4em; margin-right: 5px; }
+#atec_admin_bar { width: 0; font-size: 16px !important; }
 .atec-ckbx label { cursor: pointer; position: relative; }
 .atec-ckbx label:before, .atec-ckbx label:after { border-radius: 50px; content: ""; height: 0.85em; position: absolute; top:0; z-index: 2; }
 
 .atec-ckbx input[type="checkbox"] { opacity: 0; width:0; margin-left: -1.2em; }
+#atec_admin_bar input[type="checkbox"] { margin-left: -10px; }
+
 .atec-ckbx label:before { width: 2em; left: 0.1em; transition: background 0.2s ease; background: rgba(242, 95, 92, 0.75); }
 .atec-ckbx input[value="true"] + label:before { background: rgba(112, 193, 148, 0.9); }
 .atec-ckbx label:after { background: rgb(253, 253, 253); box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3); left: 0; width: 1em; transition: all 0.2s ease; }

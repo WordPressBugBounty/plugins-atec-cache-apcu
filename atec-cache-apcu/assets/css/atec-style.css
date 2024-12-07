@@ -65,7 +65,7 @@ p.submit	{ padding-bottom: 0.5em; }
 .atec-vat			{ vertical-align: top; }
 .atec-vam			{ vertical-align: middle; }
 
-/* .atec-notice { position:absolute !important; top: 10px; left:0; } */
+.atec-notice { position:absolute !important; top: 5px !important; left: -15px !important; z-index: 999; }
 .atec-sticky-left, .atec-sticky-right { background: #f9f9f9; border: solid 1px white; position:absolute; top: 10px; padding: 2px 4px; border-radius: 3px; }
 .atec-sticky-left { left: 0px; z-index: 0; }
 .atec-sticky-right { right: 21px; z-index: 1; }
@@ -226,11 +226,11 @@ p.submit	{ padding-bottom: 0.5em; }
 .atec-bar { background: green; display:flex; height:10px; border-radius: 3px; margin: 0; }
 .atec-barDiv { background: #e0e0e0; width:150px; height:12px; padding: 0px !important; border: var(--border-grey); border-radius: 3px; }
 
-.wp-core-ui .notice.is-dismissible { left: 165px; max-width: calc(100% - 200px); }
+/* .wp-core-ui .notice.is-dismissible { left: 165px; max-width: calc(100% - 200px); }
 @media only screen and (max-width: 960px) 
 { .wp-core-ui .notice.is-dismissible { left: 40px; max-width: calc(100% - 75px); } }
 @media only screen and (max-width: 782px) 
-{ .wp-core-ui .notice.is-dismissible { left: 10px; max-width: calc(100% - 20px); } }
+{ .wp-core-ui .notice.is-dismissible { left: 10px; max-width: calc(100% - 20px); } } */
 
 .nav-icon	{ height: 20px; margin-right: 5px; vertical-align: bottom; padding-bottom: 4px; 
 				filter: brightness(0) saturate(100%) invert(39%) sepia(67%) saturate(653%) hue-rotate(166deg) brightness(86%) contrast(90%); }
