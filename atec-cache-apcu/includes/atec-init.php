@@ -50,8 +50,8 @@ function atec_admin_debug($name,$slug): void
 function atec_admin_notice($type,$message,$hide=false): void 
 { 
 	$hash=$hide?md5($message):'';
-	echo '<div ', ($hide?'id="'.esc_attr($hash).'" ':''), 'class="notice notice-',esc_attr($type),' is-dismissible atec-notice"><p>',esc_attr($message),'</p></div>'; 
-	if ($hide) atec_reg_inline_script('atec_admin_notice', 'setTimeout(()=> { jQuery("#'.esc_attr($hash).'").slideUp(); }, 3000);', true);
+	echo '<div ', ($hide?'id="'.esc_attr($hash).'" ':''), 'class="notice notice-',esc_attr($type),' is-dismissible"><p>',esc_attr($message),'</p></div>'; 
+	if ($hide) atec_reg_inline_script('atec_admin_notice', 'setTimeout(()=> { jQuery("#'.esc_attr($hash).'").slideUp(); }, 10000);', true);
 }
 function atec_new_admin_notice($type,$message): void { add_action('admin_notices', function() use ( $type, $message ) { atec_admin_notice($type,$message); }); }
 ?>
