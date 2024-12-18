@@ -3,18 +3,21 @@ if (!defined( 'ABSPATH' )) { exit; }
 
 function atec_wpca_page_buffer_start(): void
 { 	 
-	@header('X-Cache-Enabled: true');
 	// @codingStandardsIgnoreStart
-	if (($_SERVER['REQUEST_METHOD']??'')!=='GET') { @header('X-Cache: FAIL-SKIP'); return; }
-	//if (!empty($_POST)) { @header('X-Cache: FAIL-$_POST'); return; }
+	/* $_POST and $_SERVER is uncritical as it is only used for comparison */
+	if (($_SERVER['REQUEST_METHOD']??'')!=='GET') { @header('X-Cache: SKIP:GET'); return; }
 	// @codingStandardsIgnoreEnd
-	if (is_user_logged_in()) { @header('X-Cache: FAIL-LOGGED_IN'); return; }
-	if (wp_doing_ajax()) { @header('X-Cache: FAIL-AJAX'); return; }
-	if (class_exists('woocommerce' ) && (is_cart() || is_checkout() || is_account_page() || is_woocommerce())) 	
-	{ @header('X-Cache: FAIL-WOO'); return; }
+
+	$args = add_query_arg(null,null);
+	if (str_contains($args,'/password-reset/') || str_contains($args,'/login/') || str_contains($args,'/wp-admin/')) { @header('X-Cache: SKIP/LOGIN'); return	; }
 	
 	global $wp_query;
-	if ($wp_query->is_404 || $wp_query->is_search) { @header('X-Cache: FAIL-SKIP'); return; }
+	if ($wp_query->is_404 || $wp_query->is_search || $wp_query->is_login || $wp_query->is_admin) { @header('X-Cache: SKIP:IS_'); return; }
+	
+	if (class_exists('woocommerce' ) && (is_cart() || is_checkout() || is_account_page() || is_woocommerce())) { @header('X-Cache: SKIP:WOO'); return; }
+	if (is_user_logged_in()) { @header('X-Cache: SKIP:LOGGED_IN'); return; }
+	if (wp_doing_ajax()) { @header('X-Cache: SKIP:AJAX'); return; }
+
 	$isCat=$wp_query->is_category;
 	$isTag=$wp_query->is_tag;
 	$isArchive=$wp_query->is_archive;
@@ -30,21 +33,21 @@ function atec_wpca_page_buffer_start(): void
 		if ($isCat)
 		{
 			$id=$wp_query->query_vars['cat']??'';
-			if (empty($id)) { @header('X-Cache: FAIL-CAT_EMPTY'); return; }
+			if (empty($id)) { @header('X-Cache: FAIL:CAT_EMPTY'); return; }
 			$id.='|'.$wp_query->query_vars['paged'];
 			$suffix='c';
 		}
 		elseif ($isTag)
 		{
 			$id=$wp_query->query_vars['tag_id']??'';
-			if (empty($id)) { @header('X-Cache: FAIL-TAG_EMPTY'); return; }
+			if (empty($id)) { @header('X-Cache: FAIL:TAG_EMPTY'); return; }
 			$id.='|'.$wp_query->query_vars['paged'];
 			$suffix='t';
 		}
 		elseif ($isArchive)
 		{
 			$id=($wp_query->query_vars['year']??'').($wp_query->query_vars['monthnum']??'');
-			if (empty($id)) { @header('X-Cache: FAIL-ARCHIVE_EMPTY'); return; }
+			if (empty($id)) { @header('X-Cache: FAIL:ARCH_EMPTY'); return; }
 			$id.='|'.$wp_query->query_vars['paged'];
 			$suffix='a';
 		}
@@ -52,10 +55,10 @@ function atec_wpca_page_buffer_start(): void
 	else
 	{
 		$isPP=$wp_query->is_page || $wp_query->is_single;
-		if (!$isPP) { @header('X-Cache: FAIL-INVALID_TYPE'); return; }
+		if (!$isPP) { @header('X-Cache: FAIL:INVALID_TYPE'); return; }
 		$id = $wp_query->post->ID;
 		$hash = $wp_query->post->post_modified;
-		if (empty($hash)) { @header('X-Cache: FAIL-NO_TIME'); return; }
+		if (empty($hash)) { @header('X-Cache: FAIL:NO_TIME'); return; }
 		$suffix	= 'p';
 	}
 	
@@ -65,6 +68,7 @@ function atec_wpca_page_buffer_start(): void
 	$key='atec_WPCA_'.($atec_wpca_settings['salt']??'').'_'; 
 	$arr=apcu_fetch($key.$suffix.'_'.$id);
 	@header('X-Cache-ID: '.$suffix.'_'.$id);
+	@header('X-Cache-Enabled: true');
 	if (($arr[2]??'')==='') { apcu_delete($key.$suffix.'_'.$id); apcu_delete($key.$suffix.'_h_'.$id); $arr=false; }
 	if ($arr!==false)
 	{	

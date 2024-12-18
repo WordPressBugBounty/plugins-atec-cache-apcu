@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) { exit; }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu object-cache and the only APCu based page-cache plugin available.
-* Version: 2.1.12
+* Version: 2.1.16
 * Requires at least: 5.2
 * Tested up to: 6.7.1
 * Tested up to PHP: 8.4.1
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) { exit; }
 * Text Domain:  atec-cache-apcu
 */
 
-wp_cache_set('atec_wpca_version','2.1.12');
+wp_cache_set('atec_wpca_version','2.1.16');
 
 $atec_wpca_apcu_enabled=extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings=get_option('atec_WPCA_settings',[]);
@@ -103,10 +103,10 @@ if (is_admin())
 		{
 			require_once(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
 			add_action( 'after_switch_theme', 'atec_wpca_delete_page_cache_all');
-			add_action( 'activated_plugin', 'atec_wpca_delete_page_cache_all');
-			add_action( 'deactivated_plugin', 'atec_wpca_delete_page_cache_all');
+			add_action( 'activated_plugin', 'atec_wpca_delete_wp_cache');
+			add_action( 'deactivated_plugin', 'atec_wpca_delete_wp_cache');
 			add_action( 'wp_ajax_edit_theme_plugin_file', 'atec_wpca_delete_page_cache_all');				
-		
+
 			add_action('create_category', 'atec_wpca_delete_category_cache');
 			add_action('delete_category', 'atec_wpca_delete_category_cache');
 						

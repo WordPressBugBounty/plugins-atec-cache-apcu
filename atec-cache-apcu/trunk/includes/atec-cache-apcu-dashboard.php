@@ -5,7 +5,6 @@ if (!class_exists('ATEC_wp_memory')) @require_once(__DIR__.'/atec-wp-memory.php'
 
 class ATEC_wpcu_results { function __construct() {
 
-atec_check_admin_bar();
 atec_admin_debug('Cache APCu','wpca');
 
 $wpc_tools=new ATEC_wpc_tools();
@@ -40,7 +39,7 @@ echo '
 					</div>';
 		}
 	
-		$url		= atec_get_url();
+		$url			= atec_get_url();
 		$nonce		= wp_create_nonce(atec_nonce());
 		$nav 		= atec_clean_request('nav');
 		$action 	= atec_clean_request('action');
@@ -108,11 +107,11 @@ echo '
 						<h4>APCu Cache'; $wpc_tools->enabled($atec_wpca_apcu_enabled);
 						echo ($atec_wpca_apcu_enabled?'<a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="APCu_flush" href="'.esc_url($url).'&flush=APCu_Cache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('Flush','atec-cache-apcu').'</a>':''),
 						'</h4><hr>';
-						if ($atec_wpca_apcu_enabled) { @@require_once(__DIR__.'/atec-APCu-info.php'); new ATEC_APCu_info($wpc_tools); }
+						if ($atec_wpca_apcu_enabled) { @require_once(__DIR__.'/atec-APCu-info.php'); new ATEC_APCu_info($wpc_tools); }
 						else 
 						{
 							$wpc_tools->p('APCu '.esc_attr__('extension is NOT installed/enabled','atec-cache-apcu'));
-							echo '<div class="atec-mt-5">'; @@require_once(__DIR__.'/atec-APCu-help.php'); echo '</div>';
+							echo '<div class="atec-mt-5">'; @require_once(__DIR__.'/atec-APCu-help.php'); echo '</div>';
 						}
 					echo '
 					</div>';

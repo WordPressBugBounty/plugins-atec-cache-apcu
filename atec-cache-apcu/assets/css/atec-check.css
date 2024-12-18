@@ -24,7 +24,7 @@
 
 .form-table .remark { display: inline-block; font-size: 0.9em; font-weight: 400; padding-top: 5px; width: fit-content; }
 .form-table { border:solid 1px #d0d0d0 !important; margin-bottom: 20px; width: auto; background: rgba(255, 255, 255, 0.6) !important; }
-.form-table TBODY { display: inline-table; margin: 10px; }
+.form-table TBODY { display: inline-table; margin: 5px 10px; }
 .form-table TH	{ width: auto !important; max-width: fit-content; white-space: nowrap; }
 .form-table TH, .form-table TD { border-bottom: dotted 1px #d0d0d0; padding: 10px 10px 10px 0 !important; }
 .form-table TD { display: table-cell !important; padding-left: 50px !important; vertical-align: baseline; }

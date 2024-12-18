@@ -118,11 +118,7 @@ function atec_copy_install_files($dir,$uploadDir,$arr,&$success)
 
 function atec_get_prefix($p): string { return $p==='mega-cache'?'':'atec-'; }
 
-function atec_get_upload_dir($p): string
-{
-	$p = atec_get_prefix($p).$p;
-	return atec_fix_separator(wp_get_upload_dir()['basedir'].'/'.$p);
-}
+function atec_get_upload_dir($p): string { return atec_fix_separator(wp_get_upload_dir()['basedir'].'/'.atec_get_prefix($p).$p); }
 	
 function atec_check_license($licenseCode=null, $siteName=null): bool
 {
@@ -363,7 +359,7 @@ function atec_nav_button($url,$nonce,$action,$nav,$button,$primary=false,$simple
 	elseif (in_array($button,['left','right'])) { $dash='arrow-'.$button.'-alt'; $button=''; }
 	else
 	{
-		$reg = '/#([\-|\w]+)\s(.*)/i';
+		$reg = '/#([\-|\w]+)\s?(.*)/i';
 		preg_match($reg, $button, $matches);
 		if (isset($matches[2])) { $dash=$matches[1]; $button=$matches[2]; }
 	}
@@ -516,7 +512,7 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 	$atec_slug_arr	= ['wpca','wpci','wpd','wpdb','wpds','wps','wpsi','wms','wpwp','wpmc'];
 	$approved		= in_array($slug, $atec_slug_arr);
 	$wordpress		= 'https://wordpress.org/support/plugin/';
-	$supportLink	= (!$approved)?'https://atecplugins.com/':$wordpress.$plugin;
+	$supportLink	= (!$approved)?'https://atecplugins.com/contact/':$wordpress.$plugin;
 
 	if (is_null(get_option('atec_allow_integrity_check',null))) atec_integrity_check_banner($dir);
 	$licenseOk = atec_license_banner($dir);
@@ -530,7 +526,7 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 			// @codingStandardsIgnoreEnd
 			if ($slug==='wpmc') echo '<span style="color:#2340b1;">Mega</span> <span style="color:#fe5300;">Cache</span>';
 			else echo $slug===''?'':'atec ', esc_html($title);
-			echo '<span class="atec-fs-10">';
+			echo '<span class="atec-fs-10">&nbsp;';
 			$ver=atec_get_version(esc_attr($slug));
 			if ($slug!='') echo ' v'.esc_attr($ver);
 			if ($sub_title!=='') echo ' – '.esc_html($sub_title);
@@ -542,7 +538,7 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 		echo '
 		<div class="atec-center atec-vat" style="margin-top: 2px;">',
 			'<a class="atec-fs-12 atec-nodeco atec-btn-small" style="margin-top: 0 !important; border-color: ', esc_attr($color), ' !important;" href="', esc_url($supportLink), '" target="_blank">',
-				'<span class="', esc_attr(atec_dash_class('sos')), '"></span> Plugin support',
+				'<span class="', esc_attr(atec_dash_class('sos')), '"></span>&nbsp;Plugin support',
 			'</a>';
 			
 			if (in_array($slug,['wpca','wpci','wpd','wpdp','wppp','wpsi']))
@@ -565,7 +561,7 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 			
 			if ($approved)
 			{
-				echo '<a class="atec-fs-12 atec-nodeco atec-btn-small" style="margin-top: 0 !important; border-color: ', esc_attr($color), ' !important; margin-left: 10px;" href="', esc_url($wordpress.$plugin.'/reviews/#new-post'), '" target="_blank"><span class="', esc_attr(atec_dash_class('admin-comments')), '"></span> ', esc_attr__('Post a review','atec-cache-apcu'), '</a>';
+				echo '<a class="atec-fs-12 atec-nodeco atec-btn-small" style="margin-top: 0 !important; border-color: ', esc_attr($color), ' !important; margin-left: 10px;" href="', esc_url($wordpress.$plugin.'/reviews/#new-post'), '" target="_blank"><span class="', esc_attr(atec_dash_class('admin-comments')), '"></span>&nbsp;', esc_attr__('Post a review','atec-cache-apcu'), '</a>';
 			}		
 		echo '
 		</div>

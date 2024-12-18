@@ -13,12 +13,11 @@ class ATEC_apcu_groups {
 	<div class="atec-g"><div>';
 
 		if (!defined('WP_APCU_KEY_SALT')) define('WP_APCU_KEY_SALT','WHATEVER');
-		$apcu_cache=apcu_cache_info(true);
+		$apcu_cache=class_exists('APCUIterator')?apcu_cache_info(true):false;
 		if ($apcu_cache)
 		{
 			$c=0; $total=0;
-			$apcu_it=new APCUIterator('/'.WP_APCU_KEY_SALT.'/');
-			if (iterator_count($apcu_it)!==0)
+			if (iterator_count($apcu_it=new APCUIterator('/'.WP_APCU_KEY_SALT.'/'))!==0)
 			{
 				atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Hits','atec-cache-apcu'),__('Size','atec-cache-apcu'),__('Value','atec-cache-apcu')]);
 				foreach ($apcu_it as $entry) 
@@ -40,8 +39,7 @@ class ATEC_apcu_groups {
 			else { atec_error_msg(__('WP-APCu-Cache is empty','atec-cache-apcu')); echo '<br><br>'; }
 
 			$c=0; $total=0;
-			$apcu_it=new APCUIterator('/^(?!'.WP_APCU_KEY_SALT.').*$/');
-			if (iterator_count($apcu_it)!==0)
+			if (iterator_count($apcu_it=new APCUIterator('/^(?!'.WP_APCU_KEY_SALT.').*$/'))!==0)
 			{
 				atec_little_block(__('Page Cache','atec-cache-apcu'));
 				atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Hits','atec-cache-apcu'),__('Size','atec-cache-apcu'),__('Value','atec-cache-apcu')]);
@@ -56,12 +54,11 @@ class ATEC_apcu_groups {
 							<td class="atec-anywrap">', esc_attr($entry['key']), '</td>
 							<td class="atec-nowrap">', esc_html($entry['num_hits']), '</td>
 							<td class="atec-nowrap">', esc_html(size_format($entry['mem_size'])), '</td>
-							<td class="atec-anywrap">', esc_html(htmlentities(substr(serialize($entry['value']),0,128))), '</td>
 						</tr>';
                     $total+=$entry['mem_size'];
 				}
 				atec_empty_tr();
-				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td colspan="3"></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td></td></tr>
+				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td colspan="3"></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td></tr>
 				</tbody></table>';
 				
 				$c=0; $total=0;

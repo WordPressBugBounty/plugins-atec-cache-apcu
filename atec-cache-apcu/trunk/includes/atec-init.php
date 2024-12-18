@@ -23,14 +23,8 @@ function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null): void
 		
 		if (!$atec_plugin_group_active)
 		{
-			$atec_icon=$pluginUrl . 'assets/img/atec-group/atec_icon_admin.svg';
-			add_menu_page('atec-systems','atec-systems', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); }, $atec_icon);
-			
-			$atec_icon=$pluginUrl . 'assets/img/atec-group/atec_support_icon_admin.svg';
-			// @codingStandardsIgnoreStart
-			// Image is not an attachement
-			add_submenu_page($group_slug,'Group', '<img src="'.esc_url($atec_icon).'">&nbsp;Dashboard</span>', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); } );
-			// @codingStandardsIgnoreEnd
+			add_menu_page('atec-systems','atec-systems', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); }, $pluginUrl . 'assets/img/atec-group/atec_logo.svg');	
+			add_submenu_page($group_slug,'Group', '<span style="width:20px; color:white;" class="dashicons dashicons-sos"></span>&nbsp;Dashboard', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); } );
 			$atec_plugin_group_active=true;
 		}
 		// @codingStandardsIgnoreStart
@@ -50,8 +44,8 @@ function atec_admin_debug($name,$slug): void
 function atec_admin_notice($type,$message,$hide=false): void 
 { 
 	$hash=$hide?md5($message):'';
-	echo '<div ', ($hide?'id="'.esc_attr($hash).'" ':''), 'class="notice notice-',esc_attr($type),' is-dismissible atec-notice"><p>',esc_attr($message),'</p></div>'; 
-	if ($hide) atec_reg_inline_script('atec_admin_notice', 'setTimeout(()=> { jQuery("#'.esc_attr($hash).'").slideUp(); }, 3000);', true);
+	echo '<div ', ($hide?'id="'.esc_attr($hash).'" ':''), 'class="notice notice-',esc_attr($type),' is-dismissible"><p>',esc_attr($message),'</p></div>'; 
+	if ($hide) atec_reg_inline_script('atec_admin_notice', 'setTimeout(()=> { jQuery("#'.esc_attr($hash).'").slideUp(); }, 10000);', true);
 }
 function atec_new_admin_notice($type,$message): void { add_action('admin_notices', function() use ( $type, $message ) { atec_admin_notice($type,$message); }); }
 ?>

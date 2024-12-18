@@ -46,7 +46,7 @@ echo '
 <div class="atec-page">';
 
 	$mega = $plugin==='mega-cache';
-	if ($license!=='true')	atec_header(__DIR__ ,'','atec','Plugins');
+	if ($license!=='true')	atec_header(__DIR__ ,'','atec Plugins','');
 	else
 	{
 		$opensslEnabled = extension_loaded('openssl');
@@ -59,7 +59,7 @@ echo '
 			<h3 class="atec-mb-0 atec-center" style="line-height: 0.85em;">';
 			// @codingStandardsIgnoreStart
 			// Image is not an attachement
-			echo '<sub><img alt="Plugin icon" src="', esc_url($imgSrc), '" style="height:22px;"></sub> ', esc_html($mega?'Mega-Cache':'atec-Plugins'), 
+			echo '<sub><img alt="Plugin icon" src="', esc_url($imgSrc), '" class="atec-plugin-icon" style="height: 22px;"></sub> ', esc_html($mega?'Mega-Cache':'atec-Plugins'), 
 			'</h3>';
 			// @codingStandardsIgnoreEnd		
 			atec_progress_div();
@@ -85,7 +85,7 @@ echo '
 					<h3 class="atec-mt-0">';
 					// @codingStandardsIgnoreStart
 					// Image is not an attachement
-					echo '<sub><img alt="Plugin icon" src="', esc_url( plugins_url( '/assets/img/atec-group/atec_wpmc_icon.svg', __DIR__ )), '" style="height:22px;"></sub>&nbsp;';
+					echo '<sub><img alt="Plugin icon" src="', esc_url( plugins_url( '/assets/img/atec-group/atec_wpmc_icon.svg', __DIR__ )), '" class="atec-plugin-icon" style="height: 22px;"></sub>&nbsp;';
 					// @codingStandardsIgnoreEnd
 					echo 'Mega-Cache „PRO“ package', 
 					'</h3>
@@ -108,10 +108,10 @@ echo '
 					foreach (['apcu','redis','memcached','sqlite','mongodb','mariadb','mysql'] as $a)
 					{
 						$c++;
-						if ($c % 12===0) echo '<br>';
+						if ($c % 13===0) echo '<br>';
 						// @codingStandardsIgnoreStart
 						// Image is not an attachement
-						echo '<img src="', esc_url($imgSrc.$a.'.svg'), '" style="height:22px; margin: 0 5px 10px 5px;">';
+						echo '<img src="', esc_url($imgSrc.$a.'.svg'), '" class="atec-plugin-icon" style="height: 22px; margin: 0 5px 10px 5px;">';
 						// @codingStandardsIgnoreEnd
 					}
 					echo '
@@ -125,7 +125,7 @@ echo '
 					<h3 class="atec-mt-0">';
 					// @codingStandardsIgnoreStart
 					// Image is not an attachement
-					echo '<sub><img alt="Plugin icon" src="', esc_url( plugins_url( '/assets/img/atec-group/atec_logo_blue.png', __DIR__ )), '" style="height:22px;"></sub>&nbsp;';
+					echo '<sub><img alt="Plugin icon" src="', esc_url( plugins_url( '/assets/img/atec-group/atec_logo_blue.png', __DIR__ )), '" class="atec-plugin-icon" style="height: 22px;"></sub>&nbsp;';
 					// @codingStandardsIgnoreEnd
 					echo esc_attr__('atec-Plugins „PRO“ package','atec-cache-apcu'), 
 					'</h3>
@@ -133,7 +133,7 @@ echo '
 						<div id="pro_package_welcome" class="atec-fit" style="margin: 0 auto;">
 							<div class="atec-border-white atec-bg-w atec-fit" style="font-size: 16px !important; padding: 10px; text-align:left;">
 								<ul class="atec-m-0">
-								<li>⭐ <strong>', esc_attr__('25 valuable plugins','atec-cache-apcu'), '.</strong></li>';
+								<li>⭐ <strong>', esc_attr__('28 valuable plugins','atec-cache-apcu'), '.</strong></li>';
 								$this->atec_group_star_list();
 							echo '
 								</ul>
@@ -146,11 +146,11 @@ echo '
 					foreach ($atec_group_arr as $a)
 					{
 						$c++;
-						if ($c===26) continue;
-						if ($c % 13===0) echo '<br>';
+						if ($c===27) continue;
+						if ($c % 14===0) echo '<br>';
 						// @codingStandardsIgnoreStart
 						// Image is not an attachement
-						echo '<img src="', esc_url($imgSrc.$a['slug'].'_icon.svg'), '" style="height:22px; margin: 0 5px 10px 5px;">';
+						echo '<img src="', esc_url($imgSrc.$a['slug'].'_icon.svg'), '" class="atec-plugin-icon" style="height: 22px; margin: 0 5px 10px 5px;">';
 						// @codingStandardsIgnoreEnd
 					}
 					echo '
@@ -192,13 +192,13 @@ echo '
 		{
 			$prefix = $a['name']==='mega-cache'?'':'atec-';
 			if ($prefix==='') atec_empty_tr();
-			$installed = $wp_filesystem->exists(WP_PLUGIN_DIR.'/'.$prefix.esc_attr($a['name']));
-			$active = $installed && is_plugin_active($prefix.esc_attr($a['name']).'/'.$prefix.esc_attr($a['name']).'.php');
+			$installed = $wp_filesystem->exists(WP_PLUGIN_DIR.'/'.esc_attr($prefix.$a['name']));
+			$active = $installed && is_plugin_active(esc_attr($prefix.$a['name']).'/'.esc_attr($prefix.$a['name']).'.php');
 			echo '<tr>';
 				// @codingStandardsIgnoreStart
 				// Image is not an attachement
 				echo '
-				<td><img alt="Plugin icon" src="',esc_url( plugins_url( '/assets/img/atec-group/atec_'.esc_attr($a['slug']).'_icon.svg', __DIR__ ) ) ,'" style="height:22px;"></td>';
+				<td><img alt="Plugin icon" src="',esc_url( plugins_url( '/assets/img/atec-group/atec_'.esc_attr($a['slug']).'_icon.svg', __DIR__ ) ) ,'" class="atec-plugin-icon" style="height: 22px;"></td>';
 				// @codingStandardsIgnoreEnd
 				$atecplugins='https://atecplugins.com/';
 				$link=$a['wp']?'https://wordpress.org/plugins/'.$prefix.esc_attr($a['name']).'/':$atecplugins;

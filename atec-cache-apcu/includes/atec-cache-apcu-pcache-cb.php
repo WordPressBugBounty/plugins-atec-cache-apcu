@@ -22,8 +22,9 @@ function atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash)
 		</script>';
 		$debugLen=strlen($debug);
 	}
-	if (function_exists('gzencode')) { $compressed = gzencode($buffer.$debug); $gzip=true; }
-	apcu_store($key.$suffix.'_'.$id,array($hash,$gzip,$gzip?$compressed:$buffer.$debug,$gzip?strlen($compressed):strlen($buffer)+$debugLen));
+	$powered='<p style="font-size:0; margin:0;">Powered by <a href="https://atecplugins.com/">atecplugins.com</a></p>';
+	if (function_exists('gzencode')) { $compressed = gzencode($buffer.$debug.$powered); $gzip=true; }
+	apcu_store($key.$suffix.'_'.$id,array($hash,$gzip,$gzip?$compressed:$buffer.$debug.$powered,$gzip?strlen($compressed):strlen($buffer)+$debugLen));
 	apcu_store($key.$suffix.'_h_'.$id,0);
 	unset($compressed); unset($content);
 	return $buffer;

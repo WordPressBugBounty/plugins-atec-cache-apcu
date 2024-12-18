@@ -347,6 +347,7 @@ class WP_Object_Cache
     public function flush()
     {
         $this->flush_runtime();
+		if (!class_exists('APCUIterator')) return false;
         $apcu_it=new APCUIterator('/'.WP_APCU_KEY_SALT.'/');
         if (iterator_count($apcu_it)!==0)
         { foreach ($apcu_it as $entry) { apcu_delete($entry['key']); } }
@@ -362,10 +363,10 @@ class WP_Object_Cache
 
     public function flush_group($group)
     {
+		if (!class_exists('APCUIterator')) return false;
         $prefix = ($this->multisite && !isset($this->global_groups[$group]))?$this->blog_prefix.':':'';
         $reg = WP_APCU_KEY_SALT.':'.$prefix.$group;
-        $apcu_it=new APCUIterator('/'.$reg.'/');
-        if (iterator_count($apcu_it)!==0)
+        if (iterator_count($apcu_it=new APCUIterator('/'.$reg.'/'))!==0)
         {
             foreach ($apcu_it as $entry) 
             {
