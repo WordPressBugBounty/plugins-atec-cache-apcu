@@ -42,6 +42,7 @@ if ($integrity!=='')
 	update_option('atec_allow_integrity_check',$integrity);
 }
 
+$goupAssetPath = plugins_url('/assets/img/atec-group/',__DIR__);
 echo '
 <div class="atec-page">';
 
@@ -52,20 +53,19 @@ echo '
 		$opensslEnabled = extension_loaded('openssl');
 		if (!$opensslEnabled) atec_admin_notice('warning','The openSSL extension is required for license handling.',true);
 
-		$supportLink	= $mega?'https://wpmegacache.com/contact/':'https://atecplugins.com/contact/';
-		$imgSrc = plugins_url('/assets/img/atec-group/'.($mega?'atec_wpmc_icon.svg':'atec_logo_blue.png'), __DIR__ );
 		echo '
 		<div class="atec-header">
 			<h3 class="atec-mb-0 atec-center" style="line-height: 0.85em;">';
 			// @codingStandardsIgnoreStart
 			// Image is not an attachement
-			echo '<sub><img alt="Plugin icon" src="', esc_url($imgSrc), '" class="atec-plugin-icon" style="height: 22px;"></sub> ', esc_html($mega?'Mega-Cache':'atec-Plugins'), 
+				echo '<sub><img class="atec-plugin-icon" alt="Plugin icon" src="', esc_url($goupAssetPath.'atec_'.($mega?'wpmc':'wpa').'_icon.svg'), '" style="height: 22px;"></sub> ', 
+				esc_html($mega?'Mega-Cache':'atec-Plugins'), 
 			'</h3>';
 			// @codingStandardsIgnoreEnd		
 			atec_progress_div();
 			echo '
 			<div class="atec-center">	
-				<a style="position:relative;" class="atec-fs-12 atec-nodeco atec-btn-small" href="', esc_url($supportLink), '" target="_blank">
+				<a class="atec-fs-12 atec-nodeco atec-btn-small" style="position:relative;" href="', esc_url('https://'.($mega?'wpmegacache':'atecplugins').'.com/contact/'), '" target="_blank">
 				<span class="', esc_attr(atec_dash_class('sos')), '"></span> Plugin contact</a>
 			</div>
 		</div>';
@@ -85,7 +85,7 @@ echo '
 					<h3 class="atec-mt-0">';
 					// @codingStandardsIgnoreStart
 					// Image is not an attachement
-					echo '<sub><img alt="Plugin icon" src="', esc_url( plugins_url( '/assets/img/atec-group/atec_wpmc_icon.svg', __DIR__ )), '" class="atec-plugin-icon" style="height: 22px;"></sub>&nbsp;';
+					echo '<sub><img class="atec-plugin-icon" alt="Plugin icon" src="', esc_url($goupAssetPath.'atec_wpmc_icon.svg'), '" style="height: 22px;"></sub>&nbsp;';
 					// @codingStandardsIgnoreEnd
 					echo 'Mega-Cache „PRO“ package', 
 					'</h3>
@@ -103,15 +103,14 @@ echo '
 					'<center class="atec-mt-0 atec-mb-10"><br>';
 					$c=0;
 					$pattern = '/atec-[\w\-]+/';
-					$imgSrc = plugins_url( '/assets/img/logos/', __DIR__ );
-					$imgSrc = preg_replace($pattern, 'mega-cache', $imgSrc);
+					$imgSrc = preg_replace($pattern, 'mega-cache', plugins_url( '/assets/img/logos/', __DIR__ ));
 					foreach (['apcu','redis','memcached','sqlite','mongodb','mariadb','mysql'] as $a)
 					{
 						$c++;
 						if ($c % 13===0) echo '<br>';
 						// @codingStandardsIgnoreStart
 						// Image is not an attachement
-						echo '<img src="', esc_url($imgSrc.$a.'.svg'), '" class="atec-plugin-icon" style="height: 22px; margin: 0 5px 10px 5px;">';
+						echo '<img class="atec-plugin-icon" src="', esc_url($imgSrc.$a.'.svg'), '" style="height: 22px; margin: 0 5px 10px 5px;">';
 						// @codingStandardsIgnoreEnd
 					}
 					echo '
@@ -125,7 +124,7 @@ echo '
 					<h3 class="atec-mt-0">';
 					// @codingStandardsIgnoreStart
 					// Image is not an attachement
-					echo '<sub><img alt="Plugin icon" src="', esc_url( plugins_url( '/assets/img/atec-group/atec_logo_blue.png', __DIR__ )), '" class="atec-plugin-icon" style="height: 22px;"></sub>&nbsp;';
+					echo '<sub><img class="atec-plugin-icon" alt="Plugin icon" src="', esc_url($goupAssetPath.'atec_wpa_icon.svg'), '" style="height: 22px;"></sub>&nbsp;';
 					// @codingStandardsIgnoreEnd
 					echo esc_attr__('atec-Plugins „PRO“ package','atec-cache-apcu'), 
 					'</h3>
@@ -142,15 +141,14 @@ echo '
 					<div>',
 					'<center class="atec-mt-0 atec-mb-10"><br>';
 					$c=0;
-					$imgSrc = plugins_url( '/assets/img/atec-group/atec_', __DIR__ );
 					foreach ($atec_group_arr as $a)
 					{
 						$c++;
-						if ($c===27) continue;
+						if ($a['slug']==='wpmc') continue;
 						if ($c % 14===0) echo '<br>';
 						// @codingStandardsIgnoreStart
 						// Image is not an attachement
-						echo '<img src="', esc_url($imgSrc.$a['slug'].'_icon.svg'), '" class="atec-plugin-icon" style="height: 22px; margin: 0 5px 10px 5px;">';
+						echo '<img class="atec-plugin-icon" src="', esc_url($goupAssetPath.'atec_'.$a['slug'].'_icon.svg'), '" style="height: 22px; margin: 0 5px 10px 5px;">';
 						// @codingStandardsIgnoreEnd
 					}
 					echo '
@@ -198,7 +196,7 @@ echo '
 				// @codingStandardsIgnoreStart
 				// Image is not an attachement
 				echo '
-				<td><img alt="Plugin icon" src="',esc_url( plugins_url( '/assets/img/atec-group/atec_'.esc_attr($a['slug']).'_icon.svg', __DIR__ ) ) ,'" class="atec-plugin-icon" style="height: 22px;"></td>';
+				<td><img class="atec-plugin-icon" alt="Plugin icon" src="',esc_url($goupAssetPath.'atec_'.esc_attr($a['slug']).'_icon.svg'), '" style="height: 22px;"></td>';
 				// @codingStandardsIgnoreEnd
 				$atecplugins='https://atecplugins.com/';
 				$link=$a['wp']?'https://wordpress.org/plugins/'.$prefix.esc_attr($a['name']).'/':$atecplugins;
@@ -225,15 +223,16 @@ echo '
 				</tr>';
 			$c++;
 		} 
-		echo '</tbody></table>
-		</div>
+		atec_table_footer();
+		echo 
+		'</div>
 		<center>
 			<p class="atec-fs-12" style="max-width:80%;">',
-				esc_attr__('All our plugins are optimized for speed, size and CPU footprint with an average of only 1 ms CPU time (frontend & backend)','atec-cache-apcu'), '.<br>',
-				esc_attr__('Also, they share the same `atec-WP-plugin´ framework – so that shared code will only load once, even with multiple plugins enabled','atec-cache-apcu'), '.	<br>',
+				esc_attr__('All our plugins are optimized for speed, size and CPU footprint with an average of only 1 ms CPU time','atec-cache-apcu'), '.<br>',
+				esc_attr__('Also, they share the same `atec-WP-plugin´ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.	<br>',
 				esc_attr__('Tested with','atec-cache-apcu'), ': Linux (CloudLinux, Debian, Ubuntu), Windows & Mac-OS, Apache, NGINX & LiteSpeed.
 			</p>
-			<a class="atec-nodeco" class="atec-center" href="https://de.wordpress.org/plugins/search/atec/" target="_blank"><button class="button">', esc_attr__('All atec-plugins in the WordPress directory','atec-cache-apcu'), '.</button></a>
+			<a class="atec-nodeco" class="atec-center" href="https://de.wordpress.org/plugins/search/atec/" target="_blank"><button class="button">', esc_attr__('Visit atec-plugins in the WordPress directory','atec-cache-apcu'), '.</button></a>
 		</center>';
 	}
 	

@@ -20,7 +20,7 @@ p.submit	{ padding-bottom: 0.5em; }
 
 .atec-clear		{ clear: both; margin-top: 0.5rem !important; }
 .atec-red			{ color: red !important; }
-.atec-orange		{ color: orange !important; }
+.atec-orange		{ color: #fe770087 !important; }
 .atec-green		{ color: green !important; }
 .atec-grey			{ color: grey !important; }
 .atec-violet		{ color: rgb(127, 0, 197) !important; }
@@ -30,7 +30,7 @@ p.submit	{ padding-bottom: 0.5em; }
 .atec-code, .atec-box-white { border: var(--border-grey); padding: 10px; max-width:fit-content; margin: 5px 0; }
 .atec-code { white-space: break-spaces; font-size: 1em; line-height: 1.3em; }
 
-.atec-plugin-icon { max-width: 22px; height: 22px; }
+.atec-plugin-icon { max-width: 22px; width: auto; height: 22px; }
 .atec-headline	{ display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; }
 .atec-bg-w		{ background: white; }
 .atec-bg-w6, .atec-box-white, .atec-code { background: var(--bg-w6); }
@@ -227,7 +227,7 @@ p.submit	{ padding-bottom: 0.5em; }
 .atec-bar { background: green; display:flex; height:10px; border-radius: 3px; margin: 0; }
 .atec-barDiv { background: #e0e0e0; width:150px; height:12px; padding: 0px !important; border: var(--border-grey); border-radius: 3px; }
 
-.notice { z-index: 1; }
+.notice { z-index: 1; margin-left: 0; }
 input::placeholder { color: #bbb; }
 
 .nav-icon	{ height: 20px; margin-right: 5px; vertical-align: bottom; padding-bottom: 4px; 

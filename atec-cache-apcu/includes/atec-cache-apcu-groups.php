@@ -33,8 +33,8 @@ class ATEC_apcu_groups {
                     $total+=$entry['mem_size'];
 				}
 				atec_empty_tr();
-				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td></td><td></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td></td></tr>
-				</tbody></table>';				
+				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td></td><td></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td></td></tr>';
+				atec_table_footer();
 			}
 			else { atec_error_msg(__('WP-APCu-Cache is empty','atec-cache-apcu')); echo '<br><br>'; }
 
@@ -58,8 +58,8 @@ class ATEC_apcu_groups {
                     $total+=$entry['mem_size'];
 				}
 				atec_empty_tr();
-				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td colspan="3"></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td></tr>
-				</tbody></table>';
+				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td colspan="3"></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td></tr>';
+				atec_table_footer();
 				
 				$c=0; $total=0;
 				atec_little_block('Other persistent APCu-'.__('Object-Cache','atec-cache-apcu'));
@@ -78,8 +78,8 @@ class ATEC_apcu_groups {
 					$total+=$entry['mem_size'];
 				}
 				atec_empty_tr();
-				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td></td><td></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td></td></tr>
-				</tbody></table>';
+				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td></td><td></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td></td></tr>';
+				atec_table_footer();
 				
 			}
 		}

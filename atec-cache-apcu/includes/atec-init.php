@@ -23,7 +23,7 @@ function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null): void
 		
 		if (!$atec_plugin_group_active)
 		{
-			add_menu_page('atec-systems','atec-systems', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); }, $pluginUrl . 'assets/img/atec-group/atec_logo.svg');	
+			add_menu_page('atec-systems','atec-systems', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); }, $pluginUrl . 'assets/img/atec-group/atec_wpa_icon.svg');	
 			add_submenu_page($group_slug,'Group', '<span style="width:20px; color:white;" class="dashicons dashicons-sos"></span>&nbsp;Dashboard', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); } );
 			$atec_plugin_group_active=true;
 		}

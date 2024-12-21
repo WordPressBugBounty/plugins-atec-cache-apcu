@@ -2,6 +2,19 @@
 if (!defined( 'ABSPATH' )) { exit; }
 define('ATEC_TOOLS_INC',true);
 
+function atec_sys_icon_url($dir,$icon): string { return plugins_url( '/assets/img/system/'.$icon.'-icon.svg', $dir); }
+
+function atec_icon($dir,$icon,$margin=15): void
+{
+	$iconPath=plugins_url('assets/img/icons/',$dir);
+	$reg = '/#([\-|\w]+)\s?(.*)/i';
+	preg_match($reg, $icon, $matches);
+	// @codingStandardsIgnoreStart
+	// Image is not an attachement
+	echo '<img style="max-width: 18px; max-height:18px; margin-right: ', esc_attr($margin), 'px;" src="', esc_url($iconPath.$matches[1].'.svg'), '">', isset($matches[2])?' '.esc_attr($matches[2]):'';
+	// @codingStandardsIgnoreEnd
+}
+
 function atec_fix_name($p) { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); }
 
 function atec_loader_dots(): void
@@ -334,6 +347,8 @@ function atec_readme_button_div($url, $nonce, $title): void
 	</div>';
 }
 
+function atec_table_footer(): void { echo '</tbody></table>'; }
+
 function atec_table_header_tiny($tds,$id='',$class=''): void
 {
 	echo '<table ', (esc_attr($id!==''?" id=$id":'')) ,' class="atec-table atec-table-tiny atec-fit ', esc_attr($class), '"><thead><tr>';
@@ -444,11 +459,11 @@ function atec_missing_class_check($class=''): void
 
 function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$block=false): void
 {
-	$bg 		= $ok==='blue'?'#f9f9ff':($ok==='info'?'#fff':($ok==='warning'?'rgba(255, 155, 0, 0.075)':($ok?'#f0fff0':'#fff0f0')));
+	$bg 		= $ok==='blue'?'#f9f9ff':($ok==='info'?'#fff':($ok==='warning'?'rgba(255, 155, 50, 0.05)':($ok?'#f0fff0':'#fff0f0')));
 	$border = $ok==='blue'?'#dde':($ok==='info'?'#eee':($ok==='warning'?'rgba(255, 155, 0, 0.7)':($ok?'#e0ffe0':'#ffe0e0')));
-	$md5 	= $hide?md5($ok?$strSuccess:$strFailed):'';
 	$icon	= $ok==='blue'?'awards':($ok==='info'?'info-outline':($ok==='warning'?'warning':($ok?'yes-alt':'dismiss')));
 	$color	= 'atec-'.($ok==='blue'?'blue':($ok==='info'?'black':($ok==='warning'?'orange':($ok?'green':'red'))));
+	$md5 	= $hide?md5($ok?$strSuccess:$strFailed):'';
 	echo  '
 	<div class="atec-badge atec-', $block?'db':'dilb', ' atec-fit', ($nomargin==true?' atec-mr-0':'') ,'"', ($md5!==''?' id="'.esc_attr($md5).'"':''), ' style="background:', esc_attr($bg) ,'">
 		<div class="atec-dc" style="width:20px; padding-right:5px;"><span class="', esc_attr(atec_dash_class($icon,$color)), '"></span></div>
@@ -462,7 +477,9 @@ function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$bloc
 }
 
 function atec_info($str): void { atec_badge($str,'','info'); }
-function atec_warning($str): void { atec_badge($str,'','warning'); }
+function atec_info_msg($str): void { atec_badge($str,'','info'); }
+
+function atec_warning_msg($str): void { atec_badge($str,'','warning'); }
 function atec_error_msg($txt,$break=null): void { if ($break) echo '<br>'; atec_badge('',$txt,false); }
 function atec_success_msg($txt,$break=null): void { if ($break) echo '<br>'; atec_badge($txt,'',true); }
 
@@ -506,7 +523,7 @@ function atec_help($id,$title,$hide=false,$margin=true): void
 
 function atec_header($dir,$slug,$title,$sub_title=''): bool
 { 
-	$img					= $slug===''?'atec_logo_blue.png':'atec_'.esc_attr($slug).'_icon.svg';
+	$img					= $slug===''?'atec_wpa_icon.svg':'atec_'.esc_attr($slug).'_icon.svg';
 	$imgSrc			= plugins_url('/assets/img/atec-group/'.esc_attr($img), $dir);
 	$plugin				= atec_get_plugin($dir);
 	$atec_slug_arr	= ['wpca','wpci','wpd','wpdb','wpds','wps','wpsi','wms','wpwp','wpmc'];
@@ -522,7 +539,7 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 		<h3 class="atec-mb-0 atec-center" style="line-height: 0.85em;">';
 			// @codingStandardsIgnoreStart
 			// Image is not an attachement
-			echo '<sub><img alt="Plugin icon" src="',esc_url($imgSrc),'" style="height:24px;"></sub> ';
+			echo '<sub><img alt="Plugin icon" src="',esc_url($imgSrc),'" style="height:20px;"></sub> ';
 			// @codingStandardsIgnoreEnd
 			if ($slug==='wpmc') echo '<span style="color:#2340b1;">Mega</span> <span style="color:#fe5300;">Cache</span>';
 			else echo $slug===''?'':'atec ', esc_html($title);
