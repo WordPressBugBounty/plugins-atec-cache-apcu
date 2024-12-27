@@ -81,10 +81,10 @@ p.submit	{ padding-bottom: 0.5em; }
 .atec-table TD:first-child { border-left: 1px solid #c3c4c7; }
 .atec-table TD:last-child, .atec-TDBR { border-right: 1px solid #c3c4c7; }
 
-.emptyTR1,.emptyTR2{background:#f0f0f0 !important}
-.emptyTR1{display:none !important}
-.emptyTR2{border-left:none !important;border-right:none !important;padding:1px !important}.
-.atec-table TBODY TR:nth-child(2n+1) { background: #f6f6f6; }
+.emptyTR1,.emptyTR2{ background:#f0f0f0 !important; }
+.emptyTR1 { display:none !important; }
+.emptyTR2{ border-left:none !important; border-right:none !important; padding:1px !important; }
+.atec-table TBODY TR { background: #f6f6f6; }
 .atec-table TBODY TR:nth-child(2n) { background: #fcfcfc; }
 .atec-table-w-100 { width: 100%; }
 .atec-table-tiny TD, .atec-table-tiny TH { padding: 4px 6px; }

@@ -9,8 +9,9 @@ function atec_wpca_page_buffer_start(): void
 	// @codingStandardsIgnoreEnd
 
 	$args = add_query_arg(null,null);
-	if (str_contains($args,'/password-reset/') || str_contains($args,'/login/') || str_contains($args,'/wp-admin/')) { @header('X-Cache: SKIP/LOGIN'); return	; }
-	
+	if (str_contains($args,'/password-reset/') || str_contains($args,'/login/') || str_contains($args,'/wp-admin/')) { @header('X-Cache: SKIP/LOGIN'); return; }
+	if (str_contains($args,'/?') && !str_contains($args,'/?p=')) { @header('X-Cache: SKIP/QUERY'); return; }
+
 	global $wp_query;
 	if ($wp_query->is_404 || $wp_query->is_search || $wp_query->is_login || $wp_query->is_admin) { @header('X-Cache: SKIP:IS_'); return; }
 	

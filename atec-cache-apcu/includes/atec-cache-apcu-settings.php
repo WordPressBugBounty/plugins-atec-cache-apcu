@@ -4,8 +4,8 @@ if (!class_exists('ATEC_wpc_tools')) @require_once('atec-wpc-tools.php');
 
 class ATEC_wpcu_settings { function __construct() {
 
+if (!defined('ATEC_CHECK_INC')) @require_once('atec-check.php');
 $wpc_tools=new ATEC_wpc_tools();
-require_once('atec-check.php');
 
 global $atec_wpca_apcu_enabled;
 $optName='atec_WPCA_settings';
@@ -52,7 +52,7 @@ echo '
 							
 		if ($atec_wpca_apcu_enabled && class_exists('APCUIterator'))
 		{    
-			if (!empty($apcu_it=new APCUIterator('/atec_WPCA_p_/')))
+			if (!empty($apcu_it=new APCUIterator('/atec_WPCA_*_/')))
 			{
 				$c=0; $size=0;
 				foreach ($apcu_it as $entry) 
@@ -71,6 +71,9 @@ echo '
 			atec_badge('',__('LiteSpeed-server and -cache plugin detected','atec-cache-apcu'),false); 
 			atec_badge(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),'',true); 
 		}
+		
+		if (defined('WP_APCU_MU_PAGE_CACHE')) atec_success_msg('The advanced page cache is installed');
+		
 		echo '
 		</div>
 	</div>';
@@ -87,13 +90,11 @@ echo '
 					$slug = 'atec_WPCA';
 				  	settings_fields($slug);
 				  	do_settings_sections($slug);
-					echo '<div style="margin-top: -10px;">';
-						$licenseOk=atec_pro_feature(' - this will enable the<br>advanced page cache and give your site an extra boost',true);
-					echo '</div>';
+					echo '<div style="margin-top: -10px;">'; $licenseOk=atec_pro_feature(' - this will enable the advanced<br>page cache and can give your site an extra ~20% speed boost',true); echo '</div>';
 				  	submit_button(__('Save','atec-cache-apcu'));
 				echo '
-				</form>
-				<p class="atec-red">', esc_attr__('Do not use multiple page cache plugins simultaneously.','atec-cache-apcu'), '</p>';
+				</form>';
+				atec_warning_msg(esc_attr__('Do not use multiple page cache plugins simultaneously','atec-cache-apcu'),false,true);
 				atec_help('show_debug',__('„Show debug“','atec-cache-apcu'));
 				echo '
 				<div id="show_debug_help" class="atec-help atec-dn">',

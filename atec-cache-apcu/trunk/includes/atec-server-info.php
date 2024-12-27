@@ -6,7 +6,6 @@ class ATEC_server_info {
 private function envExists($str): string { return isset($_SERVER[$str])?sanitize_text_field(wp_unslash
 ($_SERVER[$str])):''; }
 private function offset2Str($tzOffset): string { return ($tzOffset>0?'+':'').$tzOffset; }
-private function createIcon($icon): string { return plugins_url( '/assets/img/system/'.$icon.'-icon.svg', __DIR__ ); }
 
 private function getGeo($ip): string
 {
@@ -20,22 +19,14 @@ private function getGeo($ip): string
 private function tblHeader($icon,$title,$arr): void
 {
 	echo '
-	<div class="atec-mb-5">';
-		// @codingStandardsIgnoreStart
-		// Image is not an attachement
-		echo '<div style="padding: 0 0 5px 10px;"><img class="atec-sys-icon" src="', esc_url($this->createIcon($icon)), '"><span class="atec-label">', esc_attr($title), '</span></div>';
-		// @codingStandardsIgnoreEnd		
+	<div class="atec-mb-5">
+		<div style="padding: 0 0 5px 10px;">'; atec_server_sys_icon(__DIR__,$icon); echo '<span class="atec-label">', esc_attr($title), '</span></div>';
 		atec_table_header_tiny($arr,'','atec-mb-10');
-		echo '
-		<tr>';
+		echo 
+		'<tr>';
 }
 
-private function tblFooter(): void
-{
-	echo '</tr>
-		</tbody>
-	</table></div>';
-}
+private function tblFooter(): void { echo '</tr>'; atec_table_footer(); echo '</div>'; }
 
 function __construct() {	
 
@@ -105,10 +96,7 @@ echo '
 					case 'Linux': $icon='linux'; break;
 					case 'Ubuntu': $icon='ubuntu'; break;
 				}
-				// @codingStandardsIgnoreStart
-				// Image is not an attachement
-				if ($icon!=='') echo '<img class="atec-sys-icon" src="', esc_url($this->createIcon($icon)), '">';
-				// @codingStandardsIgnoreEnd
+				if ($icon!=='') atec_server_sys_icon(__DIR__,$icon);
 				echo esc_attr($php_uname['s']), 
 			'</td>
 			<td>', esc_attr($php_uname['r']), '</td>
@@ -139,19 +127,13 @@ echo '
 				if (str_contains($lowSoft,'apache')) $icon='apache';
 				else	if (str_contains($lowSoft,'nginx')) $icon='nginx';
 						else if (str_contains($lowSoft,'litespeed')) $icon='litespeed';
-				// @codingStandardsIgnoreStart
-				// Image is not an attachement
-				if ($icon!=='') echo '<img class="atec-sys-icon" src="', esc_url($this->createIcon($icon)), '">';
-				// @codingStandardsIgnoreEnd
+				if ($icon!=='') atec_server_sys_icon(__DIR__,$icon);
 				echo esc_html($serverSoftware),'
 			</td>
 			<td>';
-				// @codingStandardsIgnoreStart
-				// Image is not an attachement
- 				echo '<img class="atec-sys-icon" src="', esc_url($this->createIcon('curl')), '">', 'ver.&nbsp;', esc_attr(function_exists( 'curl_version')?$curl['version'].' | '.str_replace('(SecureTransport)','',$curl['ssl_version']):'n/a');
-				 // @codingStandardsIgnoreEnd			
-				echo '
-				</td>';
+				atec_server_sys_icon(__DIR__,'curl'); echo 'ver.&nbsp;', esc_attr(function_exists( 'curl_version')?$curl['version'].' | '.str_replace('(SecureTransport)','',$curl['ssl_version']):'n/a');
+			echo 
+			'</td>';
 		$this->tblFooter();
 		
 	echo '</div>

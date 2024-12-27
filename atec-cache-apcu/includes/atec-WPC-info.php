@@ -46,11 +46,7 @@ if (defined('LSCWP_OBJECT_CACHE') && LSCWP_OBJECT_CACHE=='true' && (method_exist
 
 	if (defined('LSCWP_V')) 
 	{
-		$imgSrc = atec_sys_icon_url(__DIR__,'litespeed');
-		// @codingStandardsIgnoreStart
-		// Image is not an attachement
-		echo '<p><img style="height:20px;" src="', esc_url($imgSrc), '"> LiteSpeed '.esc_attr__('cache','atec-cache-apcu').' v.',esc_html(LSCWP_V),' '.esc_attr__('is active','atec-cache-apcu').'.</p>';
-		// @codingStandardsIgnoreEnd
+		echo '<p>'; atec_sys_icon(__DIR__,'litespeed'); echo ' LiteSpeed '.esc_attr__('cache','atec-cache-apcu').' v.',esc_html(LSCWP_V),' '.esc_attr__('is active','atec-cache-apcu').'.</p>';
 	}
 }
 

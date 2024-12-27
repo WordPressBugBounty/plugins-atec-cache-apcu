@@ -14,7 +14,7 @@ function atec_wpca_settings_fields()
 	if (str_contains(atec_query(),'settings-updated=true')) 
 	{
 		if (get_option('atec_wpca_last_cache')!==($options['cache']??false)) 
-		{@require_once(__DIR__.'/atec-cache-apcu-pcache-tools.php'); atec_wpca_delete_page_cache_all(); };
+		{ @require_once(__DIR__.'/atec-cache-apcu-pcache-tools.php'); atec_wpca_delete_page_cache_all(); };
 		if (($options['salt']??'')==='') 	{ $options['salt']=hash('crc32', get_bloginfo(), FALSE); update_option($option_group,$options); }
 				
 		if (atec_check_license())
@@ -23,13 +23,13 @@ function atec_wpca_settings_fields()
 			atec_mkdir_if_not_exists(WPMU_PLUGIN_DIR);
 			$atec_wpca_adv_page_cache_filename='atec-wpca-adv-page-cache-pro.php';
 			$MU_advanced_cache_path=WPMU_PLUGIN_DIR.'/@'.$atec_wpca_adv_page_cache_filename;
-			$pluginDir=plugin_dir_path(__DIR__);
-			if ($options['cache']??false) $wp_filesystem->copy($pluginDir.'includes/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
-			else $wp_filesystem->delete($MU_advanced_cache_path);
+
+			if ($options['cache']??false) @$wp_filesystem->copy(plugin_dir_path(__DIR__).'includes/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
+			else @$wp_filesystem->delete($MU_advanced_cache_path);
 		}
 	}
 	update_option('atec_wpca_last_cache', $options['cache']??false, false);
-
+	
   	register_setting(sanitize_text_field($page_slug),sanitize_text_field($option_group));
 	
   	add_settings_section($section,__('APCu Page Cache','atec-cache-apcu'),'',$page_slug);

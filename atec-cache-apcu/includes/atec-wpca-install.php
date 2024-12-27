@@ -26,10 +26,9 @@ if ($atec_active_slug!=='atec_group')
 	if (!defined('WP_APCU_KEY_SALT'))
 	{
 	  	global $atec_wpca_apcu_enabled;
-	  	define('ATEC_CACHE_APCU_WARNING',!$atec_wpca_apcu_enabled?
-	  	__('APCu extension is not enabled but it is required for this plugin to work. Once you have activated APCu, please reactivate this plugin to install the object cache.','atec-cache-apcu'):
-	  	__('Can not find object-cache.php in your wp-content folder. Please deactivate/activate this plugin. Installing the object-cache.php is part of the activation process.','atec-cache-apcu'));
-	  	atec_new_admin_notice('error','atec-cache-APCu: '.ATEC_CACHE_APCU_WARNING); 
+	  	atec_new_admin_notice('error','atec-cache-APCu: '.(!$atec_wpca_apcu_enabled?
+		  __('APCu extension is not enabled but it is required for this plugin to work. Once you have activated APCu, please reactivate this plugin to install the object cache.','atec-cache-apcu'):
+		  __('Can not find object-cache.php in your wp-content folder. Please deactivate/activate this plugin. Installing the object-cache.php is part of the activation process.','atec-cache-apcu')));
 	}
 }
 else

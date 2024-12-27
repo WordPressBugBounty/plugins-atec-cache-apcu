@@ -10,7 +10,7 @@ function atec_plugin_settings(array $links): array
 	$atec_group_settings_arr=[
 		'backup'=>'wpb','cache-apcu'=>'wpca','code'=>'wpc','deploy'=>'wpdp','meta'=>'wpm','optimize'=>'wpo',
 		'page-cache'=>'wppc','poly-addon'=>'wppo','shell'=>'wpsh','web-map-service'=>'wms','smtp-mail'=>'wpsm'];
-	preg_match('/plugin=atec-([\w\-]+)/', $links['deactivate'], $match);
+	preg_match('/plugin=atec-([\w\-]+)/', $links['deactivate']??'', $match);
 	if (isset($match[1]) && isset($atec_group_settings_arr[$match[1]]))
 	{
 		$slug=$atec_group_settings_arr[$match[1]];

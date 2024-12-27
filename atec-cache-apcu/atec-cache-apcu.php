@@ -5,19 +5,19 @@ if (!defined('ABSPATH')) { exit; }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu object-cache and the only APCu based page-cache plugin available.
-* Version: 2.1.19
+* Version: 2.1.21
 * Requires at least: 5.2
 * Tested up to: 6.7.1
 * Tested up to PHP: 8.4.1
 * Requires PHP: 7.4
-* Author: Chris Ahrweiler
-* Author URI: https://atec-systems.com
+* Author: Chris Ahrweiler ℅ atecplugins.com
+* Author URI: https://atecplugins.com/
 * License: GPL2
 * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 * Text Domain:  atec-cache-apcu
 */
 
-wp_cache_set('atec_wpca_version','2.1.19');
+wp_cache_set('atec_wpca_version','2.1.21');
 
 $atec_wpca_apcu_enabled=extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings=get_option('atec_WPCA_settings',[]);
@@ -117,12 +117,9 @@ if (is_admin())
  }
 else // not is_admin
 {
-	if (!defined('WP_APCU_MU_PAGE_CACHE'))
-	add_action('init', function() { if (defined('WP_APCU_KEY_SALT') && atec_wpca_settings('cache')) { @require_once(__DIR__.'/includes/atec-cache-apcu-pcache.php'); } });
+	if (!defined('WP_APCU_MU_PAGE_CACHE') && $atec_wpca_apcu_enabled && atec_wpca_settings('cache'))
+	add_action('init', function() { @require_once(__DIR__.'/includes/atec-cache-apcu-pcache.php'); });
 }
 
-if (defined('WP_APCU_KEY_SALT'))
-{
-	if (atec_wpca_settings('cache')) { @require_once(__DIR__.'/includes/atec-cache-apcu-pcache-cleanup.php'); }
-};
+if ($atec_wpca_apcu_enabled && atec_wpca_settings('cache')) { @require_once(__DIR__.'/includes/atec-cache-apcu-pcache-cleanup.php'); }
 ?>

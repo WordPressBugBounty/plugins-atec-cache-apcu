@@ -2,6 +2,14 @@
 if (!defined( 'ABSPATH' )) { exit; }
 define('ATEC_TOOLS_INC',true);
 
+function atec_server_sys_icon($dir,$icon) 
+{ 
+	// @codingStandardsIgnoreStart
+	// Image is not an attachement
+	echo '<img class="atec-sys-icon" src="', esc_url(atec_sys_icon_url($dir, $icon)), '">'; 
+	// @codingStandardsIgnoreEnd
+}
+
 function atec_sys_icon_url($dir,$icon): string { return plugins_url( '/assets/img/system/'.$icon.'-icon.svg', $dir); }
 
 function atec_icon($dir,$icon,$margin=15): void
@@ -479,7 +487,7 @@ function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$bloc
 function atec_info($str): void { atec_badge($str,'','info'); }
 function atec_info_msg($str): void { atec_badge($str,'','info'); }
 
-function atec_warning_msg($str): void { atec_badge($str,'','warning'); }
+function atec_warning_msg($str,$br_before=false, $br_after=false): void { if ($br_before) echo '<br>'; atec_badge($str,'','warning'); if ($br_after) echo '<br>'; }
 function atec_error_msg($txt,$break=null): void { if ($break) echo '<br>'; atec_badge('',$txt,false); }
 function atec_success_msg($txt,$break=null): void { if ($break) echo '<br>'; atec_badge($txt,'',true); }
 
