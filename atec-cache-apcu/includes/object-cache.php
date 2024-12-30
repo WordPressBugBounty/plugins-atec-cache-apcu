@@ -9,7 +9,7 @@
 * Tested up to PHP: 8.4.1
 * Requires PHP: 7.4
 * Author: Chris Ahrweiler ℅ atecplugins.com
-* Author URI: https://atecplugins.com/
+* Author URI: https://atec-systems.com/
 * License: GPL2
 * License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 * Text Domain:  atec-apcu-object-cache

@@ -72,6 +72,7 @@ echo '
 			atec_badge(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),'',true); 
 		}
 		
+		if (is_multisite()) atec_error_msg('The page cache is not designed to support multisites');
 		if (defined('WP_APCU_MU_PAGE_CACHE')) atec_success_msg('The advanced page cache is installed');
 		
 		echo '

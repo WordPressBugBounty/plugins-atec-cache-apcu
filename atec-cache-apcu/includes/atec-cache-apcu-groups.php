@@ -7,7 +7,7 @@ class ATEC_apcu_groups {
 
 	$salt=get_option($prefix.'_settings',[])['salt']??'';
 	$arr=array('PC salt'=>$salt);
-	if (defined('WP_APCU_KEY_SALT')) $arr[]=array('APCU salt (*)'=>WP_APCU_KEY_SALT);
+	if (defined('WP_APCU_KEY_SALT')) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
 	atec_little_block_with_info('Persistent WP-APCu-'.__('Object-Cache','atec-cache-apcu'), $arr);
 
 	echo '

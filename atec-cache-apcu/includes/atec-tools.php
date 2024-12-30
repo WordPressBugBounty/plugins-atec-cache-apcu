@@ -25,9 +25,11 @@ function atec_icon($dir,$icon,$margin=15): void
 
 function atec_fix_name($p) { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); }
 
-function atec_loader_dots(): void
+function atec_loader_dots($c=7): void
 {
-	echo '<div class="atec-loader-dots atec-dilb"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>';
+	echo '<div class="atec-loader-dots atec-dilb">';
+	for ($i=0;$i<$c;$i++) echo '<span></span>';
+	echo '</div>';
 }
 
 function atec_check_admin_bar(): bool
@@ -487,9 +489,9 @@ function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$bloc
 function atec_info($str): void { atec_badge($str,'','info'); }
 function atec_info_msg($str): void { atec_badge($str,'','info'); }
 
-function atec_warning_msg($str,$br_before=false, $br_after=false): void { if ($br_before) echo '<br>'; atec_badge($str,'','warning'); if ($br_after) echo '<br>'; }
-function atec_error_msg($txt,$break=null): void { if ($break) echo '<br>'; atec_badge('',$txt,false); }
-function atec_success_msg($txt,$break=null): void { if ($break) echo '<br>'; atec_badge($txt,'',true); }
+function atec_warning_msg($str, $br_before=null, $br_after=null): void { if ($br_before) echo '<br>'; atec_badge($str,'','warning'); if ($br_after) echo '<br>'; }
+function atec_error_msg($txt, $br_before=null): void { if ($br_before) echo '<br>'; atec_badge('',$txt,false); }
+function atec_success_msg($txt, $br_before=null): void { if ($br_before) echo '<br>'; atec_badge($txt,'',true); }
 
 function atec_progress_div(): void 
 { 
@@ -519,14 +521,7 @@ function atec_help($id,$title,$hide=false,$margin=true): void
 	<div id="', esc_attr($id), '_help_button" class="button atec-help-button" style="margin-top: ', $margin?'2':'0', 'px !important;" onclick="return showHelp(\'', esc_attr($id), '\');">',
 		'<span style="margin-left: -4px;" class="', esc_attr(atec_dash_class('editor-help','atec-orange')), '"></span>&nbsp;', esc_attr($title), 
 	'</div>';
-	
-	atec_reg_inline_script('help', '
-		function showHelp(id) 
-		{ 
-			jQuery("#"+id+"_help").removeClass("atec-dn").show(); 
-			jQuery("#"+id+"_help_button").remove();
-			return false; 
-		}');
+	atec_reg_inline_script('help', 'function showHelp(id) { jQuery("#"+id+"_help").removeClass("atec-dn").show(); jQuery("#"+id+"_help_button").remove(); return false; }');
 }
 
 function atec_header($dir,$slug,$title,$sub_title=''): bool
@@ -604,8 +599,8 @@ function atec_clean_server($t): string { return isset($_SERVER[$t])?sanitize_tex
 
 function atec_reg_style($id,$dir,$css,$ver): void { wp_register_style($id, plugin_dir_url($dir).'assets/css/'.$css, [], esc_attr($ver)); wp_enqueue_style($id); } 
 function atec_reg_script($id,$dir,$js,$ver): void { wp_register_script($id, plugin_dir_url($dir).'assets/js/'.$js, [], esc_attr($ver),true); wp_enqueue_script($id); } 
-function atec_reg_inline_style($id, $css):void { $id=($id==='')?'atec-css':'atec_'.$id; wp_register_style($id, false, [], '1.0.0'); wp_enqueue_style($id); wp_add_inline_style($id, $css); }
-function atec_reg_inline_script($id, $js, $jquery=false):void { $id='atec_'.$id; wp_register_script($id, false, $jquery?array('jquery'):array(), '1.0.0', false); wp_enqueue_script($id); wp_add_inline_script($id, $js); }
+function atec_reg_inline_style($id, $css_safe):void { $id=($id==='')?'atec-css':'atec_'.$id; wp_register_style($id, false, [], '1.0.0'); wp_enqueue_style($id); wp_add_inline_style($id, $css_safe); }
+function atec_reg_inline_script($id, $js_safe, $jquery=false):void { $id='atec_'.$id; wp_register_script($id, false, $jquery?array('jquery'):array(), '1.0.0', false); wp_enqueue_script($id); wp_add_inline_script($id, $js_safe); }
 
 function atec_get_url(): string
 { 
