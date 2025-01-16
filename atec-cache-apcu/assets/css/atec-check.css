@@ -7,9 +7,9 @@
 #atec_admin_bar input[type="checkbox"] { margin-left: -10px; }
 
 .atec-ckbx label:before { width: 2em; left: 0.1em; transition: background 0.2s ease; background: rgba(242, 95, 92, 0.75); }
-.atec-ckbx input[value="true"] + label:before { background: rgba(112, 193, 148, 0.9); }
+.atec-ckbx input:checked + label:before { background: rgba(112, 193, 148, 0.9); }
 .atec-ckbx label:after { background: rgb(253, 253, 253); box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3); left: 0; width: 1em; transition: all 0.2s ease; }
-.atec-ckbx input[value="true"] + label:after { left: 1.2em; }
+.atec-ckbx input:checked + label:after { left: 1.2em; }
 
 .atec-ckbx label.check_disabled { cursor: auto; }
 .atec-ckbx label.check_disabled:before { background: rgba(178, 178, 188, 0.9) !important; }

@@ -18,17 +18,17 @@ add_action( 'admin_enqueue_scripts', function()
 
 if ($atec_active_slug!=='atec_group') 
 { 
-	function atec_wpca(): void { if (!function_exists('atec_check_admin_bar') || !atec_check_admin_bar()) @require_once(__DIR__.'/atec-cache-apcu-dashboard.php'); }
+	function atec_wpca(): void { @require_once(__DIR__.'/atec-cache-apcu-dashboard.php'); }
 
 	if (!function_exists('atec_load_pll')) { @require_once(__DIR__.'/atec-translation.php'); }
 	atec_load_pll(__DIR__,'cache-apcu');		
 
-	if (!defined('WP_APCU_KEY_SALT'))
+	if (defined('WP_APCU_KEY_SALT'))
 	{
 	  	global $atec_wpca_apcu_enabled;
 	  	atec_new_admin_notice('error','atec-cache-APCu: '.(!$atec_wpca_apcu_enabled?
 		  __('APCu extension is not enabled but it is required for this plugin to work. Once you have activated APCu, please reactivate this plugin to install the object cache.','atec-cache-apcu'):
-		  __('Can not find object-cache.php in your wp-content folder. Please deactivate/activate this plugin. Installing the object-cache.php is part of the activation process.','atec-cache-apcu')));
+		  __('Can not find APCu-Object-Cache.php in your wp-content folder. Please deactivate/activate this plugin. Installing the object-cache.php is part of the activation process.','atec-cache-apcu')));
 	}
 }
 else

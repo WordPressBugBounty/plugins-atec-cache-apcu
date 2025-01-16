@@ -132,7 +132,7 @@ echo '
 						<div id="pro_package_welcome" class="atec-fit" style="margin: 0 auto;">
 							<div class="atec-border-white atec-bg-w atec-fit" style="font-size: 16px !important; padding: 10px; text-align:left;">
 								<ul class="atec-m-0">
-								<li>⭐ <strong>', esc_attr__('28 valuable plugins','atec-cache-apcu'), '.</strong></li>';
+								<li>⭐ <strong>', esc_attr__('31 valuable plugins','atec-cache-apcu'), '.</strong></li>';
 								$this->atec_group_star_list();
 							echo '
 								</ul>
@@ -145,7 +145,7 @@ echo '
 					{
 						$c++;
 						if ($a['slug']==='wpmc') continue;
-						if ($c % 14===0) echo '<br>';
+						if ($c % 15===0) echo '<br>';
 						// @codingStandardsIgnoreStart
 						// Image is not an attachement
 						echo '<img class="atec-plugin-icon" src="', esc_url($goupAssetPath.'atec_'.$a['slug'].'_icon.svg'), '" style="height: 22px; margin: 0 5px 10px 5px;">';
@@ -229,7 +229,7 @@ echo '
 		<center>
 			<p class="atec-fs-12" style="max-width:80%;">',
 				esc_attr__('All our plugins are optimized for speed, size and CPU footprint with an average of only 1 ms CPU time','atec-cache-apcu'), '.<br>',
-				esc_attr__('Also, they share the same `atec-WP-plugin´ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.	<br>',
+				esc_attr__('Also, they share the same „atec-WP-plugin“ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.	<br>',
 				esc_attr__('Tested with','atec-cache-apcu'), ': Linux (CloudLinux, Debian, Ubuntu), Windows & Mac-OS, Apache, NGINX & LiteSpeed.
 			</p>
 			<a class="atec-nodeco" class="atec-center" href="https://de.wordpress.org/plugins/search/atec/" target="_blank"><button class="button">', esc_attr__('Visit atec-plugins in the WordPress directory','atec-cache-apcu'), '.</button></a>

@@ -30,7 +30,7 @@ function atec_wpca_settings_fields()
 	}
 	update_option('atec_wpca_last_cache', $options['cache']??false, false);
 	
-  	register_setting(sanitize_text_field($page_slug),sanitize_text_field($option_group));
+  	register_setting($page_slug,$option_group);
 	
   	add_settings_section($section,__('APCu Page Cache','atec-cache-apcu'),'',$page_slug);
 	

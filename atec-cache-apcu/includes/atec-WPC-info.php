@@ -46,19 +46,20 @@ if (defined('LSCWP_OBJECT_CACHE') && LSCWP_OBJECT_CACHE=='true' && (method_exist
 
 	if (defined('LSCWP_V')) 
 	{
-		echo '<p>'; atec_sys_icon(__DIR__,'litespeed'); echo ' LiteSpeed '.esc_attr__('cache','atec-cache-apcu').' v.',esc_html(LSCWP_V),' '.esc_attr__('is active','atec-cache-apcu').'.</p>';
+		echo '<p>'; atec_server_sys_icon(__DIR__,'litespeed'); echo ' LiteSpeed '.esc_attr__('cache','atec-cache-apcu').' v.',esc_html(LSCWP_V),' '.esc_attr__('is active','atec-cache-apcu').'.</p>';
 	}
 }
 
 global $_wp_using_ext_object_cache;
-if ($_wp_using_ext_object_cache) atec_success_msg('WP '.__('object cache','atec-cache-apcu').' '.__('is persistent','atec-cache-apcu'));
+if ($_wp_using_ext_object_cache) atec_success_msg('WP '.__('object cache','atec-cache-apcu').' '.__('is persistent','atec-cache-apcu'),false,true);
 
 $testKey='atec_wp_test_key';
 wp_cache_set($testKey,'hello');
 $success=wp_cache_get($testKey)=='hello';
 atec_badge('WP '.__('object cache','atec-cache-apcu').' '.__('is writeable','atec-cache-apcu'),'Writing to WP '.__('object cache','atec-cache-apcu').' failed',$success);
-if ($success) 	wp_cache_delete($testKey);
+if ($success) wp_cache_delete($testKey);
 
+echo '<br>';
 atec_help('WPcache','WP object cache explained');
 echo '<div id="WPcache_help" class="atec-help atec-dn">
 The WP object cache boosts performance by storing keys that might be used by multiple scripts while handling a page request.
