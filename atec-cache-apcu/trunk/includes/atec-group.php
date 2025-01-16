@@ -132,7 +132,7 @@ echo '
 						<div id="pro_package_welcome" class="atec-fit" style="margin: 0 auto;">
 							<div class="atec-border-white atec-bg-w atec-fit" style="font-size: 16px !important; padding: 10px; text-align:left;">
 								<ul class="atec-m-0">
-								<li>⭐ <strong>', esc_attr__('28 valuable plugins','atec-cache-apcu'), '.</strong></li>';
+								<li>⭐ <strong>', esc_attr__('31 valuable plugins','atec-cache-apcu'), '.</strong></li>';
 								$this->atec_group_star_list();
 							echo '
 								</ul>
@@ -145,7 +145,7 @@ echo '
 					{
 						$c++;
 						if ($a['slug']==='wpmc') continue;
-						if ($c % 14===0) echo '<br>';
+						if ($c % 15===0) echo '<br>';
 						// @codingStandardsIgnoreStart
 						// Image is not an attachement
 						echo '<img class="atec-plugin-icon" src="', esc_url($goupAssetPath.'atec_'.$a['slug'].'_icon.svg'), '" style="height: 22px; margin: 0 5px 10px 5px;">';
@@ -177,7 +177,7 @@ echo '
 
 		echo '
 		<div class="atec-g">';
-		atec_table_header_tiny(['','Name (Link)','WP?',esc_attr__('Preview','atec-cache-apcu'),esc_attr__('Status','atec-cache-apcu'),esc_attr__('Description','atec-cache-apcu'),'#awards '.esc_attr__('PRO features','atec-cache-apcu')],'','atec-table-med');
+		atec_table_header_tiny(['','Name (Link)','#wordpress','#admin-multisite',esc_attr__('Status','atec-cache-apcu'),esc_attr__('Description','atec-cache-apcu'),'#awards '.esc_attr__('PRO features','atec-cache-apcu')],'','atec-table-med');
 
 		$atec_active			= ['cache-apcu','cache-info','database','debug','dir-scan',		'stats','system-info','web-map-service','webp','mega-cache'];
 		$atec_review			= ['backup'];
@@ -203,16 +203,16 @@ echo '
 				echo '
 				<td class="atec-nowrap"><a class="atec-nodeco" href="', esc_url($link) ,'" target="_blank">', esc_attr(atec_fix_name($a['name'])), '</a></td>';
 				if ($a['wp']) echo '
-					<td><span title="', esc_attr__('Published','atec-cache-apcu'), '" class="',esc_attr(atec_dash_class('wordpress')), '"></span></td>
 					<td><a class="atec-nodeco" title="WordPress Playground" href="https://playground.wordpress.net/?plugin=', esc_attr($prefix.$a['name']), '&blueprint-url=https://wordpress.org/plugins/wp-json/plugins/v1/plugin/', esc_attr($prefix.$a['name']), '/blueprint.json" target="_blank"><span class="',esc_attr(atec_dash_class('welcome-view-site')), '"></span></a></td>';
 				else 
 				{
 					$inReview=in_array($a['name'], $atec_review);
-					echo '
-					<td colspan="2">
+					echo 
+					'<td>
 						<span title="', $inReview?esc_attr__('In review','atec-cache-apcu'):esc_attr__('In progress','atec-cache-apcu'), '"><span class="',esc_attr(atec_dash_class($inReview?'visibility':'')) ,'"></span>
 					</td>';
 				}
+				echo '<td>', $a['multi']?'<span class="'.esc_attr(atec_dash_class('yes')).'"></span>':'', '</td>';
 				if ($installed) echo '<td title="Installed', ($active?' and active':''), '"><span class="',esc_attr(atec_dash_class(($active?'plugins-checked':'admin-plugins'), 'atec-'.($active?'green':'grey'))), '"></span></td>';
 				else echo '
 				<td>
@@ -229,7 +229,7 @@ echo '
 		<center>
 			<p class="atec-fs-12" style="max-width:80%;">',
 				esc_attr__('All our plugins are optimized for speed, size and CPU footprint with an average of only 1 ms CPU time','atec-cache-apcu'), '.<br>',
-				esc_attr__('Also, they share the same `atec-WP-plugin´ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.	<br>',
+				esc_attr__('Also, they share the same „atec-WP-plugin“ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.	<br>',
 				esc_attr__('Tested with','atec-cache-apcu'), ': Linux (CloudLinux, Debian, Ubuntu), Windows & Mac-OS, Apache, NGINX & LiteSpeed.
 			</p>
 			<a class="atec-nodeco" class="atec-center" href="https://de.wordpress.org/plugins/search/atec/" target="_blank"><button class="button">', esc_attr__('Visit atec-plugins in the WordPress directory','atec-cache-apcu'), '.</button></a>

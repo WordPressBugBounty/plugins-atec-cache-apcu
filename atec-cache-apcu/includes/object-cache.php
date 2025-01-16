@@ -1,6 +1,6 @@
 <?php
 /**
-* Plugin Name:  atec APCu-Object-Cache
+* Plugin Name:  atec APCu Object-Cache
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object Cache
 * Version: 1.0.8

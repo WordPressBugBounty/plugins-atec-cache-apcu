@@ -1,7 +1,7 @@
 <?php
 if (!defined( 'ABSPATH' )) { exit; }
 
-class ATEC_wpcu_pcache { function __construct($url, $nonce, $action,$wpc_tools) {
+class ATEC_wpcu_pcache { function __construct($url, $nonce, $action) {
 
 global $atec_wpca_apcu_enabled;	
 global $atec_wpca_settings;
@@ -85,7 +85,7 @@ if ($atec_wpca_apcu_enabled)
 		    		}
 	    		}
         	if ($c>0) echo '<tr class="atec-table-tr-bold"><td colspan="2"></td><td>',esc_attr(number_format($c)),'</td><td></td><td></td><td></td><td class="atec-nowrap">',esc_attr(size_format($size)),'</td><td colspan="3"></td></tr>';
-			else echo '<tr><td colspan="10">./.</td></tr>';
+			else echo '<tr><td colspan="10">-/-</td></tr>';
 			echo '
     		</tbody>
     	</table>';
@@ -95,7 +95,7 @@ if ($atec_wpca_apcu_enabled)
 		echo '<a class="atec-clear button" href="', esc_url($link), '" title="', esc_attr__('Empty PCache','atec-cache-apcu'), '"><span style="margin-top: 2px;" class="', esc_attr(atec_dash_class('trash')), '"></span> ', esc_attr__('Empty page cache','atec-cache-apcu'), '</a>';
     	}
 	}
-	else { $wpc_tools->error('',esc_attr__('No page cache data available','atec-cache-apcu')); }
+	else { atec_error_msg(__('No page cache data available','atec-cache-apcu')); }
 }
 
 echo '

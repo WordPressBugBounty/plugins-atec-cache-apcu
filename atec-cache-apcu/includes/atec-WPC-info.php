@@ -46,7 +46,7 @@ if (defined('LSCWP_OBJECT_CACHE') && LSCWP_OBJECT_CACHE=='true' && (method_exist
 
 	if (defined('LSCWP_V')) 
 	{
-		echo '<p>'; atec_server_sys_icon(__DIR__,'litespeed'); echo ' LiteSpeed '.esc_attr__('cache','atec-cache-apcu').' v.',esc_html(LSCWP_V),' '.esc_attr__('is active','atec-cache-apcu').'.</p>';
+		echo '<p>'; atec_server_sys_icon(__DIR__,'litespeed'); echo ' LiteSpeed ', esc_attr__('cache','atec-cache-apcu'), ' v.', esc_html(LSCWP_V), ' ', esc_attr__('is active','atec-cache-apcu'), '.</p>';
 	}
 }
 
@@ -60,10 +60,8 @@ atec_badge('WP '.__('object cache','atec-cache-apcu').' '.__('is writeable','ate
 if ($success) wp_cache_delete($testKey);
 
 echo '<br>';
-atec_help('WPcache','WP object cache explained');
-echo '<div id="WPcache_help" class="atec-help atec-dn">
-The WP object cache boosts performance by storing keys that might be used by multiple scripts while handling a page request.
-Nonetheless, this cache is solely valid for the current request, unless a persistent object cache, such as APCu, is installed.</div>';
+atec_help('WPcache','WP '.__('object cache','atec-cache-apcu').' '.__('explained','atec-cache-apcu'));
+echo '<div id="WPcache_help" class="atec-help atec-dn">', esc_html__('The WP object cache boosts performance by storing keys that might be used by multiple scripts while handling a page request.','atec-cache-apcu').' '.esc_html__('Nonetheless, this cache is solely valid for the current request, unless a persistent object cache, such as APCu, is installed','atec-cache-apcu'), '.</div>';
 
 }}
 ?>

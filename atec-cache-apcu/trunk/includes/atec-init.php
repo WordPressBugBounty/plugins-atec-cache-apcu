@@ -2,6 +2,21 @@
 if (!defined( 'ABSPATH' )) { exit; }
 define('ATEC_INIT_INC',true);
 
+function atec_version_compare($a, $b) { return explode(".", $a) <=> explode(".", $b); }
+
+function atec_fixit($dir,$p,$slug)
+{
+	$optName 	= 'atec_fix_it';
+	$option		= get_option($optName,[]);
+	$ver 		= 'atec_'.$slug.'_version';
+	if (atec_version_compare($option[$p]??0,wp_cache_get($ver))===-1)
+	{ 
+		@require_once($dir.'/fixit.php'); 
+		$option[$p]=wp_cache_get($ver); 
+		update_option($optName,$option); 	
+	}
+};
+
 function atec_query() { return add_query_arg(null,null); }
 function atec_nonce(): string { return atec_get_slug().'_nonce'; }
 function atec_get_slug(): string { preg_match('/\?page=([\w_]+)/', atec_query(), $match); return $match[1] ?? ''; }
@@ -45,7 +60,7 @@ function atec_admin_notice($type,$message,$hide=false): void
 { 
 	$hash=$hide?md5($message):'';
 	echo '<div ', ($hide?'id="'.esc_attr($hash).'" ':''), 'class="notice notice-',esc_attr($type),' is-dismissible"><p>',esc_attr($message),'</p></div>'; 
-	if ($hide) atec_reg_inline_script('atec_admin_notice', 'setTimeout(()=> { jQuery("#'.esc_attr($hash).'").slideUp(); }, 10000);', true);
+	if ($hide) atec_reg_inline_script('admin_notice', 'setTimeout(()=> { jQuery("#'.esc_attr($hash).'").slideUp(); }, 10000);', true);
 }
 function atec_new_admin_notice($type,$message): void { add_action('admin_notices', function() use ( $type, $message ) { atec_admin_notice($type,$message); }); }
 ?>

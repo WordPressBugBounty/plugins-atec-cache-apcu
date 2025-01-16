@@ -53,10 +53,10 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 
 function atec_checkbox($args): void
 {
-	$option = get_option($args['opt-name'],[]); $field=$args['name']; $value=$option[$field]??'false';
+	$option = get_option($args['opt-name'],[]); $field=$args['name']; $value=$option[$field]??false;
 	echo '
 	<div class="atec-ckbx">
-		<input id="check_', esc_attr($field), '" type="checkbox" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="', esc_attr($value), '" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked($value,'true',true), '>
+		<input type="checkbox" id="check_', esc_attr($field), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="1" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked( 1, $value, false ), '/>
 		<label for="check_', esc_attr($field), '">
 	</div>';
 }
@@ -73,6 +73,7 @@ function atec_input_text($args,$type='text'): void
 {
 	$option = get_option($args['opt-name'],[]); $field=$args['name'];
 	echo '<input id="ai_'.esc_attr($field).'" type="', esc_attr($type), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="', esc_attr($option[$field]??''), '">';
+	//autocomplete=off
 }
 
 function atec_input_color($args): void
@@ -80,8 +81,6 @@ function atec_input_color($args): void
 	$option = get_option($args['opt-name'],[]); $field=$args['name'];
 	echo '<input id="ac_'.esc_attr($field).'" type="color" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="', esc_attr($option[$field]??''), '">';
 }
-
-
 
 function atec_input_password($args): void { atec_input_text($args,$type='password'); }
 

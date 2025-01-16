@@ -31,7 +31,7 @@ echo '
 	    		case 'WP_Ocache': $result=$wp_object_cache->flush(); break;
 				case 'APCu_Cache': if (function_exists('apcu_clear_cache')) $result=apcu_clear_cache(); break;
 				case 'APCu_PCache': @require_once('atec-cache-apcu-pcache-tools.php'); atec_wpca_delete_page_cache_all(); $result=true; break; }
-			echo $result?'<span class="atec-green">'.esc_attr__('successful','atec-cache-apcu').'</span>':'<span class="atec-red">'.esc_attr__('failed','atec-cache-apcu').'</span>';
+			echo '<span class="atec-', $result?'green':'red', '">', esc_attr__($result?'successful':'failed','atec-cache-apcu'), '</span>';
 			echo '.</p>
 			</div>';
 		}
@@ -72,7 +72,7 @@ echo '
 			echo '<div class="atec-g atec-g-50">
 			
 					<div class="atec-border-white">
-    	    			<h4>WP '.esc_attr__('Object Cache','atec-cache-apcu').' '; atec_enabled($wp_enabled);
+    	    			<h4>WP ', esc_attr__('Object Cache','atec-cache-apcu'), ' '; atec_enabled($wp_enabled);
 		        			echo ($wp_enabled?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="WP_Ocache_flush" href="'.esc_url($url).'&flush=WP_Ocache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('Flush SITE','atec-cache-apcu').'</a>':''),
 						'</h4><hr>';
 						if ($wp_enabled) { @require_once(__DIR__.'/atec-WPC-info.php'); new ATEC_WPcache_info($op_conf,$op_status,$opcache_file_only,$wpc_tools); }

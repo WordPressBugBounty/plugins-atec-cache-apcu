@@ -21,7 +21,7 @@ echo '
 		echo '
 	</span>
 	<span style="width: fit-content;" class="atec-dilb atec-right atec-mr-10">
-		© 2023/24 <a href="https://', esc_attr($domain), '/" target="_blank" class="atec-nodeco">', esc_attr($domain), '</a>
+		© 2023/25 <a href="https://', esc_attr($domain), '/" target="_blank" class="atec-nodeco">', esc_attr($domain), '</a>
 	</span>
 </div>';
 

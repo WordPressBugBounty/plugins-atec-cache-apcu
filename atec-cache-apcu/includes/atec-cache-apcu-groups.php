@@ -18,7 +18,7 @@ class ATEC_apcu_groups {
 			$apcu_it=new APCUIterator();
 			if (defined('WP_APCU_KEY_SALT')) 
 			{
-				atec_little_block_with_info('Persistent WP-APCu-'.__('Object-Cache','atec-cache-apcu'), $arr);
+				atec_little_block_with_info('Persistent WP APCu-'.__('Object-Cache','atec-cache-apcu'), $arr);
 				if (iterator_count($apcu_it)!==0)
 				{
 					$c 		= 0; 
@@ -44,12 +44,12 @@ class ATEC_apcu_groups {
 					echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td></td><td></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td></td></tr>';
 					atec_table_footer();
 				}
-				else { atec_error_msg(__('WP-APCu-Cache is empty','atec-cache-apcu')); echo '<br><br>'; }
+				else { atec_error_msg(__('WP APCu Cache is empty','atec-cache-apcu')); echo '<br><br>'; }
 			}
 				
 			if (!defined('WP_APCU_KEY_SALT')) define('WP_APCU_KEY_SALT','TEMP_KEY_SALT');
 			$c=0; $total=0;
-			atec_little_block('Other persistent APCu-'.__('Object-Cache','atec-cache-apcu'));
+			atec_little_block(__('Other persistent','atec-cache-apcu').' APCu '.__('Object-Cache','atec-cache-apcu'));
 			atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Hits','atec-cache-apcu'),__('Size','atec-cache-apcu'),__('Value','atec-cache-apcu')]);
 			foreach ($apcu_it as $entry) 
 			{

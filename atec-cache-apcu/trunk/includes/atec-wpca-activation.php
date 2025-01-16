@@ -21,10 +21,10 @@ if (extension_loaded('apcu') && apcu_enabled())
 	if ($wp_filesystem->exists($targetPath)) 
 	{
 		$content=$wp_filesystem->get_contents($targetPath);
-		if (str_contains($content,'https://github.com/l3rady/') || str_contains($content,'https://atecplugins.com/')) { $wp_filesystem->delete($targetPath); }
+		if (str_contains($content,'atec-apcu-object-cache')) { $wp_filesystem->delete($targetPath); }
 		else
 		{
-			$tmp 	= __('Another "object-cache.php" file already exists','atec-cache-apcu');
+			$tmp 	= __('Another „object-cache.php“ file already exists. Please deactivate it first','atec-cache-apcu');
 			atec_notice($notice, 'warning', $tmp);
 			$install 	= false;
 		}
@@ -32,14 +32,14 @@ if (extension_loaded('apcu') && apcu_enabled())
 	
 	if ($install)
 	{
-		if (!$wp_filesystem->copy(plugin_dir_path(__FILE__).'object-cache.php', $targetPath)) 
+		if (!$wp_filesystem->copy(plugin_dir_path(__FILE__).'object-cache.php', $targetPath, true)) 
 		{ 
-			$tmp 	= __('Object-cache installation failed','atec-cache-apcu');
+			$tmp 	= __('Object-Cache installation failed','atec-cache-apcu');
 			atec_notice($notice, 'warning', $tmp);
 		}
 		else 
 		{ 
-			$tmp 	= __('Object-cache installation successful','atec-cache-apcu');
+			$tmp 	= __('Object-Cache installation successful','atec-cache-apcu');
 			atec_notice($notice, 'info', $tmp);
 			if (function_exists('apcu_clear_cache')) { apcu_clear_cache(); }
 		}

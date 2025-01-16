@@ -3,11 +3,6 @@ if (!defined( 'ABSPATH' )) { exit; }
 
 class ATEC_wpc_tools
 {
-	public function enabled($enabled,$active=false): void { echo '<span style="color:', ($enabled?($active?'black':'green'):'red'), '" title="', ($enabled?esc_attr__('Enabled','atec-cache-apcu'):esc_attr__('Disabled','atec-cache-apcu')), '" class="', esc_attr(atec_dash_class($enabled?'yes-alt':'warning')), '"></span>'; }
-	public function error($cache,$txt): void { echo '<p class="atec-mb-0 atec-red">', esc_attr($cache), $cache!==''?' ':'', esc_html($txt),'.</p>'; }
-	public function success($cache,$txt): void { echo '<p class="atec-mb-0">', esc_attr($cache), $cache!==''?' ':'', esc_html($txt), '.&nbsp;<span class="', esc_attr(atec_dash_class('yes-alt')), '"></span></p>'; }
-	public function p($txt): void { echo '<p class="atec-mb-0">', esc_html($txt), '.</p>'; }
-	
 	public function hitrate($hits,$misses)
 	{
 		echo '

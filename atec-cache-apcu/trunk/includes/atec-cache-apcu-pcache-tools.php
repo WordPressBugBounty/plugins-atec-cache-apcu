@@ -3,7 +3,8 @@ if (!defined( 'ABSPATH' )) { exit; }
 
 function atec_wpca_delete_wp_cache(): void 
 {
-	wp_cache_delete('plugins','plugins');
+	//wp_cache_delete('alloptions','options'); wp_cache_get('notoptions','options'); 
+	wp_cache_delete('active_plugins','options');
 	atec_wpca_delete_page_cache_all();
 }
 

@@ -40,10 +40,10 @@ if ($apcu_cache)
 	$wpc_tools->usage($percent);
 	if ($apcu_cache['mem_size']!=0) $wpc_tools->hitrate($hits,$misses);
 
-	if ($percent>90) $wpc_tools->error('', __('APCu usage is beyond 90%. Please consider increasing „apc.shm_size“ option','atec-cache-apcu'));
+	if ($percent>90) atec_error_msg(__('APCu usage is beyond 90%. Please consider increasing „apc.shm_size“ option','atec-cache-apcu'));
 	elseif ($percent===0)
 	{
-		$wpc_tools->p(__('Not in use','atec-cache-apcu'));
+		atec_p(__('Not in use','atec-cache-apcu'));
 		atec_reg_inline_script('APCu_flush', 'jQuery("#APCu_flush").hide();',true);
 	}
 	
