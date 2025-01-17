@@ -8,24 +8,25 @@ function __construct($url,$nonce) {
 global $atec_wpca_apcu_enabled;
 $optName='atec_WPCA_settings';
 $options=get_option($optName,[]);
-$atec_wpca_pcache = $options['cache']??null==true;
-$atec_wpca_ocache = $options['ocache']??null==true;
+$atec_wpca_pcache = $options['cache']??false==true;
+$atec_wpca_ocache = $options['ocache']??false==true;
+$atec_wpca_advanced = defined('WP_APCU_MU_PAGE_CACHE');
 
 $update = false;
-if (!$atec_wpca_ocache && defined('WP_APCU_KEY_SALT')) { $atec_wpca_ocache=true; $update=true; }
+if (!$atec_wpca_pcache && $atec_wpca_advanced) { $options['cache']=true; $atec_wpca_pcache=true; $update=true; }
+if (!$atec_wpca_ocache && defined('WP_APCU_KEY_SALT')) { $options['ocache']=true; $atec_wpca_ocache=true; $update=true; }
+
 if (atec_clean_request('action')==='ocache') { $options['ocache'] = atec_clean_request('check_ocache')=='1'; $atec_wpca_ocache=$options['ocache']; $update=true; }
 
 if ($update)
 {
-	update_option($optName,$options); wp_cache_delete('alloptions','options');
-	@require_once('atec-wpca-set-object-cache.php'); 
-	$installedMsg = atec_wpca_set_object_cache($options);
+	wp_cache_delete('alloptions','options'); update_option($optName,$options);
+	@require_once('atec-wpca-set-object-cache.php'); $installedMsg = atec_wpca_set_object_cache($options);
 }		
 else $installedMsg = '';
 
-$advanced=defined('WP_APCU_MU_PAGE_CACHE');
-$arr=array(__('Advanced page cache','atec-cache-apcu')=>$advanced?'#yes-alt':'#dismiss');
-atec_little_block_with_info('APCu - '.__('Settings','atec-cache-apcu'), $arr, $advanced?'atec-green':'atec-red');
+$arr=array(__('Advanced page cache','atec-cache-apcu')=>$atec_wpca_advanced?'#yes-alt':'#dismiss');
+atec_little_block_with_info('APCu - '.__('Settings','atec-cache-apcu'), $arr, $atec_wpca_advanced?'atec-green':'atec-red');
 
 echo '	
 <div class="atec-g atec-g-50">
@@ -71,7 +72,7 @@ echo '
 			if (!$atec_wpca_pcache) { atec_reg_inline_style('apcu_settings_form', '.form-table:nth-of-type(2), form H2 { display:none; }'); }
 			if ($atec_wpca_apcu_enabled)
 			{
-				if (defined('WP_APCU_MU_PAGE_CACHE')) atec_success_msg('The advanced page cache is installed');
+				if ($atec_wpca_advanced) atec_success_msg('The advanced page cache is installed');
 				else 
 				{
 					$str = esc_attr__('Page Cache','atec-cache-apcu');
@@ -81,11 +82,14 @@ echo '
 				echo '
 					<hr class="atec-mb-10">
 					<form class="atec-mt-10" method="post" action="options.php">
-						<input type="hidden" name="atec_WPCA_settings[salt]" value="', esc_attr($options['salt']??''), '">';
+						<input type="hidden" name="atec_WPCA_settings[salt]" value="', esc_attr($options['salt']??''), '">
+						<input type="hidden" name="atec_WPCA_settings[ocache]" value="', esc_attr($options['ocache']??''), '">';
 						$slug = 'atec_WPCA';
 						settings_fields($slug);
 						do_settings_sections($slug);
-						echo '<div style="margin-top: -10px;">'; $licenseOk=atec_pro_feature(' - '.__('this will enable the advanced','atec-cache-apcu').'<br>'.__('page cache and can give your site an extra ~20% speed boost','atec-cache-apcu'),true); echo '</div>';
+						echo '<div style="margin-top: -10px;">'; 
+						$licenseOk=atec_pro_feature(' - '.__('this will enable the advanced','atec-cache-apcu').'<br>'.__('page cache and can give your site an extra ~20% speed boost','atec-cache-apcu'),true); 
+						echo '</div>';
 						submit_button(__('Save','atec-cache-apcu'));
 					echo '
 					</form>';

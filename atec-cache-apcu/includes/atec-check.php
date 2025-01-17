@@ -20,14 +20,11 @@ function atec_button_confirm($url,$nav,$nonce,$action,$dash='trash'): void
 
 function atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce): void
 {
-	$option=$option??'false';
-	if ($option==1) $option='true';
+	$option = in_array($option??false,['true','1',1,true]);
 	echo '
 	<div class="atec-ckbx atec-dilb">
-		<input name="check_', esc_attr($id), '"', ($disabled?'disabled="true"':''), ' type="checkbox" value="', esc_attr($option), '"', checked($option,'true',true), '>';
-	if ($disabled) echo '<label for="check_', esc_attr($id), '" class="check_disabled"></label>';
-	else echo '<label for="check_', esc_attr($id), '" onclick="location.href=\'', esc_url($url), esc_attr($param), '&_wpnonce=',esc_attr($nonce),'\'"></label>';
-	echo '
+		<input name="check_', esc_attr($id), '"', ($disabled?'disabled="true"':''), ' type="checkbox" value="', esc_attr($option), '"', checked($option,true,true), '>
+		<label for="check_', esc_attr($id), '" ', ($disabled?'class="check_disabled"':' onclick="location.href=\''.esc_url($url).esc_attr($param).'&_wpnonce='.esc_attr($nonce).'\'"'), '></label>
 	</div>';
 }
 
@@ -43,20 +40,16 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 			<span class="atec-dilb atec-fs-9"><span class="', esc_attr(atec_dash_class('awards','atec-blue atec-fs-16')), '"></span>PRO feature – please upgrade.</span>
 		</a><br>';
 	}
-	echo '
-		<div class="atec_checkbox_button_div atec-dilb">', esc_attr($str);
-			atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce);
-	echo '
-		</div>
-	</div>';
+	echo '<div class="atec_checkbox_button_div atec-dilb">', esc_attr($str); atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce); echo '</div></div>';
 }
 
 function atec_checkbox($args): void
 {
-	$option = get_option($args['opt-name'],[]); $field=$args['name']; $value=$option[$field]??false;
+	$option 	= get_option($args['opt-name'],[]); $field=$args['name']; 
+	$value 		= in_array($option[$field]??false,['true','1',1,true]);
 	echo '
 	<div class="atec-ckbx">
-		<input type="checkbox" id="check_', esc_attr($field), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="1" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked( 1, $value, false ), '/>
+		<input type="checkbox" id="check_', esc_attr($field), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="1" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked($value,true,true), '/>
 		<label for="check_', esc_attr($field), '">
 	</div>';
 }

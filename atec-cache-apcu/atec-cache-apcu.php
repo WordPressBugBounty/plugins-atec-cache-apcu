@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) { exit; }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.31
+* Version: 2.1.32
 * Requires at least: 5.2
 * Tested up to: 6.7.1
 * Tested up to PHP: 8.4.1
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) { exit; }
 * Text Domain:  atec-cache-apcu
 */
 
-wp_cache_set('atec_wpca_version','2.1.31');
+wp_cache_set('atec_wpca_version','2.1.32');
 
 $atec_wpca_apcu_enabled=extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings=get_option('atec_WPCA_settings',[]);
@@ -50,10 +50,12 @@ if (is_admin())
 		{
 			// @codingStandardsIgnoreStart
 			// Image is not an attachement
+			$yes = 'dashicons dashicons-yes-alt';
+			$style = 'padding-top: 5px; font-size: 16px; color:green;';
 			$content.=' | 
 			<sub>
 				<img alt="Plugin icon" src="'.esc_url(plugin_dir_url(__FILE__).'assets/img/atec-group/atec_wpca_icon.svg').'" style="height: 20px; vertical-align: bottom;"> 
-				APCu OCache <span style="padding-top: 5px; font-size: 16px; color:green;" class="dashicons dashicons-yes-alt"></span>';
+				APCu OCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
 			// @codingStandardsIgnoreEnd
 			if (atec_wpca_settings('cache')) $content.=' APCu PCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
 			$content.='</sub>';
