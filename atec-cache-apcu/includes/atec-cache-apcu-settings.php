@@ -43,8 +43,10 @@ echo '
 				<form method="post" action="'.esc_url($url).'&action=ocache&nav=Settings&_wpnonce='.esc_attr($nonce).'">
 					<table class="form-table" role="presentation"><tbody><tr><th scope="row">', esc_attr__('Object Cache','atec-cache-apcu'), '</th><td>
 						<div class="atec-ckbx">
-							<input id="check_ocache" name="check_ocache" type="checkbox" value="1" onclick="atec_check_validate(\'ocache\');"', checked($atec_wpca_ocache,true,true), '>
-							<label for="check_ocache"></label>
+							<label class="switch" for="check_ocache">
+								<input id="check_ocache" name="check_ocache" type="checkbox" value="1" onclick="atec_check_validate(\'ocache\');"', checked($atec_wpca_ocache,true,true), '>
+								<div class="slider round"></div>
+							</label>
 						</div>
 					</td></tr></tbody></table>
 					<p style="margin-top: -5px;"><input class="button button-primary"  type="submit" value="', esc_attr__('Save','atec-cache-apcu'), '"><br class="atec-clear"></p>

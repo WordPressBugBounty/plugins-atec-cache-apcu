@@ -7,7 +7,7 @@ $apcu_cache=function_exists('apcu_cache_info')?apcu_cache_info(true):false;
 if ($apcu_cache)
 {
 	$apcu_mem	= apcu_sma_info();
-	
+
 	$total		= $apcu_cache['num_hits']+$apcu_cache['num_misses']+0.001;
 	$hits			=	$apcu_cache['num_hits']*100/$total;
 	$misses	= $apcu_cache['num_misses']*100/$total;
@@ -44,7 +44,7 @@ if ($apcu_cache)
 	if ($apcu_cache['mem_size']!=0) $wpc_tools->hitrate($hits,$misses);
 
 	if ($percent>90) atec_error_msg(__('APCu usage is beyond 90%. Please consider increasing „apc.shm_size“ option','atec-cache-apcu'));
-	elseif ($percent===-1) atec_p(__('Shared memory info is not available','atec-cache-apcu'));
+	elseif ($percent===-1) { atec_p(__('Shared memory info is not available','atec-cache-apcu')); echo '<br>'; }
 	elseif ($percent===0) 
 	{
 		atec_p(__('Not in use','atec-cache-apcu'));

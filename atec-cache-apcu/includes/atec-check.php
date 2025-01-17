@@ -22,10 +22,12 @@ function atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce): vo
 {
 	$option = in_array($option??false,['true','1',1,true]);
 	echo '
-	<div class="atec-ckbx atec-dilb">
-		<input name="check_', esc_attr($id), '"', ($disabled?'disabled="true"':''), ' type="checkbox" value="', esc_attr($option), '"', checked($option,true,true), '>
-		<label for="check_', esc_attr($id), '" ', ($disabled?'class="check_disabled"':' onclick="location.href=\''.esc_url($url).esc_attr($param).'&_wpnonce='.esc_attr($nonce).'\'"'), '></label>
-	</div>';
+	<div class="atec-ckbx">
+		<label class="switch" for="check_', esc_attr($id), '" ', ($disabled?'class="check_disabled"':' onclick="location.href=\''.esc_url($url).esc_attr($param).'&_wpnonce='.esc_attr($nonce).'\'"'), '>
+			<input name="check_', esc_attr($id), '"', ($disabled?'disabled="true"':''), ' type="checkbox" value="', esc_attr($option), '"', checked($option,true,true), '>
+			<div class="slider round"></div>
+		</label>
+	</div>';	
 }
 
 function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,$pro=null): void
@@ -46,11 +48,13 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 function atec_checkbox($args): void
 {
 	$option 	= get_option($args['opt-name'],[]); $field=$args['name']; 
-	$value 		= in_array($option[$field]??false,['true','1',1,true]);
+	$value 		= in_array($option[$field]??false,['true','1',1,true]);	
 	echo '
 	<div class="atec-ckbx">
-		<input type="checkbox" id="check_', esc_attr($field), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="1" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked($value,true,true), '/>
-		<label for="check_', esc_attr($field), '">
+		<label class="switch" for="check_', esc_attr($field), '">
+			<input type="checkbox" id="check_', esc_attr($field), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="1" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked($value,true,true), '/>
+			<div class="slider round"></div>
+	    </label>
 	</div>';
 }
 

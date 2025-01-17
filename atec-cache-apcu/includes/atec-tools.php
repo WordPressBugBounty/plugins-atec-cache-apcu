@@ -584,14 +584,18 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 				$adminBar 	=get_option('atec_admin_bar',true)?'true':'false';
 				$id='atec_toggle_admin_bar';
 				
-				echo '<div class="atec-dilb atec-border atec-bg-w6 atec-p-0" style="vertical-align: bottom; margin-left: 10px; width: 74px; height: 24px; border-color: ', esc_attr($color), '">
-					<div id="atec_admin_bar" title="Toggle admin bar display" class="atec-ckbx" style="margin-left: -68px;">',
-						'<div style="padding-left: 5px; font-size: 22px;" class="', esc_attr(atec_dash_class('dashboard')), '"></div>',
-						'<div class="atec-dilb" style="padding-top: 3px;"><input name="check_', esc_attr($id), '" type="checkbox" value="', esc_attr($adminBar), '"', checked($adminBar,'true',true), '>',
-							'<label for="check_', esc_attr($id), '" onclick="location.href=\'', esc_url($url), '&action=adminBar&_wpnonce=',esc_attr($nonce),'\'"></label>',
-						'</div>',
-					'</div>',
-				'</div>';
+				echo 
+				'<div class="atec-dilb atec-border atec-bg-w6 atec-p-0" style="vertical-align: bottom; margin-left: 10px; height: 24px; border-color: ', esc_attr($color), '; border-radius: 5px;">
+					<div id="atec_admin_bar" title="Toggle admin bar display" style="width:76px;">
+						<div style="font-size: 22px;" class="atec-dilb ', esc_attr(atec_dash_class('dashboard')), '"></div>
+						<div class="atec-ckbx atec-dilb atec-ckbx-mini">
+							<label class="switch" for="check_', esc_attr($id), '" onclick="location.href=\'', esc_url($url), '&action=adminBar&_wpnonce=',esc_attr($nonce),'\'">
+								<input name="check_', esc_attr($id), '" type="checkbox" value="', esc_attr($adminBar), '"', checked($adminBar,'true',true), '>
+								<div class="slider round"></div>
+							</label>
+						</div>
+					</div>
+				</div>';
 			}
 			
 			if ($approved)
