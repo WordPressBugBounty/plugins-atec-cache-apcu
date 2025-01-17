@@ -36,7 +36,7 @@ echo '
 			</div>';
 		}
 	
-		$url		= atec_get_url();
+		$url			= atec_get_url();
 		$nonce		= wp_create_nonce(atec_nonce());
 		$nav 		= atec_clean_request('nav');
 		$action 	= atec_clean_request('action');
@@ -57,7 +57,7 @@ echo '
 		atec_flush();
 	
 		if ($nav=='Info') { @require_once(__DIR__.'/atec-info.php'); new ATEC_info(__DIR__); }
-		elseif ($nav=='Settings') { @require_once(__DIR__.'/atec-cache-apcu-settings.php'); }
+		elseif ($nav=='Settings') { @require_once(__DIR__.'/atec-cache-apcu-settings.php'); new ATEC_wpcu_settings($url,$nonce); }
 		elseif ($nav=='APCu') { @require_once(__DIR__.'/atec-cache-apcu-groups.php'); new ATEC_apcu_groups($url, $nonce, 'atec_WPCA'); }
 		elseif ($nav=='Page_cache') { @require_once(__DIR__.'/atec-cache-apcu-pcache-stats.php'); new ATEC_wpcu_pcache($url, $nonce, $action); }
 		elseif ($nav=='Cache')

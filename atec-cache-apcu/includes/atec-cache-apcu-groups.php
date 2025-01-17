@@ -18,7 +18,8 @@ class ATEC_apcu_groups {
 			$apcu_it=new APCUIterator();
 			if (defined('WP_APCU_KEY_SALT')) 
 			{
-				atec_little_block_with_info('Persistent WP APCu-'.__('Object-Cache','atec-cache-apcu'), $arr);
+				atec_little_block_with_info(__('Persistent','atec-cache-apcu').' '.__('Object Cache','atec-cache-apcu'), $arr);
+
 				if (iterator_count($apcu_it)!==0)
 				{
 					$c 		= 0; 

@@ -26,15 +26,16 @@ function atec_wpca_settings_fields()
 
 			if ($options['cache']??false) @$wp_filesystem->copy(plugin_dir_path(__DIR__).'includes/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
 			else @$wp_filesystem->delete($MU_advanced_cache_path);
+			wp_redirect(admin_url().'admin.php?page=atec_wpca&nav=Settings&_wpnonce='.wp_create_nonce('atec_wpca_nonce')); exit();
 		}
 	}
 	update_option('atec_wpca_last_cache', $options['cache']??false, false);
 	
   	register_setting($page_slug,$option_group);
 	
-  	add_settings_section($section,__('APCu Page Cache','atec-cache-apcu'),'',$page_slug);
+  	add_settings_section($section,'','',$page_slug);
 	
-  	add_settings_field('cache', __('Enable page cache','atec-cache-apcu'), 'atec_checkbox', $page_slug, $section, atec_opt_arr('cache','WPCA'));
+  	add_settings_field('cache', __('Page Cache','atec-cache-apcu'), 'atec_checkbox', $page_slug, $section, atec_opt_arr('cache','WPCA'));
 	  
 	$section.='_options';
 	add_settings_section($section,__('Page Cache','atec-cache-apcu').' '.__('Options','atec-cache-apcu'),'',$page_slug);
