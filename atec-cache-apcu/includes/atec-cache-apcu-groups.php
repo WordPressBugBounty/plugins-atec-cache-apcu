@@ -59,7 +59,7 @@ echo '
 					}
 				}
 				atec_empty_tr();
-				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td></td><td></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td></td></tr>';
+				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td></td><td></td><td class="atec-nowrap">', esc_html(size_format($total)), '</td><td colspan="2"></td></tr>';
 				atec_table_footer();
 			}
 			else { atec_error_msg(__('WP APCu Cache is empty','atec-cache-apcu')); echo '<br><br>'; }

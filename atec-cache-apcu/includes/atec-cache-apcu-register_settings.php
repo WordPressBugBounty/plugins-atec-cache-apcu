@@ -26,7 +26,7 @@ function atec_wpca_settings_fields()
 
 		if ($atec_wpca_pcache!==($lastSettings['cache']??false) || ($options['debug']??false)!==($lastSettings['debug']??false))
 		{ 
-			if (!defined('ATEC_WPCA_CACHE_TOOLS')) @require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');			
+			if (!defined('ATEC_WPCA_CACHE_TOOLS')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
 			atec_wpca_delete_page_cache_all(); 
 		}
 

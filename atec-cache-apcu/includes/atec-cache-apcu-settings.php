@@ -25,8 +25,9 @@ if ($update)
 }		
 else $installedMsg = '';
 
-$arr = array('PC salt'=>$options['salt']??'');
-if (defined('WP_APCU_KEY_SALT')) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
+$arr = [];
+if (defined('WP_APCU_KEY_SALT')) $arr['APCu salt']=WP_APCU_KEY_SALT;
+$arr['PC salt']=$options['salt']??'';
 
 atec_little_block_with_info('APCu - '.__('Settings','atec-cache-apcu'), $arr);
 
@@ -110,15 +111,15 @@ echo '
 				echo '
 				<div id="show_debug_help" class="atec-help atec-dn">', esc_attr__('The „Show debug“ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing','atec-cache-apcu').'.';
 				echo '
-				</div><br class="atec-clear"><br>';
+				</div><br class="atec-clear">';
 
-				atec_warning_msg(esc_attr__('Do not use multiple page cache plugins simultaneously','atec-cache-apcu'),false);
-				if (is_multisite()) atec_error_msg(__('The page cache is not designed to support multisites','atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites','atec-cache-apcu'));
+				atec_warning_msg(esc_attr__('Do not use multiple page cache plugins simultaneously','atec-cache-apcu'),true);
+				if (is_multisite()) atec_error_msg(__('The page cache is not designed to support multisites','atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites','atec-cache-apcu'),true);
 			
 				if (defined('LITESPEED_ALLOWED') && LITESPEED_ALLOWED) 
 				{ 
-					atec_info(__('LiteSpeed-server and -cache plugin detected','atec-cache-apcu'),false);
-					atec_warning(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),true); 
+					atec_info(__('LiteSpeed-server and -cache plugin detected','atec-cache-apcu'),true);
+					atec_warning(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),true);
 				}
 
 			echo 
