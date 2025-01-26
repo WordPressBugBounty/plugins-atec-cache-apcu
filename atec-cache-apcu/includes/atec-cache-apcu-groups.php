@@ -9,7 +9,7 @@ $salt=get_option('atec_WPCA_settings',[])['salt']??'';
 $arr=array('PC salt'=>$salt);
 if (defined('WP_APCU_KEY_SALT')) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
 
-if ($action==='delete')
+if ($action==='deleteAll')
 {
 	if (class_exists('APCUIterator')) 
 	{
@@ -17,6 +17,10 @@ if ($action==='delete')
 		if (iterator_count($apcu_it)!==0)
 		{ foreach ($apcu_it as $entry) { apcu_delete($entry['key']); } }
 	}
+}
+elseif ($action==='delete')
+{
+	if (($id = atec_clean_request('id'))!=='' && ($salt = WP_APCU_KEY_SALT??'')!=='') apcu_delete($salt.':'.$id);
 }
 
 echo '
@@ -30,11 +34,11 @@ echo '
 
 		if (defined('WP_APCU_KEY_SALT')) 
 		{
-			atec_little_block_with_button(__('Persistent','atec-cache-apcu').' '.__('Object Cache','atec-cache-apcu'),$url,$nonce,'delete','APCu','',false,true,false);
+			atec_little_block_with_button(__('Persistent','atec-cache-apcu').' '.__('Object Cache','atec-cache-apcu'),$url,$nonce,'deleteAll','APCu','',false,true,false);
 			if (!empty($arr))
 			{
 				$search = WP_APCU_KEY_SALT.':';
-				atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Hits','atec-cache-apcu'),__('Size','atec-cache-apcu'),__('Value','atec-cache-apcu')]);
+				atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Hits','atec-cache-apcu'),__('Size','atec-cache-apcu'),__('Value','atec-cache-apcu'),'']);
 				$c = 0; $total = 0;		
 				foreach($arr as $entry) 
 				{
@@ -42,12 +46,15 @@ echo '
 					{
 						$c++;
 						$total+=$entry['mem_size'];
+						$stripped = str_replace($search,'',$entry['key']);
 						echo '<tr>
 								<td>', esc_attr($c), '</td>
-								<td class="atec-anywrap">'; echo esc_attr(str_replace($search,'',$entry['key'])); echo '</td>
+								<td class="atec-anywrap">'; echo esc_attr($stripped); echo '</td>
 								<td class="atec-table-right">', esc_html($entry['num_hits']), '</td>
 								<td class="atec-nowrap atec-table-right">', esc_html(size_format($entry['mem_size'])), '</td>
-								<td class="atec-anywrap">', esc_html(htmlentities(substr(serialize($entry['value']),0,128))), '</td>
+								<td class="atec-anywrap">', esc_html(htmlentities(substr(serialize($entry['value']),0,128))), '</td>';
+								atec_create_button('delete&nav=APCu','trash',true,$url,$stripped,$nonce);
+							echo '
 							</tr>';
 					}
 				}

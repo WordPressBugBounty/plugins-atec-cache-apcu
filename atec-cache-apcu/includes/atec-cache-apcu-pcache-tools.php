@@ -1,10 +1,13 @@
 <?php
 if (!defined( 'ABSPATH' )) { exit; }
+define('ATEC_WPCA_CACHE_TOOLS',true);
 
 function atec_wpca_delete_wp_cache(): void 
 {
-	//error_log('atec Cache APCu – Flush WP OC');
-	wp_cache_delete('alloptions','options'); wp_cache_get('notoptions','options'); 
+	// error_log('atec Cache APCu – Flush WP OC');
+	// wp_cache_delete('alloptions','options'); wp_cache_get('notoptions','options'); 
+	// delete_option -> 	wp_protect_special_option( $option );
+	// Will die if $option is in protected list. Protected options are ‘alloptions’ and ‘notoptions’ options.
 	wp_cache_delete('active_plugins','options');
 	if (atec_wpca_settings('cache')) atec_wpca_delete_page_cache_all();
 }

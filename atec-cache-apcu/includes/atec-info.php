@@ -3,8 +3,7 @@ if (!defined( 'ABSPATH' )) { exit; }
 
 class ATEC_info { function __construct($dir,$url=null,$nonce=null) {
 
-global $wp_filesystem;
-WP_Filesystem();
+global $wp_filesystem; WP_Filesystem();
 
 $iconPath 		= plugins_url('assets/img/atec-group/',__DIR__).atec_get_slug().'_icon.svg';
 $readmePath	= plugin_dir_path($dir).'readme.txt';

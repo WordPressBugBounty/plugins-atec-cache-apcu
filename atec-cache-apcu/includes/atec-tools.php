@@ -43,8 +43,6 @@ function atec_check_admin_bar($slug,$url,$nonce,$nav): void
 	$optName='atec_'.$slug.'_admin_bar'; $option=get_option($optName);
 	update_option($optName,$option==0?1:0);
 	wp_redirect(admin_url().'admin.php?page=atec_'.$slug.'&nav='.$nav.'&_wpnonce='.$nonce); 
-	//exit();
-	//atec_reg_inline_script('atec_redirect','window.location.assign("'.esc_url(urlencode($url.'&nav='.$nav.'&_wpnonce='.$nonce)).'");');
 }
 
 function atec_notice(&$notice,$type,$str): void

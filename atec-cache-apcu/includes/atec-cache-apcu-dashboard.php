@@ -1,6 +1,6 @@
 <?php
 if (!defined( 'ABSPATH' )) { exit; }
-if (!class_exists('ATEC_wpc_tools')) @require_once('atec-wpc-tools.php');
+if (!class_exists('ATEC_wpc_tools')) @require('atec-wpc-tools.php');
 
 class ATEC_wpcu_results { function __construct() {
 
@@ -36,7 +36,9 @@ echo '
 					break;
 				}
 				case 'APCu_Cache': if (function_exists('apcu_clear_cache')) $result=apcu_clear_cache(); break;
-				case 'APCu_PCache': @require_once('atec-cache-apcu-pcache-tools.php'); atec_wpca_delete_page_cache_all(); $result=true; break; }
+				case 'APCu_PCache': 	if (!defined('ATEC_WPCA_CACHE_TOOLS')) @require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');			
+												atec_wpca_delete_page_cache_all(); $result=true; break; 
+			}
 			echo '<span class="atec-', $result?'green':'red', '">', ($result?esc_attr__('successful','atec-cache-apcu'):esc_attr__('failed','atec-cache-apcu')), '</span>';
 			echo '.</p>
 			</div>';
@@ -62,10 +64,10 @@ echo '
 		<div class="atec-g atec-border">';
 		atec_flush();
 	
-		if ($nav=='Info') { @require_once(__DIR__.'/atec-info.php'); new ATEC_info(__DIR__); }
-		elseif ($nav=='Settings') { @require_once(__DIR__.'/atec-cache-apcu-settings.php'); new ATEC_wpcu_settings($url,$nonce); }
-		elseif ($nav=='APCu') { @require_once(__DIR__.'/atec-cache-apcu-groups.php'); new ATEC_apcu_groups($url, $nonce, $action, 'atec_WPCA'); }
-		elseif ($nav=='Page_cache') { @require_once(__DIR__.'/atec-cache-apcu-pcache-stats.php'); new ATEC_wpcu_pcache($url, $nonce, $action); }
+		if ($nav=='Info') { @require(__DIR__.'/atec-info.php'); new ATEC_info(__DIR__); }
+		elseif ($nav=='Settings') { @require(__DIR__.'/atec-cache-apcu-settings.php'); new ATEC_wpcu_settings($url,$nonce); }
+		elseif ($nav=='APCu') { @require(__DIR__.'/atec-cache-apcu-groups.php'); new ATEC_apcu_groups($url, $nonce, $action, 'atec_WPCA'); }
+		elseif ($nav=='Page_cache') { @require(__DIR__.'/atec-cache-apcu-pcache-stats.php'); new ATEC_wpcu_pcache($url, $nonce, $action); }
 		elseif ($nav=='Cache')
 		{
 	
@@ -81,7 +83,7 @@ echo '
     	    			<h4>WP ', esc_attr__('Object Cache','atec-cache-apcu'), ' '; atec_enabled($wp_enabled);
 		        			echo ($wp_enabled?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="WP_Ocache_flush" href="'.esc_url($url).'&flush=WP_Ocache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('Site','atec-cache-apcu').'</a>':''),
 						'</h4><hr>';
-						if ($wp_enabled) { @require_once(__DIR__.'/atec-WPC-info.php'); new ATEC_WPcache_info($wpc_tools); }
+						if ($wp_enabled) { @require(__DIR__.'/atec-WPC-info.php'); new ATEC_WPcache_info($wpc_tools); }
     				echo '
 					</div>
 					
@@ -89,11 +91,11 @@ echo '
 						<h4>APCu Cache'; atec_enabled($atec_wpca_apcu_enabled);
 						echo ($atec_wpca_apcu_enabled?'<a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="APCu_flush" href="'.esc_url($url).'&flush=APCu_Cache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('All','atec-cache-apcu').'</a>':''),
 						'</h4><hr>';
-						if ($atec_wpca_apcu_enabled) { @require_once(__DIR__.'/atec-APCu-info.php'); new ATEC_APCu_info($wpc_tools); }
+						if ($atec_wpca_apcu_enabled) { @require(__DIR__.'/atec-APCu-info.php'); new ATEC_APCu_info($wpc_tools); }
 						else 
 						{
 							atec_p('APCu '.esc_attr__('extension is NOT installed/enabled','atec-cache-apcu'));
-							echo '<div class="atec-mt-5">'; @require_once(__DIR__.'/atec-APCu-help.php'); echo '</div>';
+							echo '<div class="atec-mt-5">'; @require(__DIR__.'/atec-APCu-help.php'); echo '</div>';
 						}
 					echo '
 					</div>
@@ -105,7 +107,7 @@ echo '
 	</div>
 </div>';
 
-if (!class_exists('ATEC_footer')) @require_once('atec-footer.php');
+if (!class_exists('ATEC_footer')) @require('atec-footer.php');
 
 }}
 

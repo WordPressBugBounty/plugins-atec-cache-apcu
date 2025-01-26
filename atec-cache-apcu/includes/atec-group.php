@@ -31,7 +31,7 @@ private function atec_group_star_list($mega)
 
 function __construct() {
 	
-if (!defined('ATEC_TOOLS_INC')) @require_once(__DIR__.'/atec-tools.php');	
+if (!defined('ATEC_TOOLS_INC')) @require(__DIR__.'/atec-tools.php');	
 if (!function_exists('atec_fix_name')) 
 { function atec_fix_name($p) { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); } }
 
@@ -40,7 +40,7 @@ $nonce 		= wp_create_nonce(atec_nonce());
 $action 		= atec_clean_request('action');
 
 $atec_group_arr=[];
-require_once(__DIR__.'/atec-group-array.php');
+require(__DIR__.'/atec-group-array.php');
 
 $license 			= $this->atec_clean_request_license('license');
 if ($license==='') $license = atec_clean_request('license');
@@ -167,8 +167,7 @@ echo '
 				$atec_review			= ['backup'];
 							
 				$c=0;
-				global $wp_filesystem;
-				WP_Filesystem();
+				global $wp_filesystem; WP_Filesystem();
 		
 				foreach ($atec_group_arr as $a)
 				{
@@ -225,7 +224,7 @@ echo '
 	</div>
 </div>';
 	
-	if ($license) @require_once('atec-footer.php');
+	if ($license) if (!class_exists('ATEC_footer')) @require('atec-footer.php');
 	atec_reg_inline_script('group','jQuery(".atec-page").css("gridTemplateRows","45px 1fr"); jQuery("#atec_loading").css("opacity",0);', true);
 	
 }}

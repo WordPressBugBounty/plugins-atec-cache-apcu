@@ -104,7 +104,7 @@ function atec_wpca_page_buffer_start(): void
 	}
 	else 
 	{
-		@require_once(WP_CONTENT_DIR.'/plugins/atec-cache-apcu/includes/atec-cache-apcu-pcache-cb.php');
+		@require(WP_CONTENT_DIR.'/plugins/atec-cache-apcu/includes/atec-cache-apcu-pcache-cb.php');
 		ob_start(function($buffer) use ($id, $hash, $suffix) { return atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash); });
 	}
  }
