@@ -1,4 +1,4 @@
-	<?php
+<?php
 if (!defined( 'ABSPATH' )) { exit; }
 define('ATEC_CHECK_INC',true);
 

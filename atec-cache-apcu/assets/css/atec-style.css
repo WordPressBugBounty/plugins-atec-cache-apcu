@@ -15,6 +15,7 @@ PRE { font-family: monospace, monospace; font-size: 1em }
 SMALL { font-size: 90% }
 
 p.submit	{ padding-bottom: 0.5em; }
+p 				{ line-height: 1.75; }
 .atec-center	 	{ text-align: center; }
 .atec-left		 	{ text-align: left !important; }
 
@@ -227,9 +228,8 @@ p.submit	{ padding-bottom: 0.5em; }
 .atec-bar { background: green; display:flex; height:10px; border-radius: 3px; margin: 0; }
 .atec-barDiv { background: #e0e0e0; width:150px; height:12px; padding: 0px !important; border: var(--border-grey); border-radius: 3px; }
 
-.notice { z-index: 1; margin: 5px 15px 2px 0; }
-@media only screen and (max-width: 782px) 
-{ .notice { z-index: 1; margin: 5px 10px 2px 0; }}
+.notice { z-index: 1; margin: 5px 15px 2px 0; margin-bottom: 10px; }
+@media only screen and (max-width: 782px) { .notice { z-index: 1; margin: 5px 10px 2px 0; }}
 
 input::placeholder { color: #bbb; }
 

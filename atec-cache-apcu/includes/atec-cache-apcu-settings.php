@@ -25,8 +25,10 @@ if ($update)
 }		
 else $installedMsg = '';
 
-$arr=array(__('Advanced page cache','atec-cache-apcu')=>$atec_wpca_advanced?'#yes-alt':'#dismiss');
-atec_little_block_with_info('APCu - '.__('Settings','atec-cache-apcu'), $arr, $atec_wpca_advanced?'atec-green':'atec-red');
+$arr = array('PC salt'=>$options['salt']??'');
+if (defined('WP_APCU_KEY_SALT')) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
+
+atec_little_block_with_info('APCu - '.__('Settings','atec-cache-apcu'), $arr);
 
 echo '	
 <div class="atec-g atec-g-50">

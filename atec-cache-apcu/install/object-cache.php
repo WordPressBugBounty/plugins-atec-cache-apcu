@@ -4,9 +4,9 @@
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object Cache
 * Version: 1.0.8
-* Requires at least: 5.2
+* Requires at least: 4.9.8
 * Tested up to: 6.7.1
-* Tested up to PHP: 8.4.1
+* Tested up to PHP: 8.4.2
 * Requires PHP: 7.4
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/

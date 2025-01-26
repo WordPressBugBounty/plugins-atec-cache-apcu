@@ -14,7 +14,9 @@ if (extension_loaded('apcu') && apcu_enabled())
 
 	$optName='atec_WPCA_settings';
 	$options=atec_create_options($optName,['ocache','cache','debug','clear','salt'],['clear']);
-	$options['salt']=hash('crc32', get_bloginfo(), FALSE);
+	$options['salt'] = hash('crc32', get_bloginfo(), FALSE);
+	$options['ocache'] = false;
+	$options['cache'] = false;
 	update_option($optName, $options);
 }
 

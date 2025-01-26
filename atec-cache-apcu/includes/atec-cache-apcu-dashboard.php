@@ -28,10 +28,16 @@ echo '
 			switch ($flush) 
 			{
 				case 'OPcache': $result=opcache_reset(); break;
-	    		case 'WP_Ocache': $result=$wp_object_cache->flush(); break;
+	    		case 'WP_Ocache': 
+				{
+					if ($_wp_using_ext_object_cache = wp_using_ext_object_cache()) wp_using_ext_object_cache(false);
+					$result = wp_cache_flush(); wp_cache_init();
+					if ($_wp_using_ext_object_cache) 	wp_using_ext_object_cache(true);
+					break;
+				}
 				case 'APCu_Cache': if (function_exists('apcu_clear_cache')) $result=apcu_clear_cache(); break;
 				case 'APCu_PCache': @require_once('atec-cache-apcu-pcache-tools.php'); atec_wpca_delete_page_cache_all(); $result=true; break; }
-			echo '<span class="atec-', $result?'green':'red', '">', esc_attr__($result?'successful':'failed','atec-cache-apcu'), '</span>';
+			echo '<span class="atec-', $result?'green':'red', '">', ($result?esc_attr__('successful','atec-cache-apcu'):esc_attr__('failed','atec-cache-apcu')), '</span>';
 			echo '.</p>
 			</div>';
 		}
@@ -58,13 +64,13 @@ echo '
 	
 		if ($nav=='Info') { @require_once(__DIR__.'/atec-info.php'); new ATEC_info(__DIR__); }
 		elseif ($nav=='Settings') { @require_once(__DIR__.'/atec-cache-apcu-settings.php'); new ATEC_wpcu_settings($url,$nonce); }
-		elseif ($nav=='APCu') { @require_once(__DIR__.'/atec-cache-apcu-groups.php'); new ATEC_apcu_groups($url, $nonce, 'atec_WPCA'); }
+		elseif ($nav=='APCu') { @require_once(__DIR__.'/atec-cache-apcu-groups.php'); new ATEC_apcu_groups($url, $nonce, $action, 'atec_WPCA'); }
 		elseif ($nav=='Page_cache') { @require_once(__DIR__.'/atec-cache-apcu-pcache-stats.php'); new ATEC_wpcu_pcache($url, $nonce, $action); }
 		elseif ($nav=='Cache')
 		{
 	
 			$arr=array('Zlib'=>ini_get('zlib.output_compression')?'#yes-alt':'#dismiss');
-			atec_little_block_with_info('APCu & WP '.__('Object Cache','atec-cache-apcu'), $arr);
+			atec_little_block_with_info('WP & APCu '.__('Object Cache','atec-cache-apcu'), $arr);
 			$atec_wpca_key='atec_wpca_key';
 	
 			$wp_enabled=is_object($wp_object_cache);
@@ -73,15 +79,15 @@ echo '
 			
 					<div class="atec-border-white">
     	    			<h4>WP ', esc_attr__('Object Cache','atec-cache-apcu'), ' '; atec_enabled($wp_enabled);
-		        			echo ($wp_enabled?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="WP_Ocache_flush" href="'.esc_url($url).'&flush=WP_Ocache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('Flush SITE','atec-cache-apcu').'</a>':''),
+		        			echo ($wp_enabled?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="WP_Ocache_flush" href="'.esc_url($url).'&flush=WP_Ocache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('Site','atec-cache-apcu').'</a>':''),
 						'</h4><hr>';
-						if ($wp_enabled) { @require_once(__DIR__.'/atec-WPC-info.php'); new ATEC_WPcache_info($op_conf,$op_status,$opcache_file_only,$wpc_tools); }
+						if ($wp_enabled) { @require_once(__DIR__.'/atec-WPC-info.php'); new ATEC_WPcache_info($wpc_tools); }
     				echo '
 					</div>
 					
 					<div class="atec-border-white">
 						<h4>APCu Cache'; atec_enabled($atec_wpca_apcu_enabled);
-						echo ($atec_wpca_apcu_enabled?'<a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="APCu_flush" href="'.esc_url($url).'&flush=APCu_Cache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('Flush ALL','atec-cache-apcu').'</a>':''),
+						echo ($atec_wpca_apcu_enabled?'<a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="APCu_flush" href="'.esc_url($url).'&flush=APCu_Cache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span> '.esc_attr__('All','atec-cache-apcu').'</a>':''),
 						'</h4><hr>';
 						if ($atec_wpca_apcu_enabled) { @require_once(__DIR__.'/atec-APCu-info.php'); new ATEC_APCu_info($wpc_tools); }
 						else 
@@ -94,8 +100,8 @@ echo '
 				</div>';
 	    }
 	
-	echo '
-		</div>
+		echo 
+		'</div>
 	</div>
 </div>';
 

@@ -56,9 +56,6 @@ function atec_wpca_settings_fields()
   	add_settings_field('debug', __('Show debug','atec-cache-apcu').'<br>
   	<span style="font-size:80%; color:#999;">'.__('Cache indicator and browser console log','atec-cache-apcu').'.</span>', 'atec_checkbox', $page_slug, $section, atec_opt_arr('debug','WPCA'));
 	
-  	add_settings_field('clear', __('Auto clear','atec-cache-apcu').'<br>
-  	<span style="font-size:80%; color:#999;">'.__('Clear cache, after plugin & theme changes','atec-cache-apcu').'.</span>', 'atec_checkbox', $page_slug, $section, atec_opt_arr('clear','WPCA'));
-
 	add_settings_field('admin', __('Show „Flush“ icon in the admin bar','atec-cache-apcu'), 'atec_checkbox', $page_slug, $section, atec_opt_arr('admin','WPCA'));
 }
 add_action( 'admin_init',  'atec_wpca_settings_fields' );

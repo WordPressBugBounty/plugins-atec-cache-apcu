@@ -3,9 +3,10 @@ if (!defined( 'ABSPATH' )) { exit; }
 
 function atec_wpca_delete_wp_cache(): void 
 {
-	//wp_cache_delete('alloptions','options'); wp_cache_get('notoptions','options'); 
+	//error_log('atec Cache APCu – Flush WP OC');
+	wp_cache_delete('alloptions','options'); wp_cache_get('notoptions','options'); 
 	wp_cache_delete('active_plugins','options');
-	atec_wpca_delete_page_cache_all();
+	if (atec_wpca_settings('cache')) atec_wpca_delete_page_cache_all();
 }
 
 function atec_wpca_delete_page($suffix, $id): void 
@@ -30,6 +31,7 @@ function atec_wpca_delete_page_cache($plugin='',$reg='[f|p|c|t|a]+'): void
 
 function atec_wpca_delete_page_cache_all(): void
 {
+	//error_log('atec Cache APCu – Flush PC');
 	if (!class_exists('APCUIterator')) return;
 	global $atec_wpca_settings;
 	$salt=$atec_wpca_settings['salt']??'';
@@ -39,7 +41,4 @@ function atec_wpca_delete_page_cache_all(): void
 		update_option( 'atec_wpca_debug', ['type'=>'info', 'message'=>'PCache '.__('cleared','atec-cache-apcu').'.'], false);
 	}
 }
-
-function atec_wpca_delete_category_cache(): void { atec_wpca_delete_page_cache('','[cf|c]+'); }
-function atec_wpca_delete_tag_cache($term_id, $tt_id, $taxo): void { if ($taxo==='post_tag') atec_wpca_delete_page_cache('','[tf|f]+'); }
 ?>

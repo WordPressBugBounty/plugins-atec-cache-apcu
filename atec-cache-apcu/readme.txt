@@ -5,7 +5,7 @@ Requires at least: 5.2
 Tested up to: 6.7.1
 Requires PHP: 7.4
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.35
+Stable tag: 2.1.39
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +51,18 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.39 [2025.01.26] =
+* atec-check issue?
+
+= 2.1.38 [2025.01.26] =
+* ATEC_WPcache_info
+
+= 2.1.37 [2025.01.22] =
+* wp_cache flush
+
+= 2.1.36 [2025.01.21] =
+* Sort group list 
 
 = 2.1.35 [2025.01.18] =
 * Optimized APCu Info

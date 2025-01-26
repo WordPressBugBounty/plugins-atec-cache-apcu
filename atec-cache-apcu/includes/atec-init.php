@@ -53,7 +53,7 @@ function atec_admin_debug($name,$slug): void
 {
 	$slug='atec_'.$slug.'_debug'; $notice=get_option($slug);
 	$name=$name==='Mega Cache'?$name:'atec '.$name;
-	if ($notice) { atec_new_admin_notice($notice['type']??'info',$name.': '.$notice['message']??''); delete_option($slug); }
+	if ($notice) { atec_admin_notice($notice['type']??'info',$name.': '.$notice['message']??''); delete_option($slug); }
 }
 
 function atec_admin_notice($type,$message,$hide=false): void 

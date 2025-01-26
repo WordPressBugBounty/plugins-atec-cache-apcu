@@ -8,7 +8,7 @@
 .form-table { border:solid 1px #d0d0d0 !important; margin-bottom: 20px; width: auto; background: rgba(255, 255, 255, 0.6) !important; }
 .form-table TBODY { display: inline-table; margin: 5px 10px; }
 .form-table TH	{ width: auto !important; max-width: fit-content; white-space: nowrap; }
-.form-table TH, .form-table TD { border-bottom: dotted 1px #d0d0d0; padding: 10px 10px 10px 0 !important; }
+.form-table TH, .form-table TD { border-bottom: dotted 1px #d0d0d0; padding: 6px 12px 6px 0 !important; }
 .form-table TD { display: table-cell !important; padding-left: 50px !important; vertical-align: baseline; }
 .form-table TR:last-child TH, .form-table TR:last-child TD { border-color: transparent; }
 .form-table SELECT, .form-table INPUT { min-height: 30px !important; }

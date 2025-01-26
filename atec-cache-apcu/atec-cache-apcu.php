@@ -5,10 +5,10 @@ if (!defined('ABSPATH')) { exit; }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.35
-* Requires at least: 5.2
+* Version: 2.1.39
+* Requires at least: 4.9.8
 * Tested up to: 6.7.1
-* Tested up to PHP: 8.4.1
+* Tested up to PHP: 8.4.2
 * Requires PHP: 7.4
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) { exit; }
 * Text Domain:  atec-cache-apcu
 */
 
-wp_cache_set('atec_wpca_version','2.1.35');
+wp_cache_set('atec_wpca_version','2.1.39');
 
 $atec_wpca_apcu_enabled=extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings=get_option('atec_WPCA_settings',[]);
@@ -96,21 +96,37 @@ if (is_admin())
 	add_action('init', function() 
 	{ 
 		if (preg_match('/page=atec_wpca|options\.php/', atec_query())) { @require_once(__DIR__.'/includes/atec-cache-apcu-register_settings.php'); }
-
-		if (atec_wpca_settings('clear'))
+		
+		function atec_wpca_delete_tag_cache($term_id, $tt_id, $taxo): void { if ($taxo==='post_tag') atec_wpca_flush_actions('tag'); }
+		function atec_wpca_flush_actions($args)
 		{
-			require_once(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
-			
-			add_action( 'after_switch_theme', 'atec_wpca_delete_page_cache_all');
-			add_action( 'activated_plugin', 'atec_wpca_delete_wp_cache');
-			add_action( 'deactivated_plugin', 'atec_wpca_delete_wp_cache');
-			
-			
-			add_action( 'wp_ajax_edit_theme_plugin_file', 'atec_wpca_delete_page_cache_all');				
+			@require_once(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');			
+			switch ($args)
+			{
+				case 'wp_cache': atec_wpca_delete_wp_cache(); break;
+				case 'p_cache': atec_wpca_delete_page_cache_all(); break;			
+				case 'all': atec_wpca_delete_page_cache_all(); break;
+				case 'cat': atec_wpca_delete_page_cache('','[cf|c]+'); break;
+				case 'tag': atec_wpca_delete_page_cache('','[tf|f]+'); break;
+				default: break;					
+			}		
+		}
 
-			add_action('create_category', 'atec_wpca_delete_category_cache');
-			add_action('delete_category', 'atec_wpca_delete_category_cache');
-						
+		if (atec_wpca_settings('ocache') || atec_wpca_settings('cache'))
+		{
+			add_action('activated_plugin', function() { atec_wpca_flush_actions('wp_cache'); });
+			add_action('deactivated_plugin', function() { atec_wpca_flush_actions('wp_cache'); });
+			add_action('upgrader_pre_install', function() { atec_wpca_flush_actions('wp_cache'); });
+		}
+		
+		if (atec_wpca_settings('cache'))
+		{		
+			add_action( 'after_switch_theme', function() { atec_wpca_flush_actions('all'); });
+			add_action( 'wp_ajax_edit_theme_plugin_file', function() { atec_wpca_flush_actions('all'); });
+
+			add_action('create_category', function() { atec_wpca_flush_actions('cat'); });
+			add_action('delete_category', function() { atec_wpca_flush_actions('cat'); });
+					
 			add_action( 'created_term', 'atec_wpca_delete_tag_cache', 10, 3);
 			add_action( 'delete_term', 'atec_wpca_delete_tag_cache', 10, 3);
 		}
