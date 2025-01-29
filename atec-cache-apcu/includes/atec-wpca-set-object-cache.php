@@ -7,7 +7,7 @@ function atec_wpca_set_object_cache($options)
 	$targetPath 	= WP_CONTENT_DIR.'/object-cache.php';
 	
 	$success 	= true;
-	$content 	= $wp_filesystem->get_contents($targetPath);
+	$content 	= $wp_filesystem->exists($targetPath)?$wp_filesystem->get_contents($targetPath):'';
 	$isOC		= $content && str_contains($content,'atec-apcu-object-cache');
 
 	if (!($options['ocache']??false)) 

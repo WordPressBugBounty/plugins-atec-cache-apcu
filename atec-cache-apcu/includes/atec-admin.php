@@ -1,14 +1,15 @@
 <?php
 if (!defined( 'ABSPATH' )) { exit; }
-define('ATEC_ADMIN_INC',true);
+define('ATEC_ADMIN_INC',true); // just for backwards compatibility
 
-function atec_plugin_settings(array $links): array
+function atec_plugin_settings(array $links, $plugin): array
 {
 	$atec_group_settings_arr=[
-		'backup'=>'wpb','cache-apcu'=>'wpca','code'=>'wpc','deploy'=>'wpdp','meta'=>'wpm','optimize'=>'wpo',
-		'page-cache'=>'wppc','poly-addon'=>'wppo','shell'=>'wpsh','web-map-service'=>'wms','smtp-mail'=>'wpsm'];
-	preg_match('/plugin=atec-([\w\-]+)/', $links['deactivate']??'', $match);
-	if (isset($match[1]) && isset($atec_group_settings_arr[$match[1]]))
+		'backup'=>'wpb',			'cache-apcu'=>'wpca',		'cache-memcached'=>'wpcm',		'cache-redis'=>'wpcr',	
+		'optimize'=>'wpo',		'smtp-mail'=>'wpsm',		'web-map-service'=>'wms',			'mega-cache'=>'wpmc'];
+		
+	preg_match('/([\w\-]+)\.php/', $plugin, $match);
+	if (isset($match[1]) && isset($atec_group_settings_arr[str_replace('atec-','',$match[1])]))
 	{
 		$slug=$atec_group_settings_arr[$match[1]];
 		$url = get_admin_url() . 'admin.php?page=atec_'.$slug;

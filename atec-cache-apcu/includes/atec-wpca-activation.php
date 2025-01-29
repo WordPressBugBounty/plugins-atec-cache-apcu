@@ -2,7 +2,7 @@
 if (!defined('ABSPATH')) { exit; }
 class ATEC_wpca_activation { function __construct() {
 	
-if (!defined('ATEC_TOOLS_INC')) @require(__DIR__.'/atec-tools.php');
+if (!function_exists('atec_header')) @require(__DIR__.'/atec-tools.php');
 atec_integrity_check(__DIR__);
 
 if (extension_loaded('apcu') && apcu_enabled())

@@ -3,15 +3,18 @@ if (!defined( 'ABSPATH' )) { exit; }
 
 class ATEC_apcu_groups { 
 
-function __construct($url, $nonce, $action, $prefix) {
+function __construct($url, $nonce, $action, $prefix, $wpc_tools) {
 
 $salt=get_option('atec_WPCA_settings',[])['salt']??'';
 $arr=array('PC salt'=>$salt);
-if (defined('WP_APCU_KEY_SALT')) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
+
+$wp_apcu_key_salt_exists = defined('WP_APCU_KEY_SALT');
+
+if ($wp_apcu_key_salt_exists) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
 
 if ($action==='deleteAll')
 {
-	if (class_exists('APCUIterator')) 
+	if ($wp_apcu_key_salt_exists && class_exists('APCUIterator')) 
 	{
 		$apcu_it=new APCUIterator('/'.WP_APCU_KEY_SALT.'/');
 		if (iterator_count($apcu_it)!==0)
@@ -20,7 +23,7 @@ if ($action==='deleteAll')
 }
 elseif ($action==='delete')
 {
-	if (($id = atec_clean_request('id'))!=='' && ($salt = WP_APCU_KEY_SALT??'')!=='') apcu_delete($salt.':'.$id);
+	if ($wp_apcu_key_salt_exists && ($id = atec_clean_request('id'))!=='' && ($salt = WP_APCU_KEY_SALT??'')!=='') apcu_delete($salt.':'.$id);
 }
 
 echo '
@@ -32,7 +35,7 @@ echo '
 		$arr = iterator_to_array($apcu_it);			
 		array_multisort(array_column($arr, 'key'), SORT_ASC,$arr);
 
-		if (defined('WP_APCU_KEY_SALT')) 
+		if ($wp_apcu_key_salt_exists) 
 		{
 			atec_little_block_with_button(__('Persistent','atec-cache-apcu').' '.__('Object Cache','atec-cache-apcu'),$url,$nonce,'deleteAll','APCu','',false,true,false);
 			if (!empty($arr))
@@ -67,7 +70,7 @@ echo '
 			
 		atec_little_block(__('Other persistent','atec-cache-apcu').' APCu '.__('Object-Cache','atec-cache-apcu'));
 		atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Hits','atec-cache-apcu'),__('Size','atec-cache-apcu'),__('Value','atec-cache-apcu')]);
-			$salt = WP_APCU_KEY_SALT??'TEMP_KEY_SALT';
+			$salt = $wp_apcu_key_salt_exists?WP_APCU_KEY_SALT:'TEMP_KEY_SALT';
 			$c=0; $total=0;
 			if (!empty($arr))
 				foreach ($arr as $entry) 

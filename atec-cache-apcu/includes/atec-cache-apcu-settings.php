@@ -12,16 +12,16 @@ $atec_wpca_pcache = $options['cache']??false==true;
 $atec_wpca_ocache = $options['ocache']??false==true;
 $atec_wpca_advanced = defined('WP_APCU_MU_PAGE_CACHE');
 
-$update = false;
-if (!$atec_wpca_pcache && $atec_wpca_advanced) { $options['cache']=true; $atec_wpca_pcache=true; $update=true; }
-if (!$atec_wpca_ocache && defined('WP_APCU_KEY_SALT')) { $options['ocache']=true; $atec_wpca_ocache=true; $update=true; }
+if (!$atec_wpca_pcache && $atec_wpca_advanced) { $options['cache']=true; $atec_wpca_pcache=true; update_option($optName,$options); }
+if (!$atec_wpca_ocache) { if (defined('WP_APCU_KEY_SALT')) { $options['ocache']=true; $atec_wpca_ocache=true; update_option($optName,$options); } }
+else { if (!defined('WP_APCU_KEY_SALT')) $atec_wpca_ocache=false; }
 
-if (atec_clean_request('action')==='ocache') { $options['ocache'] = atec_clean_request('check_ocache')=='1'; $atec_wpca_ocache=$options['ocache']; $update=true; }
-
-if ($update)
-{
-	wp_cache_delete('alloptions','options'); update_option($optName,$options);
-	@require_once('atec-wpca-set-object-cache.php'); $installedMsg = atec_wpca_set_object_cache($options);
+if (atec_clean_request('action')==='ocache') 
+{ 
+	$options['ocache'] = atec_clean_request('check_ocache')=='1'; $atec_wpca_ocache=$options['ocache'];
+	wp_cache_flush(); update_option($optName,$options);
+	@require('atec-wpca-set-object-cache.php'); 
+	$installedMsg = atec_wpca_set_object_cache($options);
 }		
 else $installedMsg = '';
 

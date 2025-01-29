@@ -9,12 +9,12 @@ function atec_wpca_arr_equal($arr1, $arr2)
 
 function atec_wpca_settings_fields()
 { 
+	if (!function_exists('atec_opt_arr')) @require('atec-check.php');
+	
 	$page_slug 		= 'atec_WPCA';
     $option_group 	= $page_slug.'_settings';
     $section			= $page_slug.'_section';
 	$options			= get_option($option_group,[]);
-
-	if (!defined('ATEC_CHECK_INC')) @require('atec-check.php');
 
 	// ** flush the pcache if pcache settings change ** //
 	if (str_contains(atec_query(),'settings-updated=true')) 
@@ -26,13 +26,12 @@ function atec_wpca_settings_fields()
 
 		if ($atec_wpca_pcache!==($lastSettings['cache']??false) || ($options['debug']??false)!==($lastSettings['debug']??false))
 		{ 
-			if (!defined('ATEC_WPCA_CACHE_TOOLS')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
+			if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
 			atec_wpca_delete_page_cache_all(); 
 		}
 
 		$atec_wpca_adv_page_cache_filename='atec-wpca-adv-page-cache-pro.php';
 		$MU_advanced_cache_path=WPMU_PLUGIN_DIR.'/@'.$atec_wpca_adv_page_cache_filename;
-	
 		if ($atec_wpca_pcache)
 		{
 			if ($options['salt']??''==='') { $options['salt']=hash('crc32', get_bloginfo(), FALSE); update_option($option_group,$options); }

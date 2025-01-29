@@ -1,6 +1,6 @@
 <?php
 if (!defined( 'ABSPATH' )) { exit; }
-define('ATEC_CHECK_INC',true);
+define('ATEC_CHECK_INC',true); // just for backwards compatibility
 
 function atec_opt_arr($opt,$slug): array { return array('name'=>$opt, 'opt-name' => 'atec_'.$slug.'_settings' ); }
 function atec_opt_arr_select($opt,$slug,$arr): array { $optArr=atec_opt_arr($opt,$slug); return array_merge($optArr,['array'=>$arr]); }
