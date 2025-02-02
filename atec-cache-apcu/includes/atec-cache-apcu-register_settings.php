@@ -42,15 +42,13 @@ function atec_wpca_settings_fields()
 				if ($options['salt']??''==='') { $options['salt']=hash('crc32', get_bloginfo(), FALSE); update_option($option_group,$options); }
 				if (atec_check_license())
 				{
-					atec_mkdir_if_not_exists(WPMU_PLUGIN_DIR);
+					wp_mkdir_p(WPMU_PLUGIN_DIR);
 					@$wp_filesystem->copy(plugin_dir_path(__DIR__).'install/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
 				}
 			}
 			else @$wp_filesystem->delete($MU_advanced_cache_path);
 			$redirect = true;
 		}
-
-var_dump($options);
 
 		if (filter_var($options['ocache']??0,258)!==filter_var($lastSettings['ocache']??0,258))
 		{ 
@@ -71,7 +69,7 @@ var_dump($options);
 	add_settings_field('oadmin', __('Admin bar „OC Flush“ icon','atec-cache-apcu'), 'atec_checkbox', $page_slug, $section.'_2', atec_opt_arr('oadmin','WPCA'));
 
 	$page_slug_pc = $page_slug.'_PC';
-	register_setting($page_slug_pc,$option_group);
+	register_setting($page_slug_pc,$option_group, 'atec_wpca_sanitize_fields');
 	  
 	$section_pc = $section.'_PC';
 	add_settings_section($section_pc,'','',$page_slug_pc);

@@ -10,7 +10,7 @@ if (extension_loaded('apcu') && apcu_enabled())
 	if (!function_exists('atec_load_pll')) @require('atec-translation.php');
 	atec_load_pll(__DIR__,'cache-apcu');
 
-	atec_mkdir_if_not_exists(WPMU_PLUGIN_DIR);
+	wp_mkdir_p(WPMU_PLUGIN_DIR);
 
 	$optName='atec_WPCA_settings';
 	$options=atec_create_options($optName,['ocache','cache','debug','clear','salt'],['clear']);

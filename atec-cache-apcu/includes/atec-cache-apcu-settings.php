@@ -12,8 +12,6 @@ $atec_wpca_ocache = filter_var($options['ocache']??0,258);
 $atec_wpca_pcache = filter_var($options['cache']??0,258);
 $atec_wpca_advanced = defined('WP_APCU_MU_PAGE_CACHE');
 
-// var_dump($options,$atec_wpca_pcache,$atec_wpca_advanced);
-
 $update = false;
 if (!$atec_wpca_ocache) { if (defined('WP_APCU_KEY_SALT')) { $options['ocache']=1; $atec_wpca_ocache=1; $update=true; } }
 else { if (!defined('WP_APCU_KEY_SALT')) { $options['ocache']=0; $atec_wpca_ocache=0; $update=true; } }
