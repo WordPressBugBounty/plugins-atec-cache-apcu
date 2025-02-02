@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 function atec_wpca_arr_equal($arr1, $arr2) 
 {
@@ -57,7 +57,7 @@ function atec_wpca_settings_fields()
 			$redirect = true;		
 		}		
 		
-		if ($redirect) wp_redirect(admin_url().'admin.php?page=atec_wpca');
+		if ($redirect) { usleep(100); wp_redirect(admin_url().'admin.php?page=atec_wpca'); }
 	}
 	
   	register_setting($page_slug, $option_group, 'atec_wpca_sanitize_fields');

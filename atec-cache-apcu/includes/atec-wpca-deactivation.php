@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 global $wp_filesystem; WP_Filesystem();
 if (defined('WP_APCU_KEY_SALT'))

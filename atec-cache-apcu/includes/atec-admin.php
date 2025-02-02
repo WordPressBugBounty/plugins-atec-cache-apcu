@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 define('ATEC_ADMIN_INC',true); // just for backwards compatibility
 
 function atec_plugin_settings(array $links, $plugin): array

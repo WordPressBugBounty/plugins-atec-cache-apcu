@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 define('ATEC_CHECK_INC',true); // just for backwards compatibility
 
 function atec_sanitize_textarea(&$input,$arr)

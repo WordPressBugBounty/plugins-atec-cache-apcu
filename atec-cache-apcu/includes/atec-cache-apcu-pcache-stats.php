@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 class ATEC_wpcu_pcache { function __construct($url, $nonce, $action) {
 
@@ -47,14 +47,14 @@ if ($atec_wpca_apcu_enabled)
 	    	<thead>
 	    	<tr>
 				<th>'.esc_attr__('Type','atec-cache-apcu').'</th>
-				<th>Key</th>
+				<th>'.esc_attr__('Key','atec-cache-apcu').'</th>
 				<th>ID</th>
-				<th><span title="'.esc_attr__('Page Nr.','atec-cache-apcu').'" class="'.esc_attr(atec_dash_class('admin-page')).'"></span></th>
-				<th><span title="'.esc_attr__('RSS feed','atec-cache-apcu').'" class="'.esc_attr(atec_dash_class('rss')).'"></span></th>
+				<th><span title="'.esc_attr__('Page','atec-cache-apcu').'" class="'.esc_attr(atec_dash_class('admin-page')).'"></span></th>
+				<th><span title="'.esc_attr__('RSS','atec-cache-apcu').'" class="'.esc_attr(atec_dash_class('rss')).'"></span></th>
 				<th>'.esc_attr__('Hits','atec-cache-apcu').'</th>
 				<th>'.esc_attr__('Size','atec-cache-apcu').'</th>
 				<th>'.esc_attr__('Title','atec-cache-apcu').'</th>
-				<th>Link</th>
+				<th>'.esc_attr__('Link','atec-cache-apcu').'</th>
 				<th></th>
 			</tr>
 			</thead>

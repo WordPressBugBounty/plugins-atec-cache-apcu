@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 function atec_wpca_pcache_delete_comment($comment)
 {

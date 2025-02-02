@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 define('ATEC_INIT_INC',true);
 
 function atec_query() { return add_query_arg(null,null); }

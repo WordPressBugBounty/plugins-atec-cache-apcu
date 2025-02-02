@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 class ATEC_info { function __construct($dir,$url=null,$nonce=null) {
 

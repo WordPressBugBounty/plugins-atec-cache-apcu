@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 define('ATEC_TOOLS_INC',true); // just for backwards compatibility
 
 function atec_p($txt): void { echo '<p class="atec-mb-0">', esc_html($txt), '.</p>'; }

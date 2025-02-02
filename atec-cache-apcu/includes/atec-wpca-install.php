@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 if (!function_exists('atec_header')) @require(__DIR__.'/atec-tools.php');	
 
 add_action( 'admin_enqueue_scripts', function() 

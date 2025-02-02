@@ -1,5 +1,5 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 class ATEC_wpcu_settings { 
 	
@@ -57,7 +57,7 @@ echo '
 			
 			if ($atec_wpca_apcu_enabled)
 			{
-				if ($atec_wpca_advanced) atec_success_msg('The advanced page cache is installed');
+				if ($atec_wpca_advanced) atec_success_msg(__('The advanced page cache is installed','atec-cache-apcu'));
 				else 
 				{
 					$str = esc_attr__('Page Cache','atec-cache-apcu');
