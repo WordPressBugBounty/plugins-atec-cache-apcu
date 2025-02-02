@@ -11,10 +11,10 @@ private function atec_group_star_list($mega)
 	'<div id="pro_package">
 		<div class="atec-border-white atec-bg-w atec-fit" style="font-size: 16px !important; padding: 0 20px; text-align: left; margin:0 auto;">
 			<ul class="atec-p-0">
-				<li>🎁 <strong>', $mega?'Seven additional storage options':esc_attr__('Including 32 valuable plugins','atec-auth-keys'), '.</strong></li>
+				<li>🎁 <strong>', $mega?'Seven additional storage options':esc_attr__('Including 32 valuable plugins','atec-cache-apcu'), '.</strong></li>
 				<li style="line-height:5px;"><br></li>
-				<li>⭐ ', esc_attr__('Priority support','atec-auth-keys'), '.</li>
-				<li>⭐ ', esc_attr__('Upgrades & updates','atec-auth-keys'), '.</li>';
+				<li>⭐ ', esc_attr__('Priority support','atec-cache-apcu'), '.</li>
+				<li>⭐ ', esc_attr__('Upgrades & updates','atec-cache-apcu'), '.</li>';
 				
 				if ($mega) 
 				echo '
@@ -22,8 +22,8 @@ private function atec_group_star_list($mega)
 				<li>⭐ WooCommerce product caching.</li>';
 				else
 				echo '
-				<li>⭐ ', esc_attr__('„Lifetime-site-License“','atec-auth-keys'), '.</li>
-				<li>⭐ ', esc_attr__('Access to all the „PRO“ features','atec-auth-keys'), '.</li>';		
+				<li>⭐ ', esc_attr__('„Lifetime-site-License“','atec-cache-apcu'), '.</li>
+				<li>⭐ ', esc_attr__('Access to all the „PRO“ features','atec-cache-apcu'), '.</li>';		
 			echo 
 			'</ul>
 		</div>';
@@ -99,7 +99,7 @@ echo '
 				// Image is not an attachement
 				echo '<sub><img class="atec-plugin-icon" alt="Plugin icon" src="', esc_url($goupAssetPath.'atec_'.($mega?'wpmc':'wpa').'_icon.svg'), '" style="height: 22px;"></sub>&nbsp;';
 				// @codingStandardsIgnoreEnd
-				echo $mega?'Mega-Cache „PRO“ package':esc_attr__('atec-Plugins „PRO“ package','atec-auth-keys'), 
+				echo $mega?'Mega-Cache „PRO“ package':esc_attr__('atec-Plugins „PRO“ package','atec-cache-apcu'), 
 				'</h3>';
 				$this->atec_group_star_list($mega);
 				echo 
@@ -136,15 +136,15 @@ echo '
 				$licenseUrl = $mega?'https://wpmegacache.com/license/':'https://atecplugins.com/license';
 				echo 
 				'<a class="atec-nodeco" style="width: fit-content !important; margin: 10px auto;" href="', esc_textarea($licenseUrl), '" target="_blank">
-					<button class="button button-primary">', esc_attr__('GET YOUR „PRO“ PACKAGE NOW','atec-auth-keys'), '</button>
+					<button class="button button-primary">', esc_attr__('GET YOUR „PRO“ PACKAGE NOW','atec-cache-apcu'), '</button>
 				</a>
 				<div class="atec-small">Links to ', esc_textarea($licenseUrl), '</div>';
 	
 				echo 
 				'<p styl="font-size: 18px !important;">',
-					esc_attr__('Buy the „PRO“ package through one time payment','atec-auth-keys'), '.<br>',
-					esc_attr__('The license is valid for the lifetime of your site (domain)','atec-auth-keys'), '.<br><b>',
-					esc_attr__('No subscription. No registration required.','atec-auth-keys'), '</b>
+					esc_attr__('Buy the „PRO“ package through one time payment','atec-cache-apcu'), '.<br>',
+					esc_attr__('The license is valid for the lifetime of your site (domain)','atec-cache-apcu'), '.<br><b>',
+					esc_attr__('No subscription. No registration required.','atec-cache-apcu'), '</b>
 				</p>';
 				
 			echo 
@@ -161,7 +161,7 @@ echo '
 		{
 			echo '
 			<div class="atec-g atec-fit" style="margin:0 auto;">';
-				atec_table_header_tiny(['','Name (Link)','#wordpress','#admin-multisite',esc_attr__('Status','atec-auth-keys'),esc_attr__('Description','atec-auth-keys'),'#awards '.esc_attr__('PRO features','atec-auth-keys')],'','atec-table-med');
+				atec_table_header_tiny(['','Name (Link)','#wordpress','#admin-multisite',esc_attr__('Status','atec-cache-apcu'),esc_attr__('Description','atec-cache-apcu'),'#awards '.esc_attr__('PRO features','atec-cache-apcu')],'','atec-table-med');
 		
 				$atec_active			= ['cache-apcu','cache-info','database','debug','dir-scan',		'stats','system-info','web-map-service','webp','mega-cache'];
 				$atec_review			= ['backup'];
@@ -192,7 +192,7 @@ echo '
 							$inReview=in_array($a['name'], $atec_review);
 							echo 
 							'<td>
-								<span title="', $inReview?esc_attr__('In review','atec-auth-keys'):esc_attr__('In progress','atec-auth-keys'), '"><span class="',esc_attr(atec_dash_class($inReview?'visibility':'')) ,'"></span>
+								<span title="', $inReview?esc_attr__('In review','atec-cache-apcu'):esc_attr__('In progress','atec-cache-apcu'), '"><span class="',esc_attr(atec_dash_class($inReview?'visibility':'')) ,'"></span>
 							</td>';
 						}
 						echo '<td>', $a['multi']?'<span class="'.esc_attr(atec_dash_class('yes')).'"></span>':'', '</td>';
@@ -212,11 +212,11 @@ echo '
 			
 			<center>
 				<p class="atec-fs-12" style="max-width:80%;">',
-					esc_attr__('All our plugins are optimized for speed, size and CPU footprint with an average of only 1 ms CPU time','atec-auth-keys'), '.<br>',
-					esc_attr__('Also, they share the same „atec-WP-plugin“ framework. Shared code will only load once across multiple plugins','atec-auth-keys'), '.	<br>',
-					esc_attr__('Tested with','atec-auth-keys'), ': Linux (CloudLinux, Debian, Ubuntu), Windows & Mac-OS, Apache, NGINX & LiteSpeed.
+					esc_attr__('All our plugins are optimized for speed, size and CPU footprint with an average of only 1 ms CPU time','atec-cache-apcu'), '.<br>',
+					esc_attr__('Also, they share the same „atec-WP-plugin“ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.	<br>',
+					esc_attr__('Tested with','atec-cache-apcu'), ': Linux (CloudLinux, Debian, Ubuntu), Windows & Mac-OS, Apache, NGINX & LiteSpeed.
 				</p>
-				<a class="atec-nodeco" class="atec-center" href="https://de.wordpress.org/plugins/search/atec/" target="_blank"><button class="button">', esc_attr__('Visit atec-plugins in the WordPress directory','atec-auth-keys'), '.</button></a>
+				<a class="atec-nodeco" class="atec-center" href="https://de.wordpress.org/plugins/search/atec/" target="_blank"><button class="button">', esc_attr__('Visit atec-plugins in the WordPress directory','atec-cache-apcu'), '.</button></a>
 			</center>';
 		}
 	

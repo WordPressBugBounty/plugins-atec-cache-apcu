@@ -192,15 +192,12 @@ function atec_nr($str): void
 	foreach ($ex as $t) { $c++; echo esc_html($t).($c<count($ex)?'<br>':''); }
 }
 
-function atec_br($str,$echo=true)
+function atec_br($str)
 {
 	$c			= 0;
 	$ex 		= explode('<br>',$str);
 	$count 	= count($ex);
-	$out 	= '';
-	foreach ($ex as $t) { $c++; $out.=esc_html($t).($c<count($ex)?'<br>':''); }
-	if ($echo) echo $out;
-	else return $out;
+	foreach ($ex as $t) { $c++; echo esc_html($t), ($c<count($ex)?'<br>':''); }
 }
 
 function atec_pro_feature($desc='',$small=false): bool
@@ -291,9 +288,15 @@ function atec_single_nav_tab($url,$nonce,$nav,$actNav,$iconPath,$icon,$str,$marg
 
 function atec_nav_tab($url, $nonce, $nav, $arr, $break=0, $pro=false, $highlight='', $about=false, $update=false, $debug=false): void
 {
-	$iconPath=plugins_url('assets/img/icons/',__DIR__);
+	$imgPath	= plugins_url('assets/img/',__DIR__);
+	$iconPath = $imgPath.'icons/';
+	$mega 		= str_contains($url, 'wpmc');
+	$link			= 'https://'.($mega?'wpmegcache':'atecplugins').'.com/';
 	echo '
 	<h2 class="nav-tab-wrapper" style="height:', esc_attr($pro?'auto':'33px'), ';">';
+		// @codingStandardsIgnoreStart | Image is not an attachement
+		echo '<a href="'.esc_url($link).'" target="_blank"><img src="',esc_url($imgPath.'atec-group/atec_'.($mega?'wpmc':'wpa').'_icon.svg'),'" style="display: inline-block; height:26px; padding: 0 5px 8px 10px;"></a>';
+		// @codingStandardsIgnoreEnd
 		$c 	= 0;
 		$reg = '/#([\-|\w]+)\s(.*)/i';
 		foreach($arr as $a) 
@@ -357,7 +360,7 @@ function atec_nav_button($url,$nonce,$action,$nav,$button,$primary=false,$simple
 	$href=$url.'&action='.$action.'&nav='.$nav.'&_wpnonce='.$nonce;
 	$action=$action===''?'update':$action;
 	$dash='';
-	if ($action==='update' || str_starts_with($action,'delete')) { $dash=$action==='update'?'update':'trash'; $button=''; }
+	if ($action==='update' || $action==='delete' || $action==='deleteAll') { $dash=$action==='update'?'update':'trash'; $button=''; }
 	elseif (in_array($button,['left','right'])) { $dash='arrow-'.$button.'-alt'; $button=''; }
 	else
 	{
@@ -446,23 +449,21 @@ function atec_missing_class_check($class=''): void
 	</div>';
 }
 
-function atec_badge_div($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$block=false,$md5=''): string
-{
-	$bg 	= $ok==='blue'?'#f9f9ff':($ok==='info'?'#fff':($ok==='warning'?'rgba(255, 251, 241, 0.85)':($ok?'#f0fff0':'#fff0f0')));
-	$border = $ok==='blue'?'#dde':($ok==='info'?'#eee':($ok==='warning'?'rgba(255, 155, 0, 1)':($ok?'#e0ffe0':'#ffe0e0')));
-	$icon	= $ok==='blue'?'awards':($ok==='info'?'info-outline':($ok==='warning'?'warning':($ok?'yes-alt':'dismiss')));
-	$color	= 'atec-'.($ok==='blue'?'blue':($ok==='info'?'black':($ok==='warning'?'orange':($ok?'green':'red'))));
-	return '
-	<div class="atec-badge atec-'.($block?'db':'dilb').' atec-fit'.($nomargin==true?' atec-mr-0':'').'"'.($md5!==''?' id="'.esc_attr($md5).'"':'').' style="font-size: 13px !important; background:'.esc_attr($bg).'">
-		<div class="atec-dc" style="width:20px; padding-right:5px;"><span class="'.atec_dash_class($icon,$color).'"></span></div>
-		<div class="atec-dc atec-vam" style="color: '.($ok==='blue'?'#2271B1':($ok==='warning'?'orange':'black')).'">'.atec_br($ok?$strSuccess:$strFailed,false).'.</div>
-	</div>';
-}
-
 function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$block=false): void
 {
 	$md5 = $hide?md5($ok?$strSuccess:$strFailed):'';
-	echo atec_badge_div($strSuccess,$strFailed,$ok,$hide,$nomargin,$block,$md5);
+	$bg 	= $ok==='blue'?'#f9f9ff':($ok==='info'?'#fff':($ok==='warning'?'rgba(255, 251, 241, 0	85)':($ok?'#f0fff0':'#fff0f0')));
+	$border = $ok==='blue'?'#dde':($ok==='info'?'#eee':($ok==='warning'?'rgba(255, 155, 0, 1)':($ok?'#e0ffe0':'#ffe0e0')));
+	$icon	= $ok==='blue'?'awards':($ok==='info'?'info-outline':($ok==='warning'?'warning':($ok?'yes-alt':'dismiss')));
+	$color	= 'atec-'.($ok==='blue'?'blue':($ok==='info'?'black':($ok==='warning'?'orange':($ok?'green':'red'))));
+	echo 
+	'<div class="atec-badge atec-', ($block?'db':'dilb'), ' atec-fit', ($nomargin==true?' atec-mr-0':''), '"', ($md5!==''?' id="'.esc_attr($md5).'"':''), ' style="font-size: 13px !important; background:', esc_attr($bg), '">
+		<div class="atec-dc" style="width:20px; padding-right:5px;"><span class="', esc_attr(atec_dash_class($icon,$color)), '"></span></div>
+		<div class="atec-dc atec-vam" style="color: ', ($ok==='blue'?'#2271B1':($ok==='warning'?'orange':'black')), '">';
+			atec_br($ok?$strSuccess:$strFailed);
+		echo 
+		'.</div>
+	</div>';
 	if ($md5!=='') atec_reg_inline_script('badge', 'setTimeout(()=> { jQuery("#'.esc_attr($md5).'").slideUp(); }, 750);', true);
 }
 
@@ -497,7 +498,7 @@ function atec_get_version($slug): string { return wp_cache_get('atec_'.esc_attr(
 function atec_help($id,$title,$hide=false,$margin=true): void
 { 
 	echo '
-	<div id="', esc_attr($id), '_help_button" class="button atec-help-button" style="margin-top: ', $margin?'2':'0', 'px !important;" onclick="return showHelp(\'', esc_attr($id), '\');">',
+	<div id="', esc_attr($id), '_help_button" class="button atec-help-button" style="margin-top: ', $margin?'2':'0', 'px !important;" onclick="return showHelp(\'', esc_attr($id), '\');">';
 		atec_dash_span('editor-help','atec-orange',''); echo '&nbsp;<span style="vertical-align: bottom;">', esc_attr($title), '</span>',
 	'</div>';
 	atec_reg_inline_script('help', 'function showHelp(id) { jQuery("#"+id+"_help").removeClass("atec-dn").show(); jQuery("#"+id+"_help_button").remove(); return false; }');
@@ -506,7 +507,8 @@ function atec_help($id,$title,$hide=false,$margin=true): void
 function atec_header($dir,$slug,$title,$sub_title=''): bool
 { 
 	$img					= $slug===''?'atec_wpa_icon.svg':'atec_'.esc_attr($slug).'_icon.svg';
-	$imgSrc			= plugins_url('/assets/img/atec-group/'.esc_attr($img), $dir);
+	$imgBaseDir		= plugins_url('/assets/img/',$dir);
+	$imgSrc			= $imgBaseDir.'/atec-group/'.esc_attr($img);
 	$plugin				= atec_get_plugin($dir);
 	$atec_slug_arr	= ['wpca','wpci','wpd','wpdb','wpds','wps','wpsi','wms','wpwp','wpmc'];
 	$approved		= in_array($slug, $atec_slug_arr);
@@ -602,14 +604,15 @@ function atec_little_block_with_info($str,$arr,$class='',$buttons=[],$url='',$no
 	echo '
 	<div class="atec-db atec-mb-10">
 		<div class="atec-dilb atec-mr-10">'; atec_little_block($str,'H3','atec-head atec-mb-0'); echo '</div>';
-		foreach ($buttons as $b)
-		{ 
-			echo '<div class="atec-dilb atec-mr-10 atec-vat">';
-			$lower=strtolower($b);
-			if ($lower!==$b) atec_nav_button_confirm($url,$nonce,$lower,$nav,$lower==='update'?'Reload':'Delete');
-			else atec_nav_button($url,$nonce,$lower,$nav,$lower==='update'?'Reload':'Delete'); 
-			echo '</div>'; 
-		}
+		if (!empty($buttons)) 
+			foreach ($buttons as $b)
+			{ 
+				echo '<div class="atec-dilb atec-mr-10 atec-vat">';
+				$lower=strtolower($b);
+				if ($lower!==$b) atec_nav_button_confirm($url,$nonce,$lower,$nav,$lower==='update'?'Reload':'Delete');
+				else atec_nav_button($url,$nonce,$lower,$nav,$lower==='update'?'Reload':'Delete'); 
+				echo '</div>'; 
+			}
 		echo '
 		<div class="atec-dilb ', $right?'atec-right':'', '">';
 			foreach ($arr as $key => $value)

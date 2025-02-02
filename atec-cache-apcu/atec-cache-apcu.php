@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) { exit; }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.44
+* Version: 2.1.47
 * Requires at least: 4.9.8
 * Tested up to: 6.7.1
 * Tested up to PHP: 8.4.2
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) { exit; }
 * Text Domain:  atec-cache-apcu
 */
 
-wp_cache_set('atec_wpca_version','2.1.44');
+wp_cache_set('atec_wpca_version','2.1.47');
 
 $atec_wpca_apcu_enabled=extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings=get_option('atec_WPCA_settings',[]);
@@ -45,54 +45,53 @@ if (is_admin())
 	if (in_array($atec_active_slug=atec_get_slug(), ['atec_group','atec_wpca'])) @require('includes/atec-wpca-install.php');
 
 	if ($atec_wpca_apcu_enabled)
-	{ 			
-		if (atec_wpca_settings('admin'))
+	{ 		
+		$oadmin = atec_wpca_settings('ocache') && atec_wpca_settings('oadmin');
+		$admin = atec_wpca_settings('cache') && atec_wpca_settings('admin');
+			
+		if ($oadmin || $admin)
 		{
-		function atec_wpca_admin_footer_function($content): string
-		{
-			// @codingStandardsIgnoreStart
-			// Image is not an attachement
-			$yes = 'dashicons dashicons-yes-alt';
-			$style = 'padding-top: 5px; font-size: 16px; color:green;';
-			$content.=' | 
-			<sub>
-				<img alt="Plugin icon" src="'.esc_url(plugin_dir_url(__FILE__).'assets/img/atec-group/atec_wpca_icon.svg').'" style="height: 20px; vertical-align: bottom;"> 
-				APCu OCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
-				if (atec_wpca_settings('cache')) $content.=' APCu PCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
-			$content.='</sub>';
-			return $content; 
-			// @codingStandardsIgnoreEnd
-		}
-		add_action('admin_footer_text', 'atec_wpca_admin_footer_function');
-
-		function atec_wpca_admin_bar_args($wp_admin_bar,$type,$nav,$action)
-		{
-			// @codingStandardsIgnoreStart
-			// Image is not an attachement
-			$args = array(
-				'id' => 'atec_wpca_'.$type.'_admin_bar', 
-				'title' => '<span title="'.__('Flush '.$type.'ache','atec-cache-apcu').'" style="font-size:12px;">
-							<span class="ab-icon dashicons dashicons-trash"></span>
-							<img src="'. plugins_url('/assets/img/atec_wpca_icon_admin.svg', __FILE__ ) .'" style="height:12px; vertical-align: bottom; margin:9px 4px 9px -7px;"> '.$type.
-							'</span>',
-				'href' => get_admin_url().'admin.php?page=atec_wpca&action='.$action.'&nav='.$nav.'&_wpnonce='.esc_attr(wp_create_nonce('atec_wpca_nonce')) );
-			// @codingStandardsIgnoreEnd
-			return $args;
-		}
+			function atec_wpca_admin_footer_function($content): string
+			{
+				// @codingStandardsIgnoreStart | Image is not an attachement
+				$yes = 'dashicons dashicons-yes-alt';
+				$style = 'padding-top: 5px; font-size: 16px; color:green;';
+				$content.=' | 
+				<sub>
+					<img alt="Plugin icon" src="'.esc_url(plugin_dir_url(__FILE__).'assets/img/atec-group/atec_wpca_icon.svg').'" style="height: 20px; vertical-align: bottom;">';
+					if (atec_wpca_settings('ocache')) $content.=' APCu OCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
+					if (atec_wpca_settings('cache')) $content.=' APCu PCache <span style="'.esc_html($style).'" class="'.esc_attr($yes).'"></span>';
+				$content.='</sub>';
+				return $content; 
+				// @codingStandardsIgnoreEnd
+			}
+			add_action('admin_footer_text', 'atec_wpca_admin_footer_function');
 		
-		if (atec_wpca_settings('ocache'))
-		{
-			function atec_wpca_oc_admin_bar($wp_admin_bar): void
-			{ $wp_admin_bar->add_node(atec_wpca_admin_bar_args($wp_admin_bar,'OC','Cache','WP_Ocache')); }
-			add_action('admin_bar_menu', 'atec_wpca_oc_admin_bar', PHP_INT_MAX);
-		}
-		
-		if (atec_wpca_settings('cache'))
-		{
-			function atec_wpca_pc_admin_bar($wp_admin_bar): void
-			{ $wp_admin_bar->add_node(atec_wpca_admin_bar_args($wp_admin_bar,'PC','Page_Cache','deleteAll')); }
-			add_action('admin_bar_menu', 'atec_wpca_pc_admin_bar', PHP_INT_MAX);
-		}
+			function atec_wpca_admin_bar_args($wp_admin_bar,$type,$nav,$action)
+			{
+				// @codingStandardsIgnoreStart | Image is not an attachement
+				$args = array(
+					'id' => 'atec_wpca_'.$type.'_admin_bar', 
+					'title' => '<span title="'.__('Flush '.$type.'ache','atec-cache-apcu').'" style="font-size:12px;">
+								<span class="ab-icon dashicons dashicons-trash"></span>
+								<img src="'. plugins_url('/assets/img/atec_wpca_icon_admin.svg', __FILE__ ) .'" style="height:12px; vertical-align: bottom; margin:9px 4px 9px -7px;"> '.$type.
+								'</span>',
+					'href' => get_admin_url().'admin.php?page=atec_wpca&action='.$action.'&nav='.$nav.'&_wpnonce='.esc_attr(wp_create_nonce('atec_wpca_nonce')) );
+				// @codingStandardsIgnoreEnd
+				return $args;
+			}
+			
+			if ($oadmin)
+			{
+				function atec_wpca_oc_admin_bar($wp_admin_bar): void 	{ $wp_admin_bar->add_node(atec_wpca_admin_bar_args($wp_admin_bar,'OC','Cache','WP_Ocache')); }
+				add_action('admin_bar_menu', 'atec_wpca_oc_admin_bar', PHP_INT_MAX);
+			}
+			
+			if ($admin)
+			{
+				function atec_wpca_pc_admin_bar($wp_admin_bar): void { $wp_admin_bar->add_node(atec_wpca_admin_bar_args($wp_admin_bar,'PC','Page_Cache','deleteAll')); }
+				add_action('admin_bar_menu', 'atec_wpca_pc_admin_bar', PHP_INT_MAX);
+			}
 		}
 	}
 	else

@@ -8,22 +8,17 @@ function __construct($url,$nonce) {
 global $atec_wpca_apcu_enabled;
 $optName='atec_WPCA_settings';
 $options=get_option($optName,[]);
-$atec_wpca_pcache = $options['cache']??false==true;
-$atec_wpca_ocache = $options['ocache']??false==true;
+$atec_wpca_ocache = filter_var($options['ocache']??0,258);
+$atec_wpca_pcache = filter_var($options['cache']??0,258);
 $atec_wpca_advanced = defined('WP_APCU_MU_PAGE_CACHE');
 
-if (!$atec_wpca_pcache && $atec_wpca_advanced) { $options['cache']=true; $atec_wpca_pcache=true; update_option($optName,$options); }
-if (!$atec_wpca_ocache) { if (defined('WP_APCU_KEY_SALT')) { $options['ocache']=true; $atec_wpca_ocache=true; update_option($optName,$options); } }
-else { if (!defined('WP_APCU_KEY_SALT')) $atec_wpca_ocache=false; }
+// var_dump($options,$atec_wpca_pcache,$atec_wpca_advanced);
 
-if (atec_clean_request('action')==='ocache') 
-{ 
-	$options['ocache'] = atec_clean_request('check_ocache')=='1'; $atec_wpca_ocache=$options['ocache'];
-	wp_cache_flush(); update_option($optName,$options);
-	@require('atec-wpca-set-object-cache.php'); 
-	$installedMsg = atec_wpca_set_object_cache($options);
-}		
-else $installedMsg = '';
+$update = false;
+if (!$atec_wpca_ocache) { if (defined('WP_APCU_KEY_SALT')) { $options['ocache']=1; $atec_wpca_ocache=1; $update=true; } }
+else { if (!defined('WP_APCU_KEY_SALT')) { $options['ocache']=0; $atec_wpca_ocache=0; $update=true; } }
+if (!$atec_wpca_pcache && $atec_wpca_advanced) { $options['cache']=1; $atec_wpca_pcache=1; $update=true; }
+if ($update) update_option($optName,$options); 
 
 $arr = [];
 if (defined('WP_APCU_KEY_SALT')) $arr['APCu salt']=WP_APCU_KEY_SALT;
@@ -43,38 +38,25 @@ echo '
 				atec_badge($str.' '.esc_attr__('is active','atec-cache-apcu'),$str.' '.esc_attr__('is inactive','atec-cache-apcu'),$atec_wpca_ocache);
 				echo 
 				'<hr class="atec-mb-10">
-				<form method="post" action="'.esc_url($url).'&action=ocache&nav=Settings&_wpnonce='.esc_attr($nonce).'">
-					<table class="form-table" role="presentation"><tbody><tr><th scope="row">', esc_attr__('Object Cache','atec-cache-apcu'), '</th><td>
-						<div class="atec-ckbx">
-							<label class="switch" for="check_ocache">
-								<input id="check_ocache" name="check_ocache" type="checkbox" value="1" onclick="atec_check_validate(\'ocache\');"', checked($atec_wpca_ocache,true,true), '>
-								<div class="slider round"></div>
-							</label>
-						</div>
-					</td></tr></tbody></table>
-					<p style="margin-top: -5px;"><input class="button button-primary"  type="submit" value="', esc_attr__('Save','atec-cache-apcu'), '"><br class="atec-clear"></p>
-				</form>';
-				
-				if ($installedMsg!=='') atec_error_msg($installedMsg);
+				<form class="atec-mt-10" method="post" action="options.php">
+					<input type="hidden" name="atec_WPCA_settings[salt]" value="', esc_attr($options['salt']??''), '">';
+					$slug = 'atec_WPCA';
+					settings_fields($slug);
+					do_settings_sections($slug);
+					submit_button(__('Save','atec-cache-apcu'));		
 			}
 			else atec_error_msg('APCu '.__('extension is NOT installed/enabled','atec-cache-apcu'));
 
-		echo '
-		</div>
-		<div class="atec-border-white">
-			<div class="atec-box-white atec-pt-0">';
-				atec_p(__('The object cache is the main feature of the plugin and will speed up your site','atec-cache-apcu'));
-			echo
-			'</div>
+			echo 
+			'<br><hr><br>
+			<div class="atec-box-white atec-mt-10">', esc_attr__('The object cache is the main feature of the plugin and will speed up your site','atec-cache-apcu'); echo '</div>
 		</div>
 	</div>
 
 	<div>		
-		<div id="atec_WPCA_settings" class="atec-border-white">';
-		
-			echo '<h4>', esc_attr__('APCu Page Cache','atec-cache-apcu'), ' '; atec_enabled($atec_wpca_pcache); echo '</h4>';
+		<div id="atec_WPCA_settings" class="atec-border-white">
+			<h4>', esc_attr__('APCu Page Cache','atec-cache-apcu'), ' '; atec_enabled($atec_wpca_pcache); echo '</h4>';
 			
-			if (!$atec_wpca_pcache) { atec_reg_inline_style('apcu_settings_form', '.form-table:nth-of-type(2), form H2 { display:none; }'); }
 			if ($atec_wpca_apcu_enabled)
 			{
 				if ($atec_wpca_advanced) atec_success_msg('The advanced page cache is installed');
@@ -84,43 +66,34 @@ echo '
 					atec_badge($str.' '.esc_attr__('is active','atec-cache-apcu'),$str.' '.esc_attr__('is inactive','atec-cache-apcu'),$atec_wpca_pcache);
 				}
 				
+				echo 
+				'<hr class="atec-mb-10">';
+				settings_fields($slug.'_PC');
+				do_settings_sections($slug.'_PC');
+				echo '<div style="margin-top: -10px;">'; 
+				$licenseOk=atec_pro_feature(' - '.__('this will enable the advanced','atec-cache-apcu').'<br>'.__('page cache and can give your site an extra ~20% speed boost','atec-cache-apcu'),true);
+				echo '</div>';
+				submit_button(__('Save','atec-cache-apcu'));
 				echo '
-					<hr class="atec-mb-10">
-					<form class="atec-mt-10" method="post" action="options.php">
-						<input type="hidden" name="atec_WPCA_settings[salt]" value="', esc_attr($options['salt']??''), '">
-						<input type="hidden" name="atec_WPCA_settings[ocache]" value="', esc_attr($options['ocache']??''), '">';
-						$slug = 'atec_WPCA';
-						settings_fields($slug);
-						do_settings_sections($slug);
-						echo '<div style="margin-top: -10px;">'; 
-						$licenseOk=atec_pro_feature(' - '.__('this will enable the advanced','atec-cache-apcu').'<br>'.__('page cache and can give your site an extra ~20% speed boost','atec-cache-apcu'),true); 
-						echo '</div>';
-						submit_button(__('Save','atec-cache-apcu'));
-					echo '
-					</form>';
-
+				</form>';
 			}
 			else atec_error_msg('APCu '.__('extension is NOT installed/enabled','atec-cache-apcu'));
 			
+			echo '<br><hr><br>';
+			atec_help('show_debug',__('„Show debug“','atec-cache-apcu'));
 			echo '
-			</div>
-			
-			<div class="atec-border-white">';
+			<div id="show_debug_help" class="atec-help atec-dn">', esc_attr__('The „Show debug“ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing','atec-cache-apcu').'.';
+			echo '
+			</div><br class="atec-clear">';
 
-				atec_help('show_debug',__('„Show debug“','atec-cache-apcu'));
-				echo '
-				<div id="show_debug_help" class="atec-help atec-dn">', esc_attr__('The „Show debug“ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing','atec-cache-apcu').'.';
-				echo '
-				</div><br class="atec-clear">';
-
-				atec_warning_msg(esc_attr__('Do not use multiple page cache plugins simultaneously','atec-cache-apcu'),true);
-				if (is_multisite()) atec_error_msg(__('The page cache is not designed to support multisites','atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites','atec-cache-apcu'),true);
-			
-				if (defined('LITESPEED_ALLOWED') && LITESPEED_ALLOWED) 
-				{ 
-					atec_info(__('LiteSpeed-server and -cache plugin detected','atec-cache-apcu'),true);
-					atec_warning(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),true);
-				}
+			atec_warning_msg(esc_attr__('Do not use multiple page cache plugins simultaneously','atec-cache-apcu'),true);
+			if (is_multisite()) atec_error_msg(__('The page cache is not designed to support multisites','atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites','atec-cache-apcu'),true);
+		
+			if (defined('LITESPEED_ALLOWED') && LITESPEED_ALLOWED) 
+			{ 
+				atec_info(__('LiteSpeed-server and -cache plugin detected','atec-cache-apcu'),true);
+				atec_warning(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),true);
+			}
 
 			echo 
 			'<br>

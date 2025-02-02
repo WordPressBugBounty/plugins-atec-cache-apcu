@@ -16,29 +16,30 @@ echo '
 
 if ($atec_wpca_apcu_enabled)
 {    
-	if ($action==='deleteAll')
+	if (in_array($action,['delete','deleteAll']))
 	{
-		echo '
-		<div class="notice is-dismissible">
-			<p>', esc_attr__('Flushing','atec-cache-apcu'), ' PCache ... ';
-				atec_flush();
-				if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
-				atec_wpca_delete_page_cache_all();
-				echo 
-				'<span class="atec-green">', esc_attr__('successful','atec-cache-apcu'), '</span>.
-			</p>
-		</div>';
-	}
-	elseif ($action==='delete')
-	{
-		$id=atec_clean_request('id');
-		if ($id!=='') 
+		if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
+		if ($action==='deleteAll')
 		{
-			$ex=explode('_',$id);
-			if (isset($ex[2])) atec_wpca_delete_page($ex[0].'_'.$ex[1], $ex[2]);
+			echo '
+			<div class="notice is-dismissible">
+				<p>', esc_attr__('Flushing','atec-cache-apcu'), ' PCache ... ';
+					atec_flush(); atec_wpca_delete_page_cache_all();
+					echo 
+					'<span class="atec-green">', esc_attr__('successful','atec-cache-apcu'), '</span>.
+				</p>
+			</div>';
+		}
+		elseif ($action==='delete')
+		{
+			$id=atec_clean_request('id');
+			if ($id!=='') 
+			{
+				$ex=explode('_',$id);
+				if (isset($ex[2])) atec_wpca_delete_page($ex[0].'_'.$ex[1], $ex[2]);
+			}
 		}
 	}
-	
 	if (!empty($apcu_it=class_exists('APCUIterator')?new APCUIterator():[]))
 	{
     	echo '
@@ -92,7 +93,7 @@ if ($atec_wpca_apcu_enabled)
 							<td class="atec-nowrap">', esc_attr(size_format($entry['mem_size'])), '</td>
 							<td>', esc_html($title), '</td>
 							<td><a href="', esc_url($link), '" target="_blank">', esc_url($short_url), '</a></td>';
-							atec_create_button('delete&nav=Page_cache','trash',true,$url,$salt.'_'.$match[1].'_'.$match[2],$nonce);
+							atec_create_button('delete&nav=Page_Cache','trash',true,$url,$salt.'_'.$match[1].'_'.$match[2],$nonce);
 						echo '
 						</tr>';						    
 		    		}
@@ -102,11 +103,7 @@ if ($atec_wpca_apcu_enabled)
 			echo '
     		</tbody>
     	</table>';
-    	if ($c>0)
-    	{
-		$link=$url.'&action=deleteAll&nav=Page_Cache&_wpnonce='.esc_attr(wp_create_nonce(atec_nonce()));
-		echo '<a class="atec-clear button" href="', esc_url($link), '" title="', esc_attr__('Empty PCache','atec-cache-apcu'), '"><span style="margin-top: 2px;" class="', esc_attr(atec_dash_class('trash')), '"></span> ', esc_attr__('Empty page cache','atec-cache-apcu'), '</a>';
-    	}
+    	if ($c>0) atec_nav_button($url,$nonce,'deleteAll','Page_Cache','#trash '.esc_attr__('Empty page cache','atec-cache-apcu'));
 	}
 	else { atec_error_msg(__('No page cache data available','atec-cache-apcu')); }
 }

@@ -3,7 +3,7 @@ if (!defined( 'ABSPATH' )) { exit; }
 
 function atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash)
 {
-	if (strlen($buffer)<1024) return $buffer;
+	if (($bufferLen=strlen($buffer))<1024) return $buffer;
     $gzip=false; $compressed=''; $debug=''; $debugLen=0;
 	global $atec_wpca_settings;
 	$key='atec_WPCA_'.($atec_wpca_settings['salt']??'').'_';
@@ -22,9 +22,9 @@ function atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash)
 		</script>';
 		$debugLen=strlen($debug);
 	}
-	$powered='<p style="font-size:0; margin:0;">Powered by <a href="https://atecplugins.com/">atecplugins.com</a></p>';
+	$powered='<a style="font-size:0; margin:0;" href="https://atecplugins.com/">Powered by atecplugins.com</a>'; // 96
 	if (function_exists('gzencode')) { $compressed = gzencode($buffer.$debug.$powered); $gzip=true; }
-	apcu_store($key.$suffix.'_'.$id,array($hash,$gzip,$gzip?$compressed:$buffer.$debug.$powered,$gzip?strlen($compressed):strlen($buffer)+$debugLen));
+	apcu_store($key.$suffix.'_'.$id,array($hash,$gzip,$gzip?$compressed:$buffer.$debug.$powered,$gzip?strlen($compressed):$bufferLen+$debugLen+96));
 	apcu_store($key.$suffix.'_h_'.$id,0);
 	unset($compressed); unset($content);
 	return $buffer;

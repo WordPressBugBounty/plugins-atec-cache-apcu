@@ -2,6 +2,24 @@
 if (!defined( 'ABSPATH' )) { exit; }
 define('ATEC_CHECK_INC',true); // just for backwards compatibility
 
+function atec_sanitize_textarea(&$input,$arr)
+{ foreach($arr as $a) $input[$a] = sanitize_textarea_field($input[$a]??''); }
+
+function atec_sanitize_key(&$input,$arr)
+{ foreach($arr as $a) $input[$a] = sanitize_key($input[$a]??''); }
+
+function atec_sanitize_email(&$input,$arr)
+{ foreach($arr as $a) $input[$a] = sanitize_email($input[$a]??''); }
+
+function atec_sanitize_text(&$input,$arr)
+{ foreach($arr as $a) $input[$a] = sanitize_text_field($input[$a]??''); }
+
+function atec_sanitize_text_in_array(&$input,$inArr)
+{ foreach($inArr as $key=>$arr) in_array($input[$key]??'', $arr)?sanitize_text_field($input[$key]):$arr[0]; }	
+
+function atec_sanitize_boolean(&$input,$arr)
+{ foreach($arr as $a) $input[$a] = filter_var($input[$a]??0,258); }
+
 function atec_opt_arr($opt,$slug): array { return array('name'=>$opt, 'opt-name' => 'atec_'.$slug.'_settings' ); }
 function atec_opt_arr_select($opt,$slug,$arr): array { $optArr=atec_opt_arr($opt,$slug); return array_merge($optArr,['array'=>$arr]); }
 
@@ -20,7 +38,7 @@ function atec_button_confirm($url,$nav,$nonce,$action,$dash='trash'): void
 
 function atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce): void
 {
-	$option = in_array($option??false,['true','1',1,true]);
+	$option = filter_var($option,258);
 	echo '
 	<div class="atec-ckbx">
 		<label class="switch" for="check_', esc_attr($id), '" ', ($disabled?'class="check_disabled"':' onclick="location.href=\''.esc_url($url).esc_attr($param).'&_wpnonce='.esc_attr($nonce).'\'"'), '>
@@ -48,7 +66,7 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 function atec_checkbox($args): void
 {
 	$option 	= get_option($args['opt-name'],[]); $field=$args['name']; 
-	$value 		= in_array($option[$field]??false,['true','1',1,true]);	
+	$value 		= 	filter_var($option[$field]??0,258);
 	echo '
 	<div class="atec-ckbx">
 		<label class="switch" for="check_', esc_attr($field), '">

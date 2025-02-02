@@ -14,8 +14,9 @@ HR { box-sizing: content-box; height: 0; margin-top:0; overflow: visible; width:
 PRE { font-family: monospace, monospace; font-size: 1em }
 SMALL { font-size: 90% }
 
-p.submit	{ padding-bottom: 0.5em; }
-p 				{ font-size: 1.1em; line-height: 1.55em; }
+P.submit	{ padding-bottom: 0.5em; }
+P, .atec-box-white { font-size: 1.1em; line-height: 1.55em; }
+
 .atec-center	 	{ text-align: center; }
 .atec-left		 	{ text-align: left !important; }
 

@@ -9,7 +9,6 @@ $salt=get_option('atec_WPCA_settings',[])['salt']??'';
 $arr=array('PC salt'=>$salt);
 
 $wp_apcu_key_salt_exists = defined('WP_APCU_KEY_SALT');
-
 if ($wp_apcu_key_salt_exists) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
 
 if ($action==='deleteAll')
@@ -32,7 +31,7 @@ echo '
 	if (class_exists('APCUIterator'))
 	{
 		$apcu_it=new APCUIterator();
-		$arr = iterator_to_array($apcu_it);			
+		$arr = iterator_to_array($apcu_it);
 		array_multisort(array_column($arr, 'key'), SORT_ASC,$arr);
 
 		if ($wp_apcu_key_salt_exists) 
@@ -119,6 +118,7 @@ echo '
 				echo '<tr class="atec-table-tr-bold"><td>', esc_attr($c), '</td><td colspan="2"></td><td class="atec-nowrap atec-table-right">', esc_html(size_format($total)), '</td></tr>';
 			atec_table_footer();
 		}
+		
 	}
 	else atec_error_msg('APCu '.__('cache data could NOT be retrieved','atec-cache-apcu'));
 	
