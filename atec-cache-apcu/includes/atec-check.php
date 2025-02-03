@@ -66,11 +66,11 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 function atec_checkbox($args): void
 {
 	$option 	= get_option($args['opt-name'],[]); $field=$args['name']; 
-	$value 		= 	filter_var($option[$field]??0,258);
+	$value 		= 	filter_var($option[$field]??0,258)?1:0;
 	echo '
 	<div class="atec-ckbx">
 		<label class="switch" for="check_', esc_attr($field), '">
-			<input type="checkbox" id="check_', esc_attr($field), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="1" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked($value,true,true), '/>
+			<input type="checkbox" id="check_', esc_attr($field), '" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']" value="', esc_attr($value), '" onclick="atec_check_validate(\'', esc_attr($field), '\');" ', checked($value,true,true), '/>
 			<div class="slider round"></div>
 	    </label>
 	</div>';

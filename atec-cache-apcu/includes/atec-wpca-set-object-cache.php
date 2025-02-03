@@ -9,7 +9,6 @@ function atec_wpca_set_object_cache($options)
 	$success 	= true;
 	$content 	= $wp_filesystem->exists($targetPath)?$wp_filesystem->get_contents($targetPath):'';
 	$isOC		= $content && str_contains($content,'atec-apcu-object-cache');
-	wp_cache_flush();
 	if (!filter_var($options['ocache']??0,258)) 
 	{
 		if ($content)
@@ -27,6 +26,7 @@ function atec_wpca_set_object_cache($options)
 		$success = $success && str_contains($content,'atec-apcu-object-cache');		
 		if (!$success) return 'Object-Cache installation failed';
 	}
+	wp_cache_flush();
 	return '';
 }
 ?>

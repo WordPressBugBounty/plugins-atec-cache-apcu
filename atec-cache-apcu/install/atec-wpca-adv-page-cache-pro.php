@@ -1,5 +1,5 @@
 <?php
-if (! defined('ABSPATH') ) { die('Forbidden'); }
+if (!defined('ABSPATH')) { exit(); }
 
 /**
 * Plugin Name: atec Cache APCu Adv

@@ -289,7 +289,10 @@ function atec_nav_tab($url, $nonce, $nav, $arr, $break=0, $pro=false, $highlight
 	echo '
 	<h2 class="nav-tab-wrapper" style="height:', esc_attr($pro?'auto':'33px'), ';">';
 		// @codingStandardsIgnoreStart | Image is not an attachement
-		echo '<a href="'.esc_url($link).'" target="_blank"><img src="',esc_url($imgPath.'atec-group/atec_'.($mega?'wpmc':'wpa').'_icon.svg'),'" style="display: inline-block; height:26px; padding: 0 5px 8px 10px;"></a>';
+		echo 
+		'<div class="atec-dilb">
+			<a href="'.esc_url($link).'" target="_blank"><img src="',esc_url($imgPath.'atec-group/atec_'.($mega?'wpmc':'wpa').'_icon.svg'),'" style="display: inline-block; height:26px; padding: 0 5px 8px 10px;"></a>
+		</div>';
 		// @codingStandardsIgnoreEnd
 		$c 	= 0;
 		$reg = '/#([\-|\w]+)\s(.*)/i';
@@ -446,7 +449,7 @@ function atec_missing_class_check($class=''): void
 function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$block=false): void
 {
 	$md5 = $hide?md5($ok?$strSuccess:$strFailed):'';
-	$bg 	= $ok==='blue'?'#f9f9ff':($ok==='info'?'#fff':($ok==='warning'?'rgba(255, 251, 241, 0	85)':($ok?'#f0fff0':'#fff0f0')));
+	$bg 	= $ok==='blue'?'#f9f9ff':($ok==='info'?'#fff':($ok==='warning'?'rgba(255, 251, 241, 0.85)':($ok?'#f0fff0':'#fff0f0')));
 	$border = $ok==='blue'?'#dde':($ok==='info'?'#eee':($ok==='warning'?'rgba(255, 155, 0, 1)':($ok?'#e0ffe0':'#ffe0e0')));
 	$icon	= $ok==='blue'?'awards':($ok==='info'?'info-outline':($ok==='warning'?'warning':($ok?'yes-alt':'dismiss')));
 	$color	= 'atec-'.($ok==='blue'?'blue':($ok==='info'?'black':($ok==='warning'?'orange':($ok?'green':'red'))));
