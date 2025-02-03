@@ -78,13 +78,20 @@ echo '
 			else atec_error_msg('APCu '.__('extension is NOT installed/enabled','atec-cache-apcu'));
 			
 			echo '<br><hr><br>';
-			atec_help('show_debug',__('„Show debug“','atec-cache-apcu'));
+			
+			echo '<div class="atec-db">';
+			echo '<div class="atec-dilb">';
+			atec_help('show_debug',__('„Show debug“','atec-cache-apcu'),false,false);
 			echo '
-			<div id="show_debug_help" class="atec-help atec-dn">', esc_attr__('The „Show debug“ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing','atec-cache-apcu'), '.</div>';
+			<div id="show_debug_help" class="atec-help atec-dn atec-mr-10">', esc_attr__('The „Show debug“ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing','atec-cache-apcu'), '.</div>';
 
-			atec_help('multi_pc',__('Multiple PC plugins','atec-cache-apcu'));
+			echo '</div>
+			<div class="atec-dilb">';
+			atec_help('multi_pc',__('Multiple PC plugins','atec-cache-apcu'),false,false);
 			echo '
 			<div id="multi_pc_help" class="atec-help atec-dn atec-orange">', esc_attr__('Do not use multiple page cache plugins simultaneously','atec-cache-apcu'), '.</div>';
+			
+			echo '</div></div>';
 
 			echo '<br>';
 			if (is_multisite()) atec_warning_msg(__('The page cache is not designed to support multisites','atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites','atec-cache-apcu'),true);
