@@ -5,7 +5,7 @@ Requires at least: 5.2
 Tested up to: 6.7.1
 Requires PHP: 7.4
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.55
+Stable tag: 2.1.56
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ Using an object-cache will speed up your site – APCu is the fastest cache, c
 - Page caching refers to caching the content of a whole page on the server-side. Later when the same page is requested again, its content will be served from the cache instead of regenerating it from scratch.
 
 Requires PHP APCu extension.
-Lightweight (70KB) and resource-efficient.
+Lightweight (160KB) and resource-efficient.
 Backend CPU footprint: 6 ms.
 Frontend CPU footprint: <1 ms.
 
@@ -51,6 +51,9 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.56 [2025.02.04] =
+* atec_warning_msg
 
 = 2.1.55 [2025.02.03] =
 * Spanish translation

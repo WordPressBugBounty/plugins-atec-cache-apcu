@@ -27,7 +27,7 @@ echo '
 
 atec_reg_inline_script('footer','
 jQuery(".atec-progressBar").css("background","transparent");
-jQuery("#footer-upgrade").html("PHP: '.esc_attr(phpversion()).' | WP: '.esc_attr(get_bloginfo('version')).'");', true);
+$wpFooter=jQuery("#footer-upgrade"); $wpFooter.html("PHP: '.esc_attr(phpversion()).' | WP: "+$wpFooter.html().replace("Version",""));', true);
 }}
 
 new ATEC_footer();

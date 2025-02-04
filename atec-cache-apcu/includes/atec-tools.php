@@ -2,6 +2,18 @@
 if (!defined('ABSPATH')) { exit(); }
 define('ATEC_TOOLS_INC',true); // just for backwards compatibility
 
+function atec_KMG_2_Int($string): int
+{
+	sscanf(strtoupper($string), '%u%c', $number, $suffix);
+	if (isset ($suffix)) { $number = $number * pow (1024, strpos(' KMG', strtoupper($suffix))); }
+	return (int) $number;
+}
+
+function atec_wp_memory_limit(): int
+{ 
+	return defined('WP_MEMORY_LIMIT')?atec_KMG_2_Int(WP_MEMORY_LIMIT):41943040;
+}
+
 function atec_p($txt): void { echo '<p class="atec-mb-0">', esc_html($txt), '.</p>'; }
 function atec_enabled($enabled,$active=false): void 
 { 

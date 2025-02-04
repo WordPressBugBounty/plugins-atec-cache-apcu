@@ -70,8 +70,7 @@ echo '
 		echo '
 		<div class="atec-header">
 			<h3 class="atec-mb-0 atec-center" style="line-height: 0.85em;">';
-			// @codingStandardsIgnoreStart
-			// Image is not an attachement
+			// @codingStandardsIgnoreStart | Image is not an attachement
 				echo '<sub><img class="atec-plugin-icon" alt="Plugin icon" src="', esc_url($goupAssetPath.'atec_'.($mega?'wpmc':'wpa').'_icon.svg'), '" style="height: 22px;"></sub> ', 
 				esc_html($mega?'Mega-Cache':'atec-Plugins'), 
 			'</h3>';

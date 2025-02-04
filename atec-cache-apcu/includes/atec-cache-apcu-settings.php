@@ -97,7 +97,7 @@ echo '
 			if (is_multisite()) atec_warning_msg(__('The page cache is not designed to support multisites','atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites','atec-cache-apcu'),true);
 			
 			if (defined('LITESPEED_ALLOWED') && LITESPEED_ALLOWED) 
-			{ atec_warning(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),true); }
+			{ atec_warning_msg(__('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one','atec-cache-apcu'),true); }
 
 			echo 
 			'<br>
