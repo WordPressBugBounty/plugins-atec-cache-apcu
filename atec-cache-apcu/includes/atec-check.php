@@ -18,7 +18,7 @@ function atec_sanitize_text_in_array(&$input,$inArr)
 { foreach($inArr as $key=>$arr) in_array($input[$key]??'', $arr)?sanitize_text_field($input[$key]):$arr[0]; }	
 
 function atec_sanitize_boolean(&$input,$arr)
-{ foreach($arr as $a) $input[$a] = filter_var($input[$a]??0,258); }
+{ foreach($arr as $a) $input[$a] = strval(filter_var($input[$a]??0,258)); }
 
 function atec_opt_arr($opt,$slug): array { return array('name'=>$opt, 'opt-name' => 'atec_'.$slug.'_settings' ); }
 function atec_opt_arr_select($opt,$slug,$arr): array { $optArr=atec_opt_arr($opt,$slug); return array_merge($optArr,['array'=>$arr]); }

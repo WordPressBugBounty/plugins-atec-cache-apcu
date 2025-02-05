@@ -1,7 +1,7 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
-class ATEC_WPcache_info { function __construct($op_conf,$op_status,$opcache_file_only,$wpc_tools) {	
+class ATEC_WPcache_info { function __construct($wpc_tools) {	
 
 global $wp_object_cache;
 if (isset($wp_object_cache->cache_hits))

@@ -5,7 +5,7 @@ Requires at least: 5.2
 Tested up to: 6.7.1
 Requires PHP: 7.4
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.27
+Stable tag: 2.1.58
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ Using an object-cache will speed up your site – APCu is the fastest cache, c
 - Page caching refers to caching the content of a whole page on the server-side. Later when the same page is requested again, its content will be served from the cache instead of regenerating it from scratch.
 
 Requires PHP APCu extension.
-Lightweight (70KB) and resource-efficient.
+Lightweight (160KB) and resource-efficient.
 Backend CPU footprint: 6 ms.
 Frontend CPU footprint: <1 ms.
 
@@ -51,6 +51,99 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.58 [2025.02.05] =
+* New flushing
+
+= 2.1.57 [2025.02.05] =
+* Verify cache settings
+
+= 2.1.56 [2025.02.04] =
+* atec_warning_msg
+
+= 2.1.55 [2025.02.03] =
+* Spanish translation
+
+= 2.1.54 [2025.02.03] =
+* Spanish translation
+
+= 2.1.53 [2025.02.03] =
+* includes/atec-cache-apcu-pcache-tools.php
+
+= 2.1.52 [2025.02.03] =
+* Updated atec-check.js
+
+= 2.1.51 [2025.02.02] =
+* Russian translation updated
+
+= 2.1.50 [2025.02.02] =
+* French translation by Stephane
+
+= 2.1.49 [2025.02.02] =
+* russian translation
+
+= 2.1.48 [2025.02.02] =
+* var_dump
+
+= 2.1.47 [2025.02.02] =
+* Framework changes (atec-check)
+
+= 2.1.46 [2025.02.02] =
+* Added settings sanitizing
+
+= 2.1.45 [2025.02.01] =
+* Added settings sanitizing
+
+= 2.1.44 [2025.01.29] =
+* Fixed wp_cache_flush
+
+= 2.1.43 [2025.01.29] =
+* define(\'ATEC_TOOLS_INC\',true); // just for backwards compatibility
+
+= 2.1.42 [2025.01.27] =
+* Flush Icon in admin bar for OC & PC
+
+= 2.1.41 [2025.01.26] =
+* Fixed require path
+
+= 2.1.40 [2025.01.26] =
+* switched require_once -> require
+
+= 2.1.39 [2025.01.26] =
+* atec-check issue?
+
+= 2.1.38 [2025.01.26] =
+* ATEC_WPcache_info
+
+= 2.1.37 [2025.01.22] =
+* wp_cache flush
+
+= 2.1.36 [2025.01.21] =
+* Sort group list 
+
+= 2.1.35 [2025.01.18] =
+* Optimized APCu Info
+
+= 2.1.34 [2025.01.17] =
+* Check button replaced
+
+= 2.1.33 [2025.01.17] =
+* Check button replaced
+
+= 2.1.32 [2025.01.17] =
+* new atec-check
+
+= 2.1.31 [2025.01.17] =
+* Fixed invalid header
+
+= 2.1.30 [2025.01.16] =
+* Translation update
+
+= 2.1.29 [2025.01.16] =
+* New object cache activation
+
+= 2.1.28 [2025.01.16] =
+* SVN cleanup
 
 = 2.1.27 [2025.01.16] =
 * German translation

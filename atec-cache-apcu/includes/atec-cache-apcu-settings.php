@@ -8,15 +8,6 @@ function __construct($url,$nonce) {
 global $atec_wpca_apcu_enabled;
 $optName='atec_WPCA_settings';
 $options=get_option($optName,[]);
-$atec_wpca_ocache = filter_var($options['ocache']??0,258);
-$atec_wpca_pcache = filter_var($options['cache']??0,258);
-$atec_wpca_advanced = defined('WP_APCU_MU_PAGE_CACHE');
-
-$update = false;
-if (!$atec_wpca_ocache) { if (defined('WP_APCU_KEY_SALT')) { $options['ocache']=1; $atec_wpca_ocache=1; $update=true; } }
-else { if (!defined('WP_APCU_KEY_SALT')) { $options['ocache']=0; $atec_wpca_ocache=0; $update=true; } }
-if (!$atec_wpca_pcache && $atec_wpca_advanced) { $options['cache']=1; $atec_wpca_pcache=1; $update=true; }
-if ($update) update_option($optName,$options); 
 
 $arr = [];
 if (defined('WP_APCU_KEY_SALT')) $arr['APCu salt']=WP_APCU_KEY_SALT;
@@ -25,8 +16,16 @@ $arr['PC salt']=$options['salt']??'';
 atec_little_block_with_info('APCu - '.__('Settings','atec-cache-apcu'), $arr);
 
 echo '	
-<div class="atec-g atec-g-50">
-	<div>
+<div class="atec-g atec-g-50">';
+
+	$atec_wpca_ocache = filter_var($options['ocache']??0,258);
+	$atec_wpca_pcache = filter_var($options['cache']??0,258);
+	$atec_wpca_advanced = defined('WP_APCU_MU_PAGE_CACHE');
+	
+	if ($atec_wpca_ocache!==defined('WP_APCU_KEY_SALT') || (!$atec_wpca_pcache && $atec_wpca_advanced)) atec_error_msg('The Cache settings are inconsistent, please save again');
+
+	echo
+	'<div>
     	<div class="atec-border-white">
     		<h4>APCu ', esc_attr__('Object Cache','atec-cache-apcu'), ' '; atec_enabled($atec_wpca_ocache); echo '</h4>';
 

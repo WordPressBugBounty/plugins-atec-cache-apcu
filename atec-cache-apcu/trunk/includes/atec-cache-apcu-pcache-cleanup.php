@@ -1,11 +1,11 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 function atec_wpca_pcache_delete_comment($comment)
 {
 	global $atec_wpca_settings;
 	$salt=$atec_wpca_settings['salt']??'';
-	require_once('atec-cache-apcu-pcache-tools.php');
+	if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
 	atec_wpca_delete_page($salt.'_p', $comment->comment_post_ID);
 }
 

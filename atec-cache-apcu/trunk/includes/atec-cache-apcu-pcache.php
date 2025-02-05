@@ -1,10 +1,9 @@
 <?php
-if (!defined( 'ABSPATH' )) { exit; }
+if (!defined('ABSPATH')) { exit(); }
 
 function atec_wpca_page_buffer_start(): void
 { 	 
-	// @codingStandardsIgnoreStart
-	/* $_POST and $_SERVER is uncritical as it is only used for comparison */
+	// @codingStandardsIgnoreStart | $_POST and $_SERVER is uncritical as it is only used for comparison */
 	if (($_SERVER['REQUEST_METHOD']??'')!=='GET') { @header('X-Cache: SKIP:GET'); return; }
 	// @codingStandardsIgnoreEnd
 
@@ -71,22 +70,21 @@ function atec_wpca_page_buffer_start(): void
 	@header('X-Cache-ID: '.$suffix.'_'.$id);
 	@header('X-Cache-Enabled: true');
 	if (($arr[2]??'')==='') { apcu_delete($key.$suffix.'_'.$id); apcu_delete($key.$suffix.'_h_'.$id); $arr=false; }
-	if ($arr!==false)
+	if (!empty($arr))
 	{	
 		if ($arr[0]===$hash)
-		 {
+		{
 		    @header('X-Cache-Type: atec APCu v'.esc_attr(wp_cache_get('atec_wpca_version')));
-			@header('Content-Type: '.($isFeed?'application/rss+xml':'text/html'));
+			@header('Content-Type: '.($isFeed?'application/rss+xml':'text/html'));		
 			if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && str_contains(sanitize_text_field(wp_unslash($_SERVER['HTTP_ACCEPT_ENCODING'])), 'gzip') && $arr[1])
 			{
 				// @codingStandardsIgnoreStart
 				$zlib='zlib.output_compression';
 				if (ini_get($zlib)) ini_set($zlib,'Off');
-				// @codingStandardsIgnoreEnd
-				header('Vary: Accept-Encoding');
-				header("Content-Encoding: gzip");
+				@header('Vary: Accept-Encoding');
+				@header("Content-Encoding: gzip");
 				@header('X-Cache: HIT/GZIP');
-				// @codingStandardsIgnoreStart
+				@header('Content-Length: '.$arr[3]);
 				echo $arr[2];
 				// @codingStandardsIgnoreEnd
 			}
@@ -95,6 +93,7 @@ function atec_wpca_page_buffer_start(): void
 				@header('X-Cache: HIT');
 				if ($arr[1] && function_exists('gzdecode')) $arr[2] = gzdecode($arr[2]);
 				// @codingStandardsIgnoreStart
+				@header('Content-Length: '.strlen($arr[2]));
 				echo $arr[2];
 				// @codingStandardsIgnoreEnd
 			}
@@ -104,7 +103,7 @@ function atec_wpca_page_buffer_start(): void
 	}
 	else 
 	{
-		@require_once(WP_CONTENT_DIR.'/plugins/atec-cache-apcu/includes/atec-cache-apcu-pcache-cb.php');
+		@require(WP_CONTENT_DIR.'/plugins/atec-cache-apcu/includes/atec-cache-apcu-pcache-cb.php');
 		ob_start(function($buffer) use ($id, $hash, $suffix) { return atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash); });
 	}
  }

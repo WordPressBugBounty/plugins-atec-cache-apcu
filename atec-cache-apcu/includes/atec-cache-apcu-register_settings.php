@@ -10,7 +10,7 @@ function atec_wpca_arr_equal($arr1, $arr2)
 function atec_wpca_sanitize_fields($input)
 {
 	$booleanArr = ['ocache','oadmin','cache','admin','debug'];
-	foreach($booleanArr as $b) $input[$b] = filter_var($input[$b]??0,258);
+	foreach($booleanArr as $b) $input[$b] = strval(filter_var($input[$b]??0,258));
 	return $input;
 }
 
@@ -42,7 +42,7 @@ function atec_wpca_settings_fields()
 				if ($options['salt']??''==='') { $options['salt']=hash('crc32', get_bloginfo(), FALSE); update_option($option_group,$options); }
 				if (atec_check_license())
 				{
-					wp_mkdir_p(WPMU_PLUGIN_DIR); chmod(WPMU_PLUGIN_DIR,0777);
+					if (!@$wp_filesystem->exists(WPMU_PLUGIN_DIR)) { wp_mkdir_p(WPMU_PLUGIN_DIR); chmod(WPMU_PLUGIN_DIR,0775); }
 					@$wp_filesystem->copy(plugin_dir_path(__DIR__).'install/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
 				}
 			}

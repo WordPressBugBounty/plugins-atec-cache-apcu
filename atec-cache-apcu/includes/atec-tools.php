@@ -133,7 +133,7 @@ function atec_include_if_exists($dir,$php): void
 	else echo '<!-- ', esc_attr($include), ' -- not found -->';
 }
 
-function atec_mkdir_if_not_exists($dir): bool { $result = wp_mkdir_p($dir); chmod($dir,0777); return $result; }	
+function atec_mkdir_if_not_exists($dir): bool { $result = wp_mkdir_p($dir); chmod($dir,0755); return $result; }	
 
 function atec_copy_install_files($dir,$uploadDir,$arr,&$success)
 {

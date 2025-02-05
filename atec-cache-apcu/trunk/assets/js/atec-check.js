@@ -1,7 +1,7 @@
 function atec_check_validate(id) 
 {
-	let $check = jQuery('#check_'+id);
-	let checked = $check.attr('checked')==='checked';
-	if (checked) $check.removeAttr('checked');
-	else $check.attr('checked',true);
+	const check = document.getElementById("check_"+id);
+	let checked = check.getAttribute("checked")!==null;
+	if (checked) { check.removeAttribute("checked"); check.checked = false; check.value=0; }
+	else { check.setAttribute("checked", "true"); check.checked = true; check.value=1; }
 }

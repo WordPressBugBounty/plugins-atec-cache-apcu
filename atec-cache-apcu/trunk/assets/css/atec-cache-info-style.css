@@ -2,4 +2,5 @@
 .ac_percent { height:7px; display:flex; box-sizing: }		
 H4 A { text-decoration:none; margin-top: -10px !important; }
 H4 A .dashicons-trash { margin-top: 3px; }
+H4 A SPAN:nth-child(2) { display: inline-block; vertical-align: bottom; margin-bottom: 2px; padding-left: 2px; }
 INPUT { padding: 0px 8px !important; min-height: 24px !important; line-height: 24px !important; }
