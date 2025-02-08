@@ -8,6 +8,8 @@
 * Tested up to: 6.7.1
 * Tested up to PHP: 8.4.2
 * Requires PHP: 7.4
+* Requires CP: 1.7
+* Premium URI: https://atecplugins.com
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
 * License: GPL2
@@ -109,14 +111,12 @@ class WP_Object_Cache
         return true;
     }
 
-
     public function flush()
     {
         $this->flush_runtime();
 		if (!class_exists('APCUIterator')) return false;
         $apcu_it=new APCUIterator('/'.WP_APCU_KEY_SALT.'/');
-        if (iterator_count($apcu_it)!==0)
-        { foreach ($apcu_it as $entry) { apcu_delete($entry['key']); } }
+        if (iterator_count($apcu_it)!==0) { foreach ($apcu_it as $entry) { apcu_delete($entry['key']); } }
         return true;
     }
 
@@ -216,7 +216,7 @@ class WP_Object_Cache
 
     public function set($key, $var, $group = 'default', $expire = 0)
     {
-        $key = $this->build_key($key, $group);
+		$key = $this->build_key($key, $group);
         return isset($this->np_groups[$group]) ? $this->set_np($key, $var) : $this->set_p($key, $var, $expire);
     }
 

@@ -2,6 +2,20 @@
 if (!defined('ABSPATH')) { exit(); }
 define('ATEC_TOOLS_INC',true); // just for backwards compatibility
 
+function atec_file_delete($path='') : bool
+{
+	global $wp_filesystem; WP_Filesystem();
+	if (!@$wp_filesystem->exists($path)) return true;
+	return @$wp_filesystem->delete($path);
+}
+
+function atec_arr_equal($arr1, $arr2) : bool
+{
+	if (!is_array($arr1) || !is_array($arr2)) return false;
+	array_multisort($arr1); array_multisort($arr2); 
+	return ( serialize($arr1) === serialize($arr2) ); 
+}
+
 function atec_KMG_2_Int($string): int
 {
 	sscanf(strtoupper($string), '%u%c', $number, $suffix);
@@ -20,7 +34,7 @@ function atec_enabled($enabled,$active=false): void
 	echo '<span style="color:', ($enabled?($active?'black':'green'):'red'), '" title="', ($enabled?esc_attr__('Enabled','atec-cache-apcu'):esc_attr__('Disabled','atec-cache-apcu')), '" class="', esc_attr(atec_dash_class($enabled?'yes-alt':'warning')), '"></span>'; 
 }
 
-function atec_server_sys_icon($dir,$icon) 
+function atec_server_sys_icon($dir,$icon) : void
 { 
 	// @codingStandardsIgnoreStart | Image is not an attachement
 	echo '<img class="atec-sys-icon" src="', esc_url(atec_sys_icon_url($dir, $icon)), '">'; 
@@ -39,7 +53,7 @@ function atec_icon($dir,$icon,$margin=15): void
 	// @codingStandardsIgnoreEnd
 }
 
-function atec_fix_name($p) { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); }
+function atec_fix_name($p) : string { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); }
 
 function atec_loader_dots($c=7): void
 {
@@ -135,7 +149,7 @@ function atec_include_if_exists($dir,$php): void
 
 function atec_mkdir_if_not_exists($dir): bool { $result = wp_mkdir_p($dir); chmod($dir,0755); return $result; }	
 
-function atec_copy_install_files($dir,$uploadDir,$arr,&$success)
+function atec_copy_install_files($dir,$uploadDir,$arr,&$success) : void
 {
 	global $wp_filesystem; WP_Filesystem();
 	$installDir=plugin_dir_path($dir).'install'.DIRECTORY_SEPARATOR;
@@ -198,7 +212,7 @@ function atec_nr($str): void
 	foreach ($ex as $t) { $c++; echo esc_html($t).($c<count($ex)?'<br>':''); }
 }
 
-function atec_br($str)
+function atec_br($str) : void
 {
 	$c			= 0;
 	$ex 		= explode('<br>',$str);
@@ -285,7 +299,7 @@ function atec_nav_tab_dashboard($url, $nonce, $nav, $dir): void
 	</h2>';
 }
 
-function atec_single_nav_tab($url,$nonce,$nav,$actNav,$iconPath,$icon,$str,$margin=0)
+function atec_single_nav_tab($url,$nonce,$nav,$actNav,$iconPath,$icon,$str,$margin=0) : void
 {
 	// @codingStandardsIgnoreStart | Image is not an attachement
 	echo '<a style="margin-right: ', esc_attr($margin), 'px;" href="', esc_url($url), '&nav=', esc_attr($actNav), '&_wpnonce=', esc_attr($nonce), '" class="nav-tab', ($nav===$actNav?' nav-tab-active':''), '"><img class="nav-icon" src="', esc_url($iconPath.$icon.'.svg'), '"> ', ($icon===strtolower($str)?'':esc_attr($str)), '</a>';

@@ -11,22 +11,21 @@ $action 	= atec_clean_request('action');
 $nav 		= atec_clean_request('nav');
 if ($nav=='') $nav='Settings';	
 
-echo '
-<div class="atec-page">';
+echo
+'<div class="atec-page">';
 	atec_header(__DIR__,'wpca','Cache APCu');
 
 	echo '
 	<div class="atec-main">';
 		atec_progress();
 
-		global $wp_object_cache, $atec_wpca_apcu_enabled;
-		$atec_wpca_pcache = atec_wpca_settings('cache');
+		global $atec_wpca_apcu_enabled;
 	
     	$navs=array('#gear Settings','#box Cache');       
 		if ($atec_wpca_apcu_enabled) 
 		{
 			$navs[]='#memory APCu';
-			if ($atec_wpca_pcache) $navs=array_merge($navs,['#blog Page Cache']);
+			if (atec_wpca_settings('cache')) $navs=array_merge($navs,['#blog Page Cache']);
 		}
 		atec_nav_tab($url, $nonce, $nav, $navs, 999, false);
 	
@@ -36,7 +35,6 @@ echo '
 	
 			if ($nav=='Info') { @require(__DIR__.'/atec-info.php'); new ATEC_info(__DIR__); }
 			{
-
 				if ($action==='flush')
 				{
 					$type = atec_clean_request('type');
@@ -47,13 +45,7 @@ echo '
 						$result=false;
 						switch ($type) 
 						{
-							case 'WP_Ocache': 
-							{
-								if ($_wp_using_ext_object_cache = wp_using_ext_object_cache()) wp_using_ext_object_cache(false);
-								$result = wp_cache_flush(); wp_cache_init();
-								if ($_wp_using_ext_object_cache) wp_using_ext_object_cache(true);
-								break;
-							}
+							case 'WP_Ocache': { $result = wp_cache_flush(); break; 	}
 							case 'APCu_Cache': 
 							{
 								$result = false;
@@ -90,15 +82,16 @@ echo '
 					$arr=array('Zlib'=>ini_get('zlib.output_compression')?'#yes-alt':'#dismiss');
 					atec_little_block_with_info('WP & APCu '.__('Object Cache','atec-cache-apcu'), $arr);
 					$atec_wpca_key='atec_wpca_key';
+					
+					global $wp_object_cache;
 					$wp_enabled=is_object($wp_object_cache);
 					
 					if (str_contains($action,'flushed')) atec_success_msg(esc_attr__('Flushing','atec-cache-apcu').' '.esc_html(str_replace('_',' ',atec_clean_request('type'))).' '.esc_attr__('successful','atec-cache-apcu'));
 					
 					echo 
-					'<div class="atec-g atec-g-50">';
+					'<div class="atec-g atec-g-50">
 					
-						echo				
-						'<div class="atec-border-white">
+						<div class="atec-border-white">
 							<h4>WP ', esc_attr__('Object Cache','atec-cache-apcu'), ' '; atec_enabled($wp_enabled);
 								echo ($wp_enabled?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right button" id="WP_Ocache_flush" href="'.esc_url($url).'&action=flush&type=WP_Ocache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span><span>'.esc_attr__('Site','atec-cache-apcu').'</span></a>':''),
 							'</h4><hr>';

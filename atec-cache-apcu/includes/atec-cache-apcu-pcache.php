@@ -14,7 +14,7 @@ function atec_wpca_page_buffer_start(): void
 	global $wp_query;
 	if ($wp_query->is_404 || $wp_query->is_search || $wp_query->is_login || $wp_query->is_admin) { @header('X-Cache: SKIP:IS_'); return; }
 	
-	if (class_exists('woocommerce' ) && (is_cart() || is_checkout() || is_account_page() || is_woocommerce())) { @header('X-Cache: SKIP:WOO'); return; }
+	if (class_exists('WooCommerce') && (is_cart() || is_checkout() || is_account_page() || is_woocommerce())) { @header('X-Cache: SKIP:WOO'); return; }
 	if (is_user_logged_in()) { @header('X-Cache: SKIP:LOGGED_IN'); return; }
 	if (wp_doing_ajax()) { @header('X-Cache: SKIP:AJAX'); return; }
 
@@ -103,6 +103,7 @@ function atec_wpca_page_buffer_start(): void
 	}
 	else 
 	{
+		if (!empty($_COOKIE)) unset($_COOKIE);
 		@require(WP_CONTENT_DIR.'/plugins/atec-cache-apcu/includes/atec-cache-apcu-pcache-cb.php');
 		ob_start(function($buffer) use ($id, $hash, $suffix) { return atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash); });
 	}

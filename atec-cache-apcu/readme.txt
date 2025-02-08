@@ -4,8 +4,9 @@ Tags: APCu-Object-Cache and the only APCu based page-cache plugin available.
 Requires at least: 5.2
 Tested up to: 6.7.1
 Requires PHP: 7.4
+Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.59
+Stable tag: 2.1.60
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -51,6 +52,9 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.60 [2025.02.07] =
+* OC fix pre_update_option
 
 = 2.1.59 [2025.02.05] =
 * Settings fixed

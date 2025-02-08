@@ -44,8 +44,7 @@ function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null): void
 			add_submenu_page($group_slug,'Group', '<span style="width:20px; color:white;" class="dashicons dashicons-sos"></span>&nbsp;Dashboard', 'administrator', $group_slug, function() use ($dir) { atec_group_page($dir); } );
 			$atec_plugin_group_active=true;
 		}
-		// @codingStandardsIgnoreStart
-		// Image is not an attachement
+		// @codingStandardsIgnoreStart | Image is not an attachement
 		add_submenu_page($group_slug, $title, '<img src="'.esc_url($icon).'">&nbsp;'.$title, 'administrator', $menu_slug, $cb );
 		// @codingStandardsIgnoreEnd
 	}
