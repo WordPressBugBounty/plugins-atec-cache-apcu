@@ -3,11 +3,10 @@ if (!defined('ABSPATH')) { exit(); }
 
 class ATEC_info { function __construct($dir,$url=null,$nonce=null) {
 
-global $wp_filesystem; WP_Filesystem();
+if (!class_exists('ATEC_fs')) @require('atec-fs.php');
 
 $iconPath 		= plugins_url('assets/img/atec-group/',__DIR__).atec_get_slug().'_icon.svg';
-$readmePath	= plugin_dir_path($dir).'readme.txt';
-$readme			= $wp_filesystem->get_contents($readmePath);
+$readme = (new ATEC_fs)->get(plugin_dir_path($dir).'readme.txt');
 
 atec_little_block('Info'); 
 
@@ -24,8 +23,7 @@ else
 	$readme = preg_replace('/===(\s+)(.*)(\s+)===\n/', '', $readme);
 	$readme = preg_replace('/==(\s+)(.*)(\s+)==\n/', "<strong>$2</strong><br>", $readme);
 
-	// @codingStandardsIgnoreStart
-	// Image is not an attachement
+	// @codingStandardsIgnoreStart | Image is not an attachement
 	echo 
 	'<div class="atec-db atec-m-0">',
 		'<div class="atec-dilb atec-vat"><img style="height: 30px;" class="atec-vat nav-icon" src="', esc_url($iconPath), '"></div>',

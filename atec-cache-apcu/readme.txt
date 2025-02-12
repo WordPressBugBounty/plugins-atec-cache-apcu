@@ -1,12 +1,12 @@
 === atec Cache APCu ===
 Contributors: DocJoJo
 Tags: APCu-Object-Cache and the only APCu based page-cache plugin available.
-Requires at least: 5.2
-Tested up to: 6.7.1
+Requires at least:4.9
+Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.60
+Stable tag: 2.1.61
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,10 +20,11 @@ Using an object-cache will speed up your site – APCu is the fastest cache, c
 – Object caching involves storing variables and database queries thereby speeding up PHP execution times. This reduces the load on your server, and delivers content to your visitors faster.
 - Page caching refers to caching the content of a whole page on the server-side. Later when the same page is requested again, its content will be served from the cache instead of regenerating it from scratch.
 
-Requires PHP APCu extension.
-Lightweight (160KB) and resource-efficient.
-Backend CPU footprint: 6 ms.
-Frontend CPU footprint: <1 ms.
+=== Specifications ===
+
+Requires: APCu extension.
+Size: only 160 KB
+CPU footprint (idle): <5 ms.
 
 == 3rd party as a service ==
 
@@ -52,6 +53,9 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.61 [2025.02.10] =
+* New atec-fs filesystem
 
 = 2.1.60 [2025.02.07] =
 * OC fix pre_update_option

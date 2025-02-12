@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) { exit(); }
 $atec_group_arr = 
 [
 	['slug'=>'wpau', 'name'=>'auth-keys','desc'=>__('Randomize the authentication keys and salt in the „wp-config.php“ file.','atec-cache-apcu'),'pro'=>'-/-','wp'=>false, 'multi'=>true],
-	['slug'=>'wpb', 'name'=>'backup','desc'=>__('All-in-one Backup and restore solution – fast & reliable','atec-cache-apcu'),'pro'=>'FTP storage (FTP & SSH)','wp'=>false, 'multi'=>false],
+	['slug'=>'wpb', 'name'=>'backup','desc'=>__('All-in-one Backup and restore solution – fast & reliable','atec-cache-apcu'),'pro'=>'FTP storage (FTP & SSH)','wp'=>true, 'multi'=>false],
 		['slug'=>'wpbn', 'name'=>'banner','desc'=>__('Temporary site banner with auto-hide feature','atec-cache-apcu'),'pro'=>'-/-','wp'=>false, 'multi'=>true],
 	['slug'=>'wpca', 'name'=>'cache-apcu','desc'=>__('APCu object and page cache','atec-cache-apcu'),'pro'=>'Advanced page cache','wp'=>true, 'multi'=>true],
 	['slug'=>'wpci', 'name'=>'cache-info','desc'=>__('Cache Info & Statistics (OPcache, all types of Object-Caches & JIT)','atec-cache-apcu'),'pro'=>'PHP extensions','wp'=>true, 'multi'=>true],

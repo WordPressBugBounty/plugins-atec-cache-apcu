@@ -4,8 +4,8 @@
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object Cache
 * Version: 1.0.8
-* Requires at least: 4.9.8
-* Tested up to: 6.7.1
+* Requires at least:4.9
+* Tested up to: 6.7
 * Tested up to PHP: 8.4.2
 * Requires PHP: 7.4
 * Requires CP: 1.7

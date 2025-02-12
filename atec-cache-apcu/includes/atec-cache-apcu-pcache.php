@@ -6,9 +6,8 @@ function atec_wpca_page_buffer_start(): void
 	// @codingStandardsIgnoreStart | $_POST and $_SERVER is uncritical as it is only used for comparison */
 	if (($_SERVER['REQUEST_METHOD']??'')!=='GET') { @header('X-Cache: SKIP:GET'); return; }
 	// @codingStandardsIgnoreEnd
-
 	$args = add_query_arg(null,null);
-	if (str_contains($args,'/password-reset/') || str_contains($args,'/login/') || str_contains($args,'/wp-admin/')) { @header('X-Cache: SKIP/LOGIN'); return; }
+	if (preg_match('/wp\-admin|wp\-cron|\/login|wp\-login|wp\-json|wp\-trackback|admin\-ajax/', $args))	{ @header('X-Cache: SKIP/ADMIN+AJAX/'); return; }
 	if (str_contains($args,'/?') && !str_contains($args,'/?p=')) { @header('X-Cache: SKIP/QUERY'); return; }
 
 	global $wp_query;

@@ -37,8 +37,7 @@ function atec_wpca_settings_fields()
 
 		$lastOptName 	= 'atec_wpca_last_cache'; 
 		$lastSettings 	= get_option($lastOptName);
-		$equal = function_exists('atec_arr_equal')?atec_arr_equal($options,$lastSettings):atec_wpca_arr_equal($options,$lastSettings);
-		if (!$equal) 
+		if (!atec_wpca_arr_equal($options,$lastSettings)) 
 		{
 			update_option($lastOptName,$options); 
 			$atec_wpca_pcache = filter_var($options['cache']??0,258);
@@ -46,7 +45,9 @@ function atec_wpca_settings_fields()
 			if (empty($lastSettings) || $atec_wpca_pcache!==filter_var($lastSettings['cache']??0,258))
 			{ 
 				$deletePC = true;
-				global $wp_filesystem; WP_Filesystem();
+				if (!class_exists('ATEC_fs')) @require('atec-fs.php');
+				$afs = new ATEC_fs();
+				
 				$atec_wpca_adv_page_cache_filename='atec-wpca-adv-page-cache-pro.php';
 				$MU_advanced_cache_path=WPMU_PLUGIN_DIR.'/@'.$atec_wpca_adv_page_cache_filename;
 				if ($atec_wpca_pcache)
@@ -54,11 +55,11 @@ function atec_wpca_settings_fields()
 					if ($options['salt']??''==='') { $options['salt']=hash('crc32', get_bloginfo(), FALSE); }
 					if (atec_check_license())
 					{
-						if (!@$wp_filesystem->exists(WPMU_PLUGIN_DIR)) { wp_mkdir_p(WPMU_PLUGIN_DIR); chmod(WPMU_PLUGIN_DIR,0775); }
-						@$wp_filesystem->copy(plugin_dir_path(__DIR__).'install/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
+						if ($afs->mkdir(WPMU_PLUGIN_DIR)) 
+							$afs->copy(plugin_dir_path(__DIR__).'install/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
 					}
 				}
-				else @$wp_filesystem->delete($MU_advanced_cache_path);
+				else $afs->unlink($MU_advanced_cache_path);
 			}
 			
 			if ($deletePC)
@@ -69,7 +70,7 @@ function atec_wpca_settings_fields()
 	
 			if (empty($lastSettings) || filter_var($options['ocache']??0,258)!==filter_var($lastSettings['ocache']??0,258))
 			{
-				@require('atec-wpca-set-object-cache.php'); 
+				@require(__DIR__.'/atec-wpca-set-object-cache.php'); 
 				$result = atec_wpca_set_object_cache($options);
 				if ($result!=='') add_action( 'admin_notices', function() use ($result) { echo '<div class="notice notice-warning is-dismissible">', esc_html($result), '</div>'; });
 				else wp_redirect(admin_url().'admin.php?page=atec_wpca');

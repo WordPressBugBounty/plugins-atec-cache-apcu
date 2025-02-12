@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) { exit(); }
-define('ATEC_ADMIN_INC',true); // just for backwards compatibility
+define('ATEC_ADMIN_INC',true); // downward comp. Feb 25, remove later
 
 function atec_plugin_settings(array $links, $plugin): array
 {

@@ -1,28 +1,10 @@
 <?php
 if (!defined('ABSPATH')) { exit(); }
-define('ATEC_INIT_INC',true);
+define('ATEC_INIT_INC',true);	// downward comp. Feb 25, remove later
 
 function atec_query() { return add_query_arg(null,null); }
-
-function atec_version_compare($a, $b) { return explode(".", $a) <=> explode(".", $b); }
-
-function atec_fixit($dir,$p,$slug,$option=null)
-{
-	$optName 	= 'atec_fix_it';
-	if (!$option) $option = get_option($optName,[]);
-	$verName	= 'atec_'.$slug.'_version';
-	$ver = wp_cache_get($verName);
-	if (atec_version_compare($option[$p]??0,$ver)===-1)
-	{ 
-		@require($dir.'/fixit.php'); 
-		$option[$p]=$ver; 
-		update_option($optName,$option); 	
-	}
-};
-
 function atec_nonce(): string { return atec_get_slug().'_nonce'; }
 function atec_get_slug(): string { preg_match('/\?page=([\w_]+)/', atec_query(), $match); return $match[1] ?? ''; }
-function atec_get_plugin($dir): string { $plugin=plugin_basename($dir); return substr($plugin,0,strpos($plugin,DIRECTORY_SEPARATOR)); }
 function atec_group_page($dir): void { if (!class_exists('ATEC_group')) @require(plugin_dir_path($dir).'includes/atec-group.php'); } 
 
 function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null): void

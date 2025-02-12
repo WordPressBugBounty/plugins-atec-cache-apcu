@@ -5,9 +5,9 @@ if (!defined('ABSPATH')) { exit(); }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.60
-* Requires at least: 4.9.8
-* Tested up to: 6.7.1
+* Version: 2.1.61
+* Requires at least:4.9
+* Tested up to: 6.7
 * Tested up to PHP: 8.4.2
 * Requires PHP: 7.4
 * Requires CP: 1.7
@@ -19,12 +19,12 @@ if (!defined('ABSPATH')) { exit(); }
 * Text Domain:  atec-cache-apcu
 */
 
-wp_cache_set('atec_wpca_version','2.1.60');
+wp_cache_set('atec_wpca_version','2.1.61');
 
-$atec_wpca_apcu_enabled=extension_loaded('apcu') && apcu_enabled();
-$atec_wpca_settings=get_option('atec_WPCA_settings',[]);
+$atec_wpca_apcu_enabled	= extension_loaded('apcu') && apcu_enabled();
+$atec_wpca_settings 			= get_option('atec_WPCA_settings',[]);
 
-function atec_wpca_settings($opt): bool { global $atec_wpca_settings; return $atec_wpca_settings[$opt]??null==true; }
+function atec_wpca_settings($opt): bool { global $atec_wpca_settings; return filter_var($atec_wpca_settings[$opt]??0,258)?true:false; }
 
 if (is_admin()) 
 {
@@ -37,9 +37,10 @@ if (is_admin())
 	if (!function_exists('atec_query')) @require('includes/atec-init.php');
 	add_action('admin_menu', function() 
 	{ 
-		$error = defined('WP_APCU_KEY_SALT')?'':esc_attr__('OC is not installed','atec-cache-apcu');
-		if ($error==='') { global $atec_wpca_apcu_enabled; if (!$atec_wpca_apcu_enabled) $error=esc_attr__('APCu extension required','atec-cache-apcu').'!'; }
-		atec_wp_menu(__FILE__,'atec_wpca',$error===''?'Cache APCu':'<span title="'.$error.'">Cache APCu ❗</span>'); 
+		global $atec_wpca_apcu_enabled; 
+		$error = $atec_wpca_apcu_enabled?'':esc_attr__('APCu extension required','atec-cache-apcu').'!';
+		if ($error==='') $error = defined('WP_APCU_KEY_SALT')?'':esc_attr__('OC is not installed','atec-cache-apcu').'!';
+		atec_wp_menu(__FILE__,'atec_wpca','<span '.($error===''?'':' title="'.$error.'"').'>Cache&nbsp;APCu'.($error===''?'':'❗').'</span>'); 
 	});
 	
 	global $atec_active_slug;
@@ -47,8 +48,8 @@ if (is_admin())
 
 	if ($atec_wpca_apcu_enabled)
 	{ 		
-		$oadmin = atec_wpca_settings('ocache') && atec_wpca_settings('oadmin');
-		$admin = atec_wpca_settings('cache') && atec_wpca_settings('admin');
+		$oadmin = ($atec_wpca_ocache = atec_wpca_settings('ocache')) && atec_wpca_settings('oadmin');
+		$admin = ($atec_wpca_pcache = atec_wpca_settings('cache')) && atec_wpca_settings('admin');
 			
 		if ($oadmin || $admin)
 		{
@@ -94,6 +95,55 @@ if (is_admin())
 				add_action('admin_bar_menu', 'atec_wpca_pc_admin_bar', PHP_INT_MAX);
 			}
 		}
+		
+		if (defined('WP_APCU_KEY_SALT'))
+		{
+			function atec_wpca_alloptions($value, $option)
+			{
+				$alloptions = wp_cache_get('alloptions','options');
+				if (isset($alloptions[$option])) wp_cache_delete('alloptions','options');
+				return $value;
+			}
+			add_action('pre_update_option', 'atec_wpca_alloptions', 10, 2);
+		}
+		
+		if ($atec_wpca_ocache || $atec_wpca_pcache)
+		{
+			function atec_wpca_delete_tag_cache($term_id, $tt_id, $taxo): void { if ($taxo==='post_tag') atec_wpca_flush_actions('tag'); }
+			function atec_wpca_flush_actions($args)
+			{
+				if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
+				foreach((array) $args as $arg)
+				{
+					switch ($arg)
+					{
+						case 'wp_cache': if (atec_wpca_settings('ocache')) atec_wpca_delete_wp_cache(); break;
+						case 'p_cache': if (atec_wpca_settings('cache')) atec_wpca_delete_page_cache_all(); break;			
+						case 'all': atec_wpca_delete_page_cache_all(); break;
+						case 'cat': atec_wpca_delete_page_cache('','[cf|c]+'); break;
+						case 'tag': atec_wpca_delete_page_cache('','[tf|f]+'); break;
+						default: break;					
+					}
+				}		
+			}
+		
+			add_action('activated_plugin', function() { atec_wpca_flush_actions(['wp_cache','p_cache']); });
+			add_action('deactivated_plugin', function() { atec_wpca_flush_actions(['wp_cache','p_cache']); });
+			add_action('upgrader_pre_install', function() { atec_wpca_flush_actions(['wp_cache','p_cache']); });
+		}
+		
+		if ($atec_wpca_pcache)
+		{		
+			add_action( 'after_switch_theme', function() { atec_wpca_flush_actions('all'); });
+			add_action( 'wp_ajax_edit_theme_plugin_file', function() { atec_wpca_flush_actions('all'); });
+	
+			add_action('create_category', function() { atec_wpca_flush_actions('cat'); });
+			add_action('delete_category', function() { atec_wpca_flush_actions('cat'); });
+					
+			add_action( 'created_term', 'atec_wpca_delete_tag_cache', 10, 3);
+			add_action( 'delete_term', 'atec_wpca_delete_tag_cache', 10, 3);
+		}
+
 	}
 	else
 	{
@@ -112,62 +162,12 @@ if (is_admin())
 	|| (str_contains($atec_query,'wp-admin/options.php') && isset($_POST['atec_WPCA_settings'])))		
 	@require('includes/atec-cache-apcu-register_settings.php'); 
 	// @codingStandardsIgnoreEnd
-
-	add_action('init', function() 
-	{ 
-		function atec_wpca_delete_tag_cache($term_id, $tt_id, $taxo): void { if ($taxo==='post_tag') atec_wpca_flush_actions('tag'); }
-		function atec_wpca_flush_actions($args)
-		{
-			if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
-			foreach((array) $args as $arg)
-			{
-				switch ($arg)
-				{
-					case 'wp_cache': if (atec_wpca_settings('ocache')) atec_wpca_delete_wp_cache(); break;
-					case 'p_cache': if (atec_wpca_settings('cache')) atec_wpca_delete_page_cache_all(); break;			
-					case 'all': atec_wpca_delete_page_cache_all(); break;
-					case 'cat': atec_wpca_delete_page_cache('','[cf|c]+'); break;
-					case 'tag': atec_wpca_delete_page_cache('','[tf|f]+'); break;
-					default: break;					
-				}
-			}		
-		}
-
-		if (atec_wpca_settings('ocache') || atec_wpca_settings('cache'))
-		{
-			add_action('activated_plugin', function() { atec_wpca_flush_actions(['wp_cache','p_cache']); });
-			add_action('deactivated_plugin', function() { atec_wpca_flush_actions(['wp_cache','p_cache']); });
-			add_action('upgrader_pre_install', function() { atec_wpca_flush_actions(['wp_cache','p_cache']); });
-		}
-		
-		if (atec_wpca_settings('cache'))
-		{		
-			add_action( 'after_switch_theme', function() { atec_wpca_flush_actions('all'); });
-			add_action( 'wp_ajax_edit_theme_plugin_file', function() { atec_wpca_flush_actions('all'); });
-
-			add_action('create_category', function() { atec_wpca_flush_actions('cat'); });
-			add_action('delete_category', function() { atec_wpca_flush_actions('cat'); });
-					
-			add_action( 'created_term', 'atec_wpca_delete_tag_cache', 10, 3);
-			add_action( 'delete_term', 'atec_wpca_delete_tag_cache', 10, 3);
-		}
-	});
 	
-	if (defined('WP_APCU_KEY_SALT'))
-	{
-		function atec_wpca_alloptions($value, $option)
-		{
-			$alloptions = wp_cache_get('alloptions','options');
-			if (isset($alloptions[$option])) wp_cache_delete('alloptions','options');
-			return $value;
-		}
-		add_action('pre_update_option', 'atec_wpca_alloptions', 10, 2);
-	}
 }
 else // not is_admin
 {
 	if (!defined('WP_APCU_MU_PAGE_CACHE') && $atec_wpca_apcu_enabled && atec_wpca_settings('cache'))
-	add_action('init', function() { @require(__DIR__.'/includes/atec-cache-apcu-pcache.php'); });
+		add_action('init', function() { @require(__DIR__.'/includes/atec-cache-apcu-pcache.php'); });
 }
 
 if ($atec_wpca_apcu_enabled && atec_wpca_settings('cache')) { @require(__DIR__.'/includes/atec-cache-apcu-pcache-cleanup.php'); }

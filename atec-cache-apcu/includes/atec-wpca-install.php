@@ -20,8 +20,11 @@ if ($atec_active_slug!=='atec_group')
 { 
 	function atec_wpca(): void { @require(__DIR__.'/atec-cache-apcu-dashboard.php'); }
 
-	if (!function_exists('atec_load_pll')) { @require(__DIR__.'/atec-translation.php'); }
-	atec_load_pll(__DIR__,'cache-apcu');		
+	add_action('admin_init', function() 
+	{
+		if (!function_exists('atec_load_pll')) { @require(__DIR__.'/atec-translation.php'); }
+		atec_load_pll(__DIR__,'cache-apcu');
+	});
 
 	if (!defined('WP_APCU_KEY_SALT'))
 	{

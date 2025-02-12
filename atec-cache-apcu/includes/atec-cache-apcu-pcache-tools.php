@@ -1,7 +1,12 @@
 <?php
 if (!defined('ABSPATH')) { exit(); }
 
-function atec_wpca_delete_wp_cache(): void { wp_cache_flush(); }
+function atec_wpca_delete_wp_cache(): void 
+{ 
+	wp_cache_delete('alloptions','options');
+	wp_cache_delete('notoptions','options');
+	wp_cache_delete('active_plugins','options');
+}
 
 function atec_wpca_delete_page($suffix, $id): void 
 { apcu_delete('atec_WPCA_'.$suffix.'_'.$id); apcu_delete('atec_WPCA_'.$suffix.'_h_'.$id); }

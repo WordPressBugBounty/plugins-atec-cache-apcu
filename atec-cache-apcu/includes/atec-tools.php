@@ -1,32 +1,20 @@
 <?php
 if (!defined('ABSPATH')) { exit(); }
-define('ATEC_TOOLS_INC',true); // just for backwards compatibility
+define('ATEC_TOOLS_INC',true); // downward comp. Feb 25, remove later
 
-function atec_file_delete($path='') : bool
-{
-	global $wp_filesystem; WP_Filesystem();
-	if (!@$wp_filesystem->exists($path)) return true;
-	return @$wp_filesystem->delete($path);
-}
+// START These functions are all deprecated, Feb. 25, remove later
 
-function atec_arr_equal($arr1, $arr2) : bool
-{
-	if (!is_array($arr1) || !is_array($arr2)) return false;
-	array_multisort($arr1); array_multisort($arr2); 
-	return ( serialize($arr1) === serialize($arr2) ); 
-}
+function atec_get_upload_dir($p): string { return wp_get_upload_dir()['basedir'].'/'.($p==='mega-cache'?'':'atec-').$p; }
+// Replaced by ATEC_fs, used in *activation & *uninstall Feb. 25, remove later
+function atec_info($str): void { atec_badge($str,'','info'); }
+// Replaced by atec_info_msg, before Feb. 25, remove later
+function atec_get_version($slug): string { return wp_cache_get('atec_'.esc_attr($slug).'_version'); }
+// Was also only used in atec_header() until Feb. 25, remove later
+if (!function_exists('atec_get_plugin'))
+{ function atec_get_plugin($dir): string { $plugin=plugin_basename($dir); return substr($plugin,0,strpos($plugin,DIRECTORY_SEPARATOR)); } }
+// Was used in atec_header(); & atec-footer.php until Feb. 25, remove later
 
-function atec_KMG_2_Int($string): int
-{
-	sscanf(strtoupper($string), '%u%c', $number, $suffix);
-	if (isset ($suffix)) { $number = $number * pow (1024, strpos(' KMG', strtoupper($suffix))); }
-	return (int) $number;
-}
-
-function atec_wp_memory_limit(): int
-{ 
-	return defined('WP_MEMORY_LIMIT')?atec_KMG_2_Int(WP_MEMORY_LIMIT):41943040;
-}
+// STOP These functions are all deprecated, Feb. 25, remove later
 
 function atec_p($txt): void { echo '<p class="atec-mb-0">', esc_html($txt), '.</p>'; }
 function atec_enabled($enabled,$active=false): void 
@@ -37,23 +25,18 @@ function atec_enabled($enabled,$active=false): void
 function atec_server_sys_icon($dir,$icon) : void
 { 
 	// @codingStandardsIgnoreStart | Image is not an attachement
-	echo '<img class="atec-sys-icon" src="', esc_url(atec_sys_icon_url($dir, $icon)), '">'; 
+	echo '<img class="atec-sys-icon" src="', esc_url(plugins_url( '/assets/img/system/'.$icon.'-icon.svg', $dir)), '">'; 
 	// @codingStandardsIgnoreEnd
 }
-
-function atec_sys_icon_url($dir,$icon): string { return plugins_url( '/assets/img/system/'.$icon.'-icon.svg', $dir); }
 
 function atec_icon($dir,$icon,$margin=15): void
 {
 	$iconPath=plugins_url('assets/img/icons/',$dir);
-	$reg = '/#([\-|\w]+)\s?(.*)/i';
-	preg_match($reg, $icon, $matches);
+	preg_match('/#([\-|\w]+)\s?(.*)/i', $icon, $matches);
 	// @codingStandardsIgnoreStart | Image is not an attachement
 	echo '<img style="max-width: 18px; max-height:18px; margin-right: ', esc_attr($margin), 'px;" src="', esc_url($iconPath.$matches[1].'.svg'), '">', isset($matches[2])?' '.esc_attr($matches[2]):'';
 	// @codingStandardsIgnoreEnd
 }
-
-function atec_fix_name($p) : string { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); }
 
 function atec_loader_dots($c=7): void
 {
@@ -85,27 +68,15 @@ function atec_little_ext_box($ext): void
 	esc_attr($ext), '</strong></span>';
 }
 
-function atec_is_linux(): string { return (DIRECTORY_SEPARATOR=='/'); }
-function atec_fix_separator($str): string
-{ 
-	if (atec_is_linux()) return $str;
-	return str_replace('/',DIRECTORY_SEPARATOR,$str);
-}
 function atec_trailingslashit($str): string { return rtrim($str,DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR; }
-
-function atec_replace_seperator(&$str): string { $str=str_replace(DIRECTORY_SEPARATOR,'/',$str); }
 
 function atec_random_string($length,$lower=false): string
 { 
 	$charset = 'abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ'; $string = ''; 
-	while(strlen($string)<$length) { $string .= substr($charset,wp_rand(0,61),1); } 
+	// @codingStandardsIgnoreStart | wp_rand is not available if called early
+	while(strlen($string)<$length) { $string .= substr($charset,rand(0,61),1); } 
+	// @codingStandardsIgnoreEnd
 	return $lower?strtolower($string):$string;
-}
-
-function atec_htaccess_exists(): bool
-{
-	global $wp_filesystem; WP_Filesystem();
-	return $wp_filesystem->exists(ABSPATH.'.htaccess');
 }
 
 function atec_integrity_check($dir,$plugin=''): void
@@ -115,29 +86,12 @@ function atec_integrity_check($dir,$plugin=''): void
 	wp_remote_get('https://atecplugins.com/WP-Plugins/activated.php?plugin='.esc_attr($plugin).'&domain='.get_bloginfo('url')); 
 }
 
-function atec_empty_tr(): void { echo '<tr><td colspan="99" class="emptyTR1"></td></tr><tr><td colspan="99" class="emptyTR2"></td></tr>'; }
-
 function atec_short_string($str,$len=128): string 
 { 
 	if ($str=='') return $str;
 	return strlen($str)>$len?substr($str, 0, $len).' ...':$str; 
 }
-function atec_dash_yes_no($enabled): void 
-{ 
-	echo '<span style="color:', ($enabled?'green':'red'), '" title="', ($enabled?'Enabled':'Disabled'), '" class="', esc_attr(atec_dash_class($enabled?'yes-alt':'warning')), '"></span>'; 
-}
 
-function atec_bar_div($time,$max,$threshold1,$threshold2): void
-{
-	echo '
-	<div class="atec-barDiv">
-		<span class="atec-bar" style="width:', esc_attr($time/$max*100), 'px;';
-			if ($time>$threshold1) echo ' background: red;'; 
-			elseif ($time>$threshold2) echo ' background: orange;';
-		echo '"></span>
-	</div>';
-}
-	
 function atec_dash_class($icon,$class=''): string { return 'dashicons dashicons-'.$icon.($class!==''?' '.$class:''); }
 
 function atec_include_if_exists($dir,$php): void
@@ -147,22 +101,9 @@ function atec_include_if_exists($dir,$php): void
 	else echo '<!-- ', esc_attr($include), ' -- not found -->';
 }
 
-function atec_mkdir_if_not_exists($dir): bool { $result = wp_mkdir_p($dir); chmod($dir,0755); return $result; }	
-
-function atec_copy_install_files($dir,$uploadDir,$arr,&$success) : void
-{
-	global $wp_filesystem; WP_Filesystem();
-	$installDir=plugin_dir_path($dir).'install'.DIRECTORY_SEPARATOR;
-	foreach($arr as $key=>$value) { $success = $success && $wp_filesystem->copy($installDir.$key, $uploadDir.DIRECTORY_SEPARATOR.$value, true); }
-}
-
-function atec_get_prefix($p): string { return $p==='mega-cache'?'':'atec-'; }
-
-function atec_get_upload_dir($p): string { return atec_fix_separator(wp_get_upload_dir()['basedir'].'/'.atec_get_prefix($p).$p); }
-	
 function atec_check_license($licenseCode=null, $siteName=null): bool
 {
-	// @codingStandardsIgnoreStart | This function should have a low CPU footprint, therefore no use of $wp_filesystem.
+	// @codingStandardsIgnoreStart | This function should have a low CPU footprint, therefore no use of WP_Filesystem();.
 	$include=__DIR__.'/atec-pro.php';
 	if (!class_exists('ATEC_pro') && file_exists($include)) @include_once($include);
 	// @codingStandardsIgnoreEnd
@@ -205,13 +146,6 @@ function atec_license_banner($dir): bool
 	return $licenseOk;
 }
 
-function atec_nr($str): void
-{
-	$c		= 0;
-	$ex 	= explode("\n",$str);
-	foreach ($ex as $t) { $c++; echo esc_html($t).($c<count($ex)?'<br>':''); }
-}
-
 function atec_br($str) : void
 {
 	$c			= 0;
@@ -242,7 +176,7 @@ function atec_pro_feature($desc='',$small=false): bool
 		echo '
 			</a>
 		</div>';
-		if ($desc!=='') { echo '<br><div class="atec-pro-box" style="background: #f9f9ff;"><h4 class="atec-mt-0">'; atec_br($desc); echo '.'; echo '</h4></div>'; 	}
+		if ($desc!=='') { echo '<br><div class="atec-pro-box" style="background: #f9f9ff;"><h4 class="atec-fs-14 atec-mt-0">'; atec_br($desc); echo '.'; echo '</h4></div>'; 	}
 	}
 	return $licenseOk; 
 }
@@ -262,13 +196,6 @@ function atec_pro_block($inline='',$more=null): void
 	</div><br>';
 }
 
-function atec_pro_feature_mini($desc=''): bool
-{ 
-	$licenseOk=atec_check_license();
-	if (!$licenseOk) atec_pro_block($desc);
-	return $licenseOk;
-}
-
 function atec_pro_only($licenseOk=null): void
 { 
 	if (is_null($licenseOk)) $licenseOk=atec_check_license();
@@ -283,7 +210,7 @@ function atec_nav_tab_dashboard($url, $nonce, $nav, $dir): void
 		<div class="atec-dilb">
 			<a href="', esc_url($url), '&nav=Dashboard&_wpnonce=', esc_attr($nonce), '" class="nav-tab atec-blue', ($nav==='Dashboard'?' nav-tab-active':''), '">';
 			// @codingStandardsIgnoreStart | Image is not an attachement
-			echo '<img class="nav-icon" src="', esc_url($iconPath.'home.svg'), '">Dashboard';
+			echo '<img class="nav-icon" src="', esc_url($iconPath.'home.svg'), '">&nbsp;Dashboard';
 			// @codingStandardsIgnoreEnd
 			echo '
 			</a>
@@ -306,20 +233,14 @@ function atec_single_nav_tab($url,$nonce,$nav,$actNav,$iconPath,$icon,$str,$marg
 	// @codingStandardsIgnoreEnd
 }
 
-function atec_nav_tab($url, $nonce, $nav, $arr, $break=0, $pro=false, $highlight='', $about=false, $update=false, $debug=false): void
+function atec_nav_tab($url, $nonce, $nav, $arr, $break=999, $licenseOk=null, $highlight='', $about=false, $update=false, $debug=false): void
 {
 	$imgPath	= plugins_url('assets/img/',__DIR__);
 	$iconPath = $imgPath.'icons/';
 	$mega 		= str_contains($url, 'wpmc');
 	$link			= 'https://'.($mega?'wpmegcache':'atecplugins').'.com/';
-	echo '
-	<h2 class="nav-tab-wrapper" style="height:', esc_attr($pro?'auto':'33px'), ';">';
-		// @codingStandardsIgnoreStart | Image is not an attachement
-		echo 
-		'<div class="atec-dilb">
-			<a href="'.esc_url($link).'" target="_blank"><img src="',esc_url($imgPath.'atec-group/atec_'.($mega?'wpmc':'wpa').'_icon.svg'),'" style="display: inline-block; height:26px; padding: 0 5px 8px 10px;"></a>
-		</div>';
-		// @codingStandardsIgnoreEnd
+	echo 
+	'<h2 class="nav-tab-wrapper" style="', esc_attr($licenseOk?'margin-top:14px; height:14px;':''), ';">';
 		$c 	= 0;
 		$reg = '/#([\-|\w]+)\s(.*)/i';
 		foreach($arr as $a) 
@@ -330,14 +251,14 @@ function atec_nav_tab($url, $nonce, $nav, $arr, $break=0, $pro=false, $highlight
 			$nice=str_replace([' ','.','-','/'],'_',$nice);
 			$nice=str_replace(['(',')'],'',$nice);
 			$active=$nav==$nice;		
-			$proNav=$c>$break && $pro;
+			$proNav=$c>$break;
 			echo 
-			'<div class="atec-dilb" style="margin-right: ', $c===$break?'0.5em':'0', '">';
-				if ($pro) echo '<div class="atec-dilb atec-pro" style="margin-left: 10px; padding-bottom: 10px;">', $proNav?'PRO':'&nbsp;', '</div><br class="atec-clear">';
+			'<div class="atec-dilb atec-fs-12" style="margin-right: ', $c===$break?'0.5em':'0', '">';
+				if ($licenseOk!==true) echo '<div class="atec-dilb atec-pro" style="margin: 0 0 12px 10px;">', $proNav?'PRO':'&nbsp;', '</div><br class="atec-clear">';
 				echo '
-				<a href="', esc_url($url), '&nav=', esc_attr($nice), '&_wpnonce=', esc_attr($nonce), '" class="nav-tab ', ($pro?'atec-grey':'atec-blue'), ($active?' nav-tab-active':''), ($nice==$highlight?' atec-under':''), ($proNav?' atec-pro-nav':''), '">';
+				<a href="', esc_url($url), '&nav=', esc_attr($nice), '&_wpnonce=', esc_attr($nonce), '" class="nav-tab ', ($active?' nav-tab-active':''), ($nice==$highlight?' atec-under':''), '">';
 					// @codingStandardsIgnoreStart | Image is not an attachement
-					if (isset($matches[2])) echo '<img class="nav-icon" src="', esc_url($iconPath.$matches[1].'.svg'), '">', esc_attr($matches[2]);
+					if (isset($matches[2])) echo '<img class="nav-icon" src="', esc_url($iconPath.$matches[1].'.svg'), '">&nbsp;', esc_attr($matches[2]);
 					else echo esc_attr(preg_replace($reg, '', $a));
 					// @codingStandardsIgnoreEnd
 				echo 
@@ -346,18 +267,18 @@ function atec_nav_tab($url, $nonce, $nav, $arr, $break=0, $pro=false, $highlight
 		}
 		echo '
 		<div class="atec-dilb atec-right">';
-		if ($pro) echo '<div class="atec-dilb atec-pro" style="height:10px;">&nbsp;</div><br class="atec-clear">';
-		if ($update) atec_single_nav_tab($url,$nonce,$nav,'Update',$iconPath,'update','Update');
-		if ($about) atec_single_nav_tab($url,$nonce,$nav,'About',$iconPath,'about','About');
-		if ($debug) atec_single_nav_tab($url,$nonce,$nav,'Debug',$iconPath,'bug','Debug');
-		atec_single_nav_tab($url,$nonce,$nav,'Info',$iconPath,'info','Info',10);
+			if ($licenseOk!==true) echo '<div class="atec-dilb atec-pro" style="height:10px;">&nbsp;</div><br class="atec-clear">';
+			if ($update) atec_single_nav_tab($url,$nonce,$nav,'Update',$iconPath,'update','Update');
+			if ($about) atec_single_nav_tab($url,$nonce,$nav,'About',$iconPath,'about','About');
+			if ($debug) atec_single_nav_tab($url,$nonce,$nav,'Debug',$iconPath,'bug','Debug');
+			atec_single_nav_tab($url,$nonce,$nav,'Info',$iconPath,'info','Info',10);
 		echo '
 		</div>
 	</h2>';
 }
 
+function atec_empty_tr(): void { echo '<tr><td colspan="99" class="emptyTR1"></td></tr><tr><td colspan="99" class="emptyTR2"></td></tr>'; }
 function atec_table_footer(): void { echo '</tbody></table>'; }
-
 function atec_table_header_tiny($tds,$id='',$class=''): void
 {
 	echo '<table ', (esc_attr($id!==''?" id=$id":'')) ,' class="atec-table atec-table-tiny atec-fit ', esc_attr($class), '"><thead><tr>';
@@ -401,23 +322,6 @@ function atec_nav_button($url,$nonce,$action,$nav,$button,$primary=false,$simple
 	if (!$simple) echo '</div>';
 }
 
-function atec_nav_button_select_confirm($url,$nonce,$action,$nav,$button,$arr,$name): void
-{
-	echo '
-	<div class="alignleft atec-btn-bg" style="background: #f0f0f0;">
-		<input title="Confirm action" type="checkbox" onchange="const $btn=jQuery(this).parent().find(\'button\'); $btn.prop(\'disabled\',!$btn.prop(\'disabled\'));">
-		<a class="atec-nodeco" href="', esc_url($url), '&id=', esc_attr(array_key_first($arr)), '&action=', esc_attr($action), '&nav=', esc_attr($nav), '&_wpnonce=', esc_attr($nonce),'"><button disabled="true" class="button button-secondary">';
-			if (str_contains($action,'delete')) atec_dash_span('trash');
-			echo esc_attr($button), '</button>
-		</a>
-		<select name="', esc_attr($name), '" style="padding: 0 4px;" onchange="const $link=jQuery(this).parent().find(\'a\'); let href=$link.attr(\'href\'); const pattern = /&id=([\w|_|\-]+)&/g; $link.attr(\'href\',href.replace(pattern, \'&id=\'+jQuery(this).val()+\'&\'));">'; 
-			$c=0;
-			foreach($arr as $key=>$value) { echo '<option value="', esc_attr($key), '" ', $c==0?'seleceted':'', '>', esc_html($value), '</option>'; $c++; } 
-		echo '
-		</select>
-	</div>';
-}
-
 function atec_dash_span($dash,$class='',$style=''): void
 { echo '<span '.($style!==''?'style="'.esc_textarea($style).'"':'').' class="'.esc_attr(atec_dash_class($dash)).($class!==''?' '.esc_textarea($class):'').'"></span>'; }
 
@@ -441,23 +345,6 @@ function atec_create_button($action,$icon,$enabled,$url,$id,$nonce,$primary=fals
 	<td><button ', esc_attr(!$enabled)?'disabled ':'', 'onclick="window.location.assign(\'', esc_url($url), '&action=', esc_attr($action), '&id=', esc_attr($id), '&_wpnonce=', esc_attr($nonce),'\');" class="button button-', ($primary?'primary':'secondary'), '">'; atec_dash_span($icon); echo '</button></td>';
 }
   
-function atec_create_options($name,$arr,$preset=[]): array
-{ 
-	$options	= get_option($name);
-	$update 	= false;
-	if (!$options) { $options=[]; $update=true; }
-	foreach ($arr as $key) 
-	{ 
-		if (!isset($options[$key])) 
-		{ 
-			$update 			= true;
-			$options[$key]	= in_array($key,$preset)?'true':'';
-		} 
-	}
-	if ($update) update_option($name,$options);
-	return $options;
-}
-
 function atec_missing_class_check($class=''): void
 {
 	if ($class!=='' && class_exists($class)) return;
@@ -490,7 +377,6 @@ function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$bloc
 	if ($md5!=='') atec_reg_inline_script('badge', 'setTimeout(()=> { jQuery("#'.esc_attr($md5).'").slideUp(); }, 750);', true);
 }
 
-function atec_info($str): void { atec_badge($str,'','info'); }
 function atec_info_msg($str, $br_before=null): void { if ($br_before) echo '<br>'; atec_badge($str,'','info'); }
 function atec_warning_msg($str, $br_before=null, $br_after=null): void { if ($br_before) echo '<br>'; atec_badge($str,'','warning'); if ($br_after) echo '<br>'; }
 function atec_error_msg($txt, $br_before=null, $br_after=null): void { if ($br_before) echo '<br>'; atec_badge('',$txt,false); if ($br_after) echo '<br>'; }
@@ -502,21 +388,13 @@ function atec_progress_div(): void
 	atec_reg_inline_script('progress', 'setTimeout(()=>{ jQuery("#atec_loading").css("opacity",0); },4500);', true); 
 }
 
-function atec_progress(): void 
-{ 
-	ob_start(); 
-	if (@ob_get_length()>0) @ob_end_flush(); 
-	if (@ob_get_level() > 0) @ob_flush(); 
-	@flush(); 
-}
+function atec_progress(): void { ob_start(); atec_flush(); }
 function atec_flush(): void 
 { 
 	if (@ob_get_length()>0) @ob_end_flush(); 
 	if (@ob_get_level() > 0) @ob_flush();
 	@flush(); 
 }
-
-function atec_get_version($slug): string { return wp_cache_get('atec_'.esc_attr($slug).'_version'); }
 
 function atec_help($id,$title,$hide=false,$margin=true): void
 { 
@@ -527,16 +405,28 @@ function atec_help($id,$title,$hide=false,$margin=true): void
 	atec_reg_inline_script('help', 'function showHelp(id) { jQuery("#"+id+"_help").removeClass("atec-dn").show(); jQuery("#"+id+"_help_button").remove(); return false; }');
 }
 
+function atec_get_url(): string
+{ 
+	$url_parts	= wp_parse_url( home_url() );
+	$url			= $url_parts['scheme'] . "://" . $url_parts['host'] . (isset($url_parts['port'])?':'.$url_parts['port']:'') .atec_query();
+	return rtrim(strtok($url, '&'),'/');
+} 
+
+function atec_clean_request($t,$nonce=''): string
+{ 
+	if (!isset($_REQUEST[ '_wpnonce' ]) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST[ '_wpnonce' ]) ), $nonce===''?atec_nonce():$nonce ) ) { return ''; }
+	return isset($_REQUEST[$t])?sanitize_text_field(wp_unslash($_REQUEST[$t])):'';
+}
+
 function atec_header($dir,$slug,$title,$sub_title=''): bool
 { 
-	$img					= $slug===''?'atec_wpa_icon.svg':'atec_'.esc_attr($slug).'_icon.svg';
-	$imgBaseDir		= plugins_url('/assets/img/',$dir);
-	$imgSrc			= $imgBaseDir.'/atec-group/'.esc_attr($img);
-	$plugin				= atec_get_plugin($dir);
-	$atec_slug_arr	= ['wpca','wpci','wpd','wpdb','wpds','wps','wpsi','wms','wpwp','wpmc'];
+	$imgBaseDir		= plugins_url('/assets/img/',$dir).'/atec-group/';
+	$atec_slug_arr	= ['wpb','wpca','wpci','wpd','wpdb',	'wpds','wps','wpsi','wms','wpwp',	'wpmc'];
 	$approved		= in_array($slug, $atec_slug_arr);
 	$wordpress		= 'https://wordpress.org/support/plugin/';
+	$plugin 			= str_replace('/includes','',plugin_basename($dir)); 
 	$supportLink	= (!$approved)?'https://atecplugins.com/contact/':$wordpress.$plugin;
+	$ver					= wp_cache_get('atec_'.esc_attr($slug).'_version');
 
 	if (is_null(get_option('atec_allow_integrity_check',null))) atec_integrity_check_banner($dir);
 	$licenseOk = atec_license_banner($dir);
@@ -545,18 +435,21 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 	<div class="atec-header">
 		<h3 class="atec-mb-0 atec-center" style="line-height: 0.85em;">';
 			// @codingStandardsIgnoreStart | Image is not an attachement
-			echo '<sub><img alt="Plugin icon" src="',esc_url($imgSrc),'" style="height:20px;"></sub> ';
+			echo '<sub><img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.($slug==='wpmc'?'wpmc':'wpa').'_icon.svg'),'" style="height:'.($slug==='wpmc'?'20':'12').'px; '.($slug==='wpmc'?'padding-bottom:4px':'').'"></sub> ';
+			if ($slug==='wpmc') echo '<span style="color:#2340b1;">Mega</span>-<span style="color:#fe5300;">Cache</span>';
+			elseif ($slug!=='') echo '<sub><img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.esc_attr($slug).'_icon.svg'),'" style="height:20px;"></sub>';
+			else echo 'atec-Plugins';
 			// @codingStandardsIgnoreEnd
-			if ($slug==='wpmc') echo '<span style="color:#2340b1;">Mega</span> <span style="color:#fe5300;">Cache</span>';
-			else echo $slug===''?'':'atec ', esc_html($title);
-			echo 
-			'<span class="atec-fs-10">&nbsp;';
-				$ver=atec_get_version(esc_attr($slug));
-				if ($slug!='') echo ' v'.esc_attr($ver);
-				if ($sub_title!=='') echo ' – '.esc_html($sub_title);
-			echo '
-			</span>',
-		'</h3>';
+			if ($slug!=='') 
+			{
+				if ($slug!=='wpmc')
+				{
+					$fixName 	= str_replace(['Atec',' '],['atec','-'],ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$plugin)));
+					echo '&nbsp;', esc_html($fixName);
+				}
+				echo '<span class="atec-fs-10">&nbspv', esc_attr($ver), '</span>';
+			}
+		echo '</h3>';
 		atec_progress_div();
 		$color='rgba(34, 113, 177, 0.33)';
 		echo '
@@ -597,25 +490,10 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 	return $licenseOk;
 }
 
-function atec_clean_request($t,$nonce=''): string
-{ 
-	if (!isset($_REQUEST[ '_wpnonce' ]) || !wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST[ '_wpnonce' ]) ), $nonce===''?atec_nonce():$nonce ) ) { return ''; }
-	return isset($_REQUEST[$t])?sanitize_text_field(wp_unslash($_REQUEST[$t])):'';
-}
-
-function atec_clean_server($t): string { return isset($_SERVER[$t])?sanitize_text_field(wp_unslash($_SERVER[$t])):''; } 
-
 function atec_reg_style($id,$dir,$css,$ver): void { wp_register_style($id, plugin_dir_url($dir).'assets/css/'.$css, [], esc_attr($ver)); wp_enqueue_style($id); } 
 function atec_reg_script($id,$dir,$js,$ver): void { wp_register_script($id, plugin_dir_url($dir).'assets/js/'.$js, [], esc_attr($ver),true); wp_enqueue_script($id); } 
 function atec_reg_inline_style($id, $css_safe):void { $id=($id==='')?'atec-css':'atec_'.$id; wp_register_style($id, false, [], '1.0.0'); wp_enqueue_style($id); wp_add_inline_style($id, $css_safe); }
 function atec_reg_inline_script($id, $js_safe, $jquery=false):void { $id='atec_'.$id; wp_register_script($id, false, $jquery?array('jquery'):array(), '1.0.0', false); wp_enqueue_script($id); wp_add_inline_script($id, $js_safe); }
-
-function atec_get_url(): string
-{ 
-	$url_parts	= wp_parse_url( home_url() );
-	$url			= $url_parts['scheme'] . "://" . $url_parts['host'] . (isset($url_parts['port'])?':'.$url_parts['port']:'') .atec_query();
-	return rtrim(strtok($url, '&'),'/');
-} 
 
 function atec_little_block($str,$tag='H3',$class='atec-head',$classTag=''): void 
 { echo '<div class="',esc_attr($class),'"><',esc_attr($tag),' class="',esc_attr($classTag),'">',esc_html($str),'</',esc_attr($tag),'></div>'; }

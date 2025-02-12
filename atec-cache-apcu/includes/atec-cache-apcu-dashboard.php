@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) { exit(); }
 
-class ATEC_wpcu_results { function __construct() {
+class ATEC_wpcu_dashboard { function __construct() {
 
 atec_admin_debug('Cache APCu','wpca');
 
@@ -15,22 +15,22 @@ echo
 '<div class="atec-page">';
 	atec_header(__DIR__,'wpca','Cache APCu');
 
-	echo '
-	<div class="atec-main">';
+	echo 
+	'<div class="atec-main">';
 		atec_progress();
 
 		global $atec_wpca_apcu_enabled;
 	
-    	$navs=array('#gear Settings','#box Cache');       
+    	$navs=array('#gear Settings','#box Cache');
 		if ($atec_wpca_apcu_enabled) 
 		{
 			$navs[]='#memory APCu';
 			if (atec_wpca_settings('cache')) $navs=array_merge($navs,['#blog Page Cache']);
 		}
-		atec_nav_tab($url, $nonce, $nav, $navs, 999, false);
+		atec_nav_tab($url, $nonce, $nav, $navs);
 	
-		echo '
-		<div class="atec-g atec-border">';
+		echo
+		'<div class="atec-g atec-border">';
 			atec_flush();
 	
 			if ($nav=='Info') { @require(__DIR__.'/atec-info.php'); new ATEC_info(__DIR__); }
@@ -125,5 +125,5 @@ echo
 
 }}
 
-new ATEC_wpcu_results();
+new ATEC_wpcu_dashboard();
 ?>

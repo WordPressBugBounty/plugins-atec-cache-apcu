@@ -35,7 +35,7 @@ echo '
 				atec_badge($str.' '.esc_attr__('is active','atec-cache-apcu'),$str.' '.esc_attr__('is inactive','atec-cache-apcu'),defined('WP_APCU_KEY_SALT'));
 				echo 
 				'<hr class="atec-mb-10">
-				<form class="atec-mt-10" method="post" action="options.php">
+				<form class="atec-form atec-mt-10" method="post" action="options.php">
 					<input type="hidden" name="atec_WPCA_settings[salt]" value="', esc_attr($options['salt']??''), '">';
 					$slug = 'atec_WPCA';
 					settings_fields($slug);
@@ -64,7 +64,8 @@ echo '
 				}
 				
 				echo 
-				'<hr class="atec-mb-10">';
+				'<hr class="atec-mb-10">
+				<div class="atec-form">';
 				settings_fields($slug.'_PC');
 				do_settings_sections($slug.'_PC');
 				echo '<div style="margin-top: -10px;">'; 
@@ -72,7 +73,8 @@ echo '
 				echo '</div>';
 				submit_button(__('Save','atec-cache-apcu'));
 				echo '
-				</form>';
+				</form>
+				</div>';
 			}
 			else atec_error_msg('APCu '.__('extension is NOT installed/enabled','atec-cache-apcu'));
 			

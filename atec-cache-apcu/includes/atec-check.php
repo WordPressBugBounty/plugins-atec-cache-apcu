@@ -19,7 +19,7 @@ function atec_sanitize_text_in_array(&$input,$inArr)
 
 function atec_sanitize_boolean(&$input,$arr)
 { 
-	foreach($arr as $a) 
+	foreach($arr as $b) 
 	{
 		if (filter_var($input[$b]??0,258)) $input[$b]='1';
 		else unset($input[$b]);
@@ -108,6 +108,6 @@ function atec_input_password($args): void { atec_input_text($args,$type='passwor
 function atec_input_textarea($args): void
 {
 	$option = get_option($args['opt-name'],[]); $field=$args['name'];
-	echo '<textarea class="atec-fs-10" style="resize:both;" rows="', (($args['size']??'')===''?'2':esc_attr($args['size'])), '" cols="30" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']">', esc_textarea($option[$field]??''), '</textarea>';
+	echo '<textarea style="resize:both;" rows="', (($args['size']??'')===''?'2':esc_attr($args['size'])), '" cols="30" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']">', esc_textarea($option[$field]??''), '</textarea>';
 }
 ?>
