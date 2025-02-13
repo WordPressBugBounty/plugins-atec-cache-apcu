@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.61
+Stable tag: 2.1.62
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,9 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.62 [2025.02.13] =
+* Minor fix
 
 = 2.1.61 [2025.02.10] =
 * New atec-fs filesystem

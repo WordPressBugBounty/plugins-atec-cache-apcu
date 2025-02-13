@@ -16,7 +16,7 @@ public function copy($source,$target,$overwrite=true,$mode = false): bool { retu
 public function dirlist($path, $include_hidden = true, $recursive = false) { return $this->afs->dirlist($path, $include_hidden, $recursive); }		// array|false
 public function getchmod($path): string { return $this->afs->exists($path)?$this->afs->getchmod($path):false; }		// string|false
 public function mkdir($dir, $chmod = false, $chown = false, $chgrp = false): bool 
-{ return ($this->afs->exists($dir))?true:$this->afs->mkdir($dir,$chmod,$chown,$chgrp); 	} // default FS_CHMOD_DIR = 0755
+{ if ($this->afs->exists($dir)) return true; return $this->afs->mkdir($dir,$chmod,$chown,$chgrp); } // default FS_CHMOD_DIR = 0755
 public function move($source,$target,$overwrite=true): bool { return $this->afs->move($source,$target,$overwrite); }
 public function mtime($path) { return $this->afs->exists($path)?$this->afs->mtime($path):false; } 	//  int|false
 public function rmdir($dir,$recursive = false): bool { return $this->afs->rmdir($dir,$recursive); }	
