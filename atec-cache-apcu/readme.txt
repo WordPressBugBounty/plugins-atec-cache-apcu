@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.63
+Stable tag: 2.1.67
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,18 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.67 [2025.02.14] =
+* $wp_query
+
+= 2.1.66 [2025.02.14] =
+* Fixed $atec_wpca_pcache_params
+
+= 2.1.65 [2025.02.14] =
+* Fixed the fix routine
+
+= 2.1.64 [2025.02.14] =
+* Improved cache check
 
 = 2.1.63 [2025.02.13] =
 * Base on send_headers

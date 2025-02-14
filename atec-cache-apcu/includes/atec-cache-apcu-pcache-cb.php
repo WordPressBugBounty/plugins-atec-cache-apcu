@@ -3,18 +3,26 @@ if (!defined('ABSPATH')) { exit(); }
 
 function atec_wpca_page_buffer_callback($buffer)
 {
+	if (($bufferLen=strlen($buffer))<1024) return $buffer;
+
 	global $atec_wpca_pcache_hit; 
 	if ($atec_wpca_pcache_hit??false) return $buffer;
-	if (($bufferLen=strlen($buffer))<1024) return $buffer;
 	
-	global $atec_wpca_pcache_params;
+	global $wp_query, $atec_wpca_pcache_params;
+	if (is_null($atec_wpca_pcache_params))
+	{
+		@require('atec-cache-apcu-pcache-parse.php');
+		$atec_wpca_pcache_params = atec_wpca_pcache_parse($wp_query);
+	}
+	
 	if (is_array($atec_wpca_pcache_params))
 	{
 		$suffix = $atec_wpca_pcache_params['suffix']??'';
 		$id = $atec_wpca_pcache_params['id']??'';
 		$hash = $atec_wpca_pcache_params['hash']??'';
 	}
-
+	else return $buffer;
+	
     $gzip=false; $compressed=''; $debug=''; $debugLen=0;
 	global $atec_wpca_settings;
 	$key='atec_WPCA_'.($atec_wpca_settings['salt']??'').'_';

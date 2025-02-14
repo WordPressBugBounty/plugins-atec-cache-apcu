@@ -27,22 +27,25 @@ function atec_wpca_settings_fields()
     $option_group 	= $page_slug.'_settings';
     $section			= $page_slug.'_section';
 	$options			= get_option($option_group,[]);
-	
+
+	$optName = 'atec_wpca_fix_cache';
+	$atec_wpca_fix_cache = filter_var(get_option($optName),258); delete_option($optName);
+
 	$atec_wpca_ocache = filter_var($options['ocache']??0,258);
 	$atec_wpca_pcache = filter_var($options['cache']??0,258);
 
 	// ** flush the pcache if pcache settings change ** //
-	if (str_contains(atec_query(),'settings-updated=true')) 
+	if ($atec_wpca_fix_cache || str_contains(atec_query(),'settings-updated=true')) 
 	{
 
 		$lastOptName 	= 'atec_wpca_last_cache'; 
 		$lastSettings 	= get_option($lastOptName);
-		if (!atec_wpca_arr_equal($options,$lastSettings)) 
+		if ($atec_wpca_fix_cache || !atec_wpca_arr_equal($options,$lastSettings)) 
 		{
 			update_option($lastOptName,$options); 
 			$atec_wpca_pcache = filter_var($options['cache']??0,258);
 			$deletePC = filter_var($options['debug']??0,258)!==filter_var($lastSettings['debug']??0,258);
-			if (empty($lastSettings) || $atec_wpca_pcache!==filter_var($lastSettings['cache']??0,258))
+			if ($atec_wpca_fix_cache || empty($lastSettings) || $atec_wpca_pcache!==filter_var($lastSettings['cache']??0,258))
 			{ 
 				$deletePC = true;
 				if (!class_exists('ATEC_fs')) @require('atec-fs.php');
@@ -68,11 +71,18 @@ function atec_wpca_settings_fields()
 				atec_wpca_delete_page_cache_all();
 			}
 	
-			if (empty($lastSettings) || filter_var($options['ocache']??0,258)!==filter_var($lastSettings['ocache']??0,258))
+			if ($atec_wpca_fix_cache || empty($lastSettings) || filter_var($options['ocache']??0,258)!==filter_var($lastSettings['ocache']??0,258))
 			{
 				@require(__DIR__.'/atec-wpca-set-object-cache.php'); 
 				$result = atec_wpca_set_object_cache($options);
-				if ($result!=='') add_action( 'admin_notices', function() use ($result) { echo '<div class="notice notice-warning is-dismissible">', esc_html($result), '</div>'; });
+				error_log('oc'.$result);
+
+				if ($result!=='') 
+				{
+					if (!function_exists('atec_header')) @require('atec-tools.php');	
+					atec_notice($notice, 'warning', $result);
+					update_option( 'atec_wpca_debug', $notice, false);
+				}
 				else wp_redirect(admin_url().'admin.php?page=atec_wpca');
 			}
 			

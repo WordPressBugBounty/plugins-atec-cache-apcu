@@ -42,7 +42,6 @@ function atec_wpca_page_buffer_start(): void
 		if ($arr[0]===$hash)
 		{
 			global $atec_wpca_pcache_hit; $atec_wpca_pcache_hit=true;
-			while (@ob_get_length()>0) @ob_end_flush(); 
 		    @header('X-Cache-Type: atec APCu v'.esc_attr(wp_cache_get('atec_wpca_version')));
 			@header('Content-Type: '.($isFeed?'application/rss+xml':'text/html'));		
 			if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && str_contains(sanitize_text_field(wp_unslash($_SERVER['HTTP_ACCEPT_ENCODING'])), 'gzip') && $arr[1])
@@ -70,13 +69,11 @@ function atec_wpca_page_buffer_start(): void
 			exit(200);
 		}
 	}
-	
-	
- }
+}
 
 add_action('init', function() 
 { 
-	@require(WP_CONTENT_DIR.'/plugins/atec-cache-apcu/includes/atec-cache-apcu-pcache-cb.php');
+	@require('atec-cache-apcu-pcache-cb.php');
 	ob_start(function($buffer) { return atec_wpca_page_buffer_callback($buffer); }); 
 },0);
 add_action('send_headers', 'atec_wpca_page_buffer_start',0);

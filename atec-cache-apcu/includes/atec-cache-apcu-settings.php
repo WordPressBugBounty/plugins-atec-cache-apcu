@@ -18,8 +18,15 @@ $atec_wpca_ocache = filter_var($options['ocache']??0,258);
 $atec_wpca_pcache = filter_var($options['cache']??0,258);
 $atec_wpca_advanced = defined('WP_APCU_MU_PAGE_CACHE');
 
-if ($atec_wpca_ocache!==defined('WP_APCU_KEY_SALT') || (!$atec_wpca_pcache && $atec_wpca_advanced)) 
-{ atec_error_msg('The cache settings are inconsistent, please click save to run the self-fix routine'); }
+$error = '';
+if ($atec_wpca_ocache!==defined('WP_APCU_KEY_SALT')) { $error = 'KEY_SALT is '.(defined('WP_APCU_KEY_SALT')?'defined':'not defined'); }
+elseif (!$atec_wpca_pcache && $atec_wpca_advanced) $error = 'MU_PAGE_CACHE is defined';
+
+if ($error!=='')
+{
+	atec_error_msg('The cache settings are inconsistent ('.$error.'), please click save to run the self-fix routine');
+	update_option('atec_wpca_fix_cache',true);
+}
 
 echo '	
 <div class="atec-g atec-g-50">

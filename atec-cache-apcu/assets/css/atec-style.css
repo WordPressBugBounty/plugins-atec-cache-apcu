@@ -135,7 +135,7 @@ P, .atec-box-white { font-size: 1.1em; line-height: 1.55em; }
 .atec-header H3, .atec-head H3 { margin: 0; }
 
 #wpbody-content { padding-bottom: 40px; }
-.notice { z-index: 1; margin-left: 0; padding: 0 4px 0 8px; }
+.notice { z-index: 1; margin-left: 0; padding: 0 8px; }
 
 @media only screen and (max-width: 1280px) 
 {
