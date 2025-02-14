@@ -1,9 +1,20 @@
 <?php
 if (!defined('ABSPATH')) { exit(); }
 
-function atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash)
+function atec_wpca_page_buffer_callback($buffer)
 {
+	global $atec_wpca_pcache_hit; 
+	if ($atec_wpca_pcache_hit??false) return $buffer;
 	if (($bufferLen=strlen($buffer))<1024) return $buffer;
+	
+	global $atec_wpca_pcache_params;
+	if (is_array($atec_wpca_pcache_params))
+	{
+		$suffix = $atec_wpca_pcache_params['suffix']??'';
+		$id = $atec_wpca_pcache_params['id']??'';
+		$hash = $atec_wpca_pcache_params['hash']??'';
+	}
+
     $gzip=false; $compressed=''; $debug=''; $debugLen=0;
 	global $atec_wpca_settings;
 	$key='atec_WPCA_'.($atec_wpca_settings['salt']??'').'_';
@@ -27,6 +38,7 @@ function atec_wpca_page_buffer_callback($buffer, $suffix, $id, $hash)
 	apcu_store($key.$suffix.'_'.$id,array($hash,$gzip,$gzip?$compressed:$buffer.$debug.$powered,$gzip?strlen($compressed):$bufferLen+$debugLen+96));
 	apcu_store($key.$suffix.'_h_'.$id,0);
 	unset($compressed); unset($content);
+	if (!empty($_COOKIE)) unset($_COOKIE);
 	return $buffer;
 }
 ?>

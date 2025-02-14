@@ -14,7 +14,7 @@ function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null): void
 	$pluginUrl=plugin_dir_url($dir);
 	$icon=$pluginUrl . 'assets/img/'.$menu_slug.'_icon_admin.svg';
 
-	if ($single) { add_menu_page($title, $title, 'administrator', $menu_slug, $cb , $icon); }
+	if ($single || $menu_slug==='atec_wpmc') { add_menu_page($title, $title, 'administrator', $menu_slug, $cb , $icon); }
 	else
 	{
 		global $atec_plugin_group_active;

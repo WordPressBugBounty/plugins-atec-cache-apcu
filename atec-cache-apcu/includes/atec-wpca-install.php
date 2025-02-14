@@ -11,7 +11,6 @@ add_action( 'admin_enqueue_scripts', function()
 	{
 		atec_reg_style('atec_check',__DIR__,'atec-check.min.css','1.0.003');
 		atec_reg_script('atec_check',__DIR__,'atec-check.min.js','1.0.004');
-		
 		if (str_contains(atec_query(), 'nav=Cache')) atec_reg_style('atec_cache_info',__DIR__,'atec-cache-info-style.min.css','1.0.002');
 	}
 });

@@ -9,8 +9,6 @@ public function fix_separator($str): string { return (DIRECTORY_SEPARATOR==='/')
 private function prefix($p): string { return $p==='mega-cache'?'':'atec-'; }
 public function upload_dir($p): string { return $this->fix_separator(wp_get_upload_dir()['basedir'].'/'.$this->prefix($p).$p); }
 
-//public function get_contents($path) { return $this->afs->exists($path)?$this->afs->get_contents($path):false; }		// string|false
-//public function put_contents($path,$content,$mode = false): bool { return $this->afs->put_contents($path,$content,$mode); }
 public function copy($source,$target,$overwrite=true,$mode = false): bool { return $this->afs->copy($source,$target,$overwrite,$mode); }
 //public function delete($path, $recursive = false, $type = false): bool { return $this->afs->exists($path)?$this->afs->delete($path,$recursive,$type):true; }
 public function dirlist($path, $include_hidden = true, $recursive = false) { return $this->afs->dirlist($path, $include_hidden, $recursive); }		// array|false
