@@ -230,8 +230,8 @@ P, .atec-box-white { font-size: 1.1em; line-height: 1.55em; }
 .atec-progressBar { background:rgba(0, 20, 129, 0.8); opacity: 1; height:100%; animation: atec-progress 5s linear forwards; border-radius: 3px; }
 @keyframes atec-progress { 0% { margin-left: 50%; width: 0%; opacity: 1; } 50% { margin-left: 25%; width: 50%; } 99% { margin-left: 0.5%; width: 99%; } 100% { margin-left: 0%; width: 100%; opacity:0; } }
 
-.atec-loader-dots { height: 15px; }
-.atec-loader-dots span { display: inline-block; vertical-align: middle; width: 15px; height: 15px; background: #2271b1; border-radius: 20px; animation: atec-loader-dots 1.4s infinite alternate; }
+.atec-loader-dots { height: 9px; }
+.atec-loader-dots span { display: inline-block; vertical-align: middle; width: 9px; height: 9px; background: #2271b1; border-radius: 9px; animation: atec-loader-dots 1.4s infinite alternate; }
 .atec-loader-dots span:nth-of-type(1) { animation-delay: 0.1s; }
 .atec-loader-dots span:nth-of-type(2) { animation-delay: 0.2s; }
 .atec-loader-dots span:nth-of-type(3) { animation-delay: 0.3s; }

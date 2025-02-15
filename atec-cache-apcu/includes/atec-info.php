@@ -26,7 +26,7 @@ else
 	// @codingStandardsIgnoreStart | Image is not an attachement
 	echo 
 	'<div class="atec-db atec-m-0">',
-		'<div class="atec-dilb atec-vat"><img style="height: 30px;" class="atec-vat nav-icon" src="', esc_url($iconPath), '"></div>',
+		'<div class="atec-dilb atec-vat"><img style="height: 30px;" class="atec-vat nav-icon" src="', esc_url($iconPath), '"></div>&nbsp;&nbsp;',
 		'<div class="atec-dilb atec-vat atec-fs-16 atec-bold">', esc_attr(trim($matches[2])), '</div>',
 	'</div>';
 	// @codingStandardsIgnoreEnd

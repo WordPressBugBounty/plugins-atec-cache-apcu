@@ -73,10 +73,8 @@ function atec_wpca_settings_fields()
 	
 			if ($atec_wpca_fix_cache || empty($lastSettings) || filter_var($options['ocache']??0,258)!==filter_var($lastSettings['ocache']??0,258))
 			{
-				@require(__DIR__.'/atec-wpca-set-object-cache.php'); 
+				if (!function_exists('atec_wpca_set_object_cache')) @require(__DIR__.'/atec-wpca-set-object-cache.php'); 
 				$result = atec_wpca_set_object_cache($options);
-				error_log('oc'.$result);
-
 				if ($result!=='') 
 				{
 					if (!function_exists('atec_header')) @require('atec-tools.php');	

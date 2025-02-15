@@ -206,21 +206,15 @@ function atec_nav_tab_dashboard($url, $nonce, $nav, $dir): void
 {
 	$iconPath=plugins_url('assets/img/icons/',$dir);
 	echo '
-	<h2 class="nav-tab-wrapper" style="height:33px;">
+	<h2 class="nav-tab-wrapper" style="height:30px;">
 		<div class="atec-dilb">
-			<a href="', esc_url($url), '&nav=Dashboard&_wpnonce=', esc_attr($nonce), '" class="nav-tab atec-blue', ($nav==='Dashboard'?' nav-tab-active':''), '">';
-			// @codingStandardsIgnoreStart | Image is not an attachement
-			echo '<img class="nav-icon" src="', esc_url($iconPath.'home.svg'), '">&nbsp;Dashboard';
-			// @codingStandardsIgnoreEnd
-			echo '
+			<a href="', esc_url($url), '&nav=Dashboard&_wpnonce=', esc_attr($nonce), '" class="nav-tab atec-blue', ($nav==='Dashboard'?' nav-tab-active':''), '">
+				<span class="', esc_attr(atec_dash_class('admin-home','atec-blue')), '"></span>&nbsp;Dashboard
 			</a>
 		</div>
 		<div class="atec-dilb atec-right">
-			<a href="', esc_url($url), '&nav=Info&_wpnonce=', esc_attr($nonce), '" class="nav-tab atec-mr-10', ($nav==='Info'?' nav-tab-active':''), '">';
-				// @codingStandardsIgnoreStart | Image is not an attachement
-				echo '<img class="nav-icon" style="margin-right: 0px;" src="', esc_url($iconPath.'info.svg'), '">';
-				// @codingStandardsIgnoreEnd
-			echo '
+			<a href="', esc_url($url), '&nav=Info&_wpnonce=', esc_attr($nonce), '" class="nav-tab atec-mr-10', ($nav==='Info'?' nav-tab-active':''), '">
+				<span class="', esc_attr(atec_dash_class('info','atec-blue')), '"></span>
 			</a>
 		</div>
 	</h2>';
@@ -239,6 +233,7 @@ function atec_nav_tab($url, $nonce, $nav, $arr, $break=999, $licenseOk=null, $hi
 	$iconPath = $imgPath.'icons/';
 	$mega 		= str_contains($url, 'wpmc');
 	$link			= 'https://'.($mega?'wpmegcache':'atecplugins').'.com/';
+	$dashArr 	= ['admin-home','admin-plugins','awards','admin-generic','archive','info','editor-code','editor-table','admin-comments','backup','hourglass','admin-tools','update','admin-settings','database','forms','groups'];
 	echo 
 	'<h2 class="nav-tab-wrapper" style="', esc_attr($licenseOk?'margin-top:14px; height:14px;':''), ';">';
 		$c 	= 0;
@@ -258,7 +253,12 @@ function atec_nav_tab($url, $nonce, $nav, $arr, $break=999, $licenseOk=null, $hi
 				echo '
 				<a href="', esc_url($url), '&nav=', esc_attr($nice), '&_wpnonce=', esc_attr($nonce), '" class="nav-tab ', ($active?' nav-tab-active':''), ($nice==$highlight?' atec-under':''), '">';
 					// @codingStandardsIgnoreStart | Image is not an attachement
-					if (isset($matches[2])) echo '<img class="nav-icon" src="', esc_url($iconPath.$matches[1].'.svg'), '">&nbsp;', esc_attr($matches[2]);
+					if (isset($matches[2])) 
+					{
+						if (in_array($matches[1], $dashArr)) echo '<span class="', esc_attr(atec_dash_class($matches[1],'atec-blue')), '"></span>';
+						else echo '<img class="nav-icon" src="', esc_url($iconPath.$matches[1].'.svg'), '">';
+						echo '&nbsp;', esc_attr($matches[2]);
+					}
 					else echo esc_attr(preg_replace($reg, '', $a));
 					// @codingStandardsIgnoreEnd
 				echo 
@@ -271,7 +271,7 @@ function atec_nav_tab($url, $nonce, $nav, $arr, $break=999, $licenseOk=null, $hi
 			if ($update) atec_single_nav_tab($url,$nonce,$nav,'Update',$iconPath,'update','Update');
 			if ($about) atec_single_nav_tab($url,$nonce,$nav,'About',$iconPath,'about','About');
 			if ($debug) atec_single_nav_tab($url,$nonce,$nav,'Debug',$iconPath,'bug','Debug');
-			atec_single_nav_tab($url,$nonce,$nav,'Info',$iconPath,'info','Info',10);
+			if (!str_contains($url, 'atec_group')) atec_single_nav_tab($url,$nonce,$nav,'Info',$iconPath,'info','Info',10);
 		echo '
 		</div>
 	</h2>';
@@ -435,9 +435,9 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 	<div class="atec-header">
 		<h3 class="atec-mb-0 atec-center" style="line-height: 0.85em;">';
 			// @codingStandardsIgnoreStart | Image is not an attachement
-			echo '<sub><img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.($slug==='wpmc'?'wpmc':'wpa').'_icon.svg'),'" style="height:'.($slug==='wpmc'?'20':'12').'px; '.($slug==='wpmc'?'padding-bottom:4px':'').'"></sub> ';
+			echo '<img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.($slug==='wpmc'?'wpmc':'wpa').'_icon.svg'),'" style="height:'.($slug===''?'18':'12').'px; '.($slug==='wpmc'?'padding-bottom:4px':'').'">&nbsp;';
 			if ($slug==='wpmc') echo '<span style="color:#2340b1;">Mega</span>-<span style="color:#fe5300;">Cache</span>';
-			elseif ($slug!=='') echo '<sub><img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.esc_attr($slug).'_icon.svg'),'" style="height:20px;"></sub>';
+			elseif ($slug!=='') echo '<img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.esc_attr($slug).'_icon.svg'),'" style="height:20px;">&nbsp;';
 			else echo 'atec-Plugins';
 			// @codingStandardsIgnoreEnd
 			if ($slug!=='') 

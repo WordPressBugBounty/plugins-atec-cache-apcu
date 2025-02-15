@@ -21,7 +21,7 @@ echo
 
 		global $atec_wpca_apcu_enabled;
 	
-    	$navs=array('#gear Settings','#box Cache');
+    	$navs=array('#admin-generic Settings','#archive Cache');
 		if ($atec_wpca_apcu_enabled) 
 		{
 			$navs[]='#memory APCu';

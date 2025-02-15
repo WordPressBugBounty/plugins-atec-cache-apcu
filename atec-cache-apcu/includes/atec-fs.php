@@ -6,7 +6,7 @@ class ATEC_fs {
 private $afs;
 
 public function fix_separator($str): string { return (DIRECTORY_SEPARATOR==='/')?$str:str_replace('/',DIRECTORY_SEPARATOR,$str); }
-private function prefix($p): string { return $p==='mega-cache'?'':'atec-'; }
+public function prefix($p): string { return $p==='mega-cache'?'':'atec-'; }
 public function upload_dir($p): string { return $this->fix_separator(wp_get_upload_dir()['basedir'].'/'.$this->prefix($p).$p); }
 
 public function copy($source,$target,$overwrite=true,$mode = false): bool { return $this->afs->copy($source,$target,$overwrite,$mode); }
