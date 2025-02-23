@@ -14,7 +14,7 @@ private function atec_clean_request_license($t): string { return atec_clean_requ
 private function atec_group_star_list($mega)
 {
 	echo 
-	'<div id="pro_package">
+	'<div id="pro_package" style="display: none;">
 		<div class="atec-border-white atec-bg-w atec-fit" style="font-size: 16px !important; padding: 0 20px; text-align: left; margin:0 auto;">
 			<ul class="atec-p-0">
 				<li>🎁 <strong>', $mega?'Seven additional storage options':esc_attr__('Including 32 valuable plugins','atec-cache-apcu'), '.</strong></li>
@@ -76,6 +76,7 @@ if ($integrity!=='')
 }
 
 $goupAssetPath = plugins_url('/assets/img/atec-group/',__DIR__);
+$pluginDirPath = preg_replace('/\/[\w\-]+\/$/','', plugin_dir_path(__DIR__));			
 
 if ($nav!=='License')
 {
@@ -90,10 +91,8 @@ echo
 
 	echo 
 	'<div class="atec-main">';
-		atec_progress();
-	
-		$navs=['#admin-home Dashboard','#admin-plugins Plugins Overview','#awards License'];
-		atec_nav_tab($url, $nonce, $nav, $navs);
+		atec_progress();	
+		atec_nav_tab($url, $nonce, $nav, ['#admin-home Dashboard','#admin-plugins Plugins Overview','#awards License']);
 		
 		echo 
 		'<div class="atec-g atec-border" style="padding: 20px 10px;">';
@@ -109,7 +108,7 @@ echo
 				foreach($atec_group_arr as $p)
 				{ 
 					$prefix	=	$afs->prefix($p['name']);
-					$installed = $afs->exists(WP_PLUGIN_DIR.'/'.esc_attr($prefix.$p['name']));
+					$installed = $afs->exists($pluginDirPath.'/'.esc_attr($prefix.$p['name']));
 					$essentialPlugins = ['backup','cache-apcu','cache-memcached','cache-redis','debug','deploy','developer','limit-login','login-url','optimize','profiler','stats','smtp-mail','temp-admin','webp','mega-cache'];
 					if ($installed)
 					{
@@ -117,9 +116,16 @@ echo
 						if ($active && in_array($p['name'], $essentialPlugins))
 						{
 							echo 
-							'<div class="atec-dilb atec-fit atec-vat">
-								<p class="atec-bold atec-mb-0 atec-ml-10"><img class="atec-plugin-icon" src="', esc_url($goupAssetPath.'atec_'.$p['slug'].'_icon.svg'), '" style="height: 16px;">&nbsp;', $this->atec_fix_name($p['name']).'</p>
-								<div class="atec-border atec-bg-w6" style="padding:0 0 0 10px; margin: 0 10px 0 0; order:0;">
+							'<div class="atec-dilb atec-fit atec-vat">';
+								// @codingStandardsIgnoreStart | Image is not an attachement
+								echo 
+								'<p class="atec-bold atec-mb-0 atec-ml-10">
+									<img class="atec-plugin-icon" src="', esc_url($goupAssetPath.'atec_'.$p['slug'].'_icon.svg'), '" style="height: 16px;">&nbsp;', 
+									'<a href="', esc_url(admin_url().'admin.php?page=atec_'.$p['slug']) ,'" class="atec-nodeco">', $this->atec_fix_name($p['name']), '</a>',
+								'</p>';
+								// @codingStandardsIgnoreEnd								
+								echo
+								'<div class="atec-border atec-bg-w6" style="padding:0 0 0 10px; margin: 0 10px 0 0; order:0;">
 								<hr style="border-color:white;">';
 								
 								switch ($p['name'])
@@ -202,7 +208,7 @@ echo
 										break;
 									case 'mega-cache':
 										global $atec_wpmc_settings; 
-										$this->atec_group_badge('Page-Cache',defined('MEGA_CACHE_UPLOAD') && MEGA_CACHE_UPLOAD);
+										$this->atec_group_badge('Page-Cache',filter_var($atec_wpca_settings['cache']??0,258));
 										break;
 								}
 								echo 
@@ -228,12 +234,12 @@ echo
 			
 					$atec_active			= ['cache-apcu','cache-info','database','debug','dir-scan',		'stats','system-info','web-map-service','webp','mega-cache'];
 					$atec_review			= ['backup'];	
-					$c=0;		
+					$c=0;					
 					foreach ($atec_group_arr as $a)
 					{
 						$prefix = $a['name']==='mega-cache'?'':'atec-';
 						if ($prefix==='') atec_empty_tr();
-						$installed = $afs->exists(WP_PLUGIN_DIR.'/'.esc_attr($prefix.$a['name']));
+						$installed = $afs->exists($pluginDirPath.'/'.esc_attr($prefix.$a['name']));
 						$active = $installed && is_plugin_active(esc_attr($prefix.$a['name']).'/'.esc_attr($prefix.$a['name']).'.php');
 						echo '<tr>';
 							// @codingStandardsIgnoreStart | Image is not an attachement
@@ -349,7 +355,7 @@ echo
 </div>';
 
 if ($license) @require('atec-footer.php');
-atec_reg_inline_script('group','jQuery(".atec-page").css("gridTemplateRows","45px 1fr"); jQuery(".atec-progressBar").css("background","transparent");', true);
+//atec_reg_inline_script('group','jQuery(".atec-page").css("gridTemplateRows","45px 1fr"); jQuery(".atec-progressBar").css("background","transparent");', true);
 	
 }}
 

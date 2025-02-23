@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.68
+Stable tag: 2.1.72
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,18 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.72 [2025.02.23] =
+* Flush Cache Indicator
+
+= 2.1.71 [2025.02.22] =
+* Flush alloptions
+
+= 2.1.70 [2025.02.22] =
+* wp_cache flush
+
+= 2.1.69 [2025.02.20] =
+* Remove OCache cleanup
 
 = 2.1.68 [2025.02.15] =
 * (function() {

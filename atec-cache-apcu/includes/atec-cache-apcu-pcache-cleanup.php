@@ -5,7 +5,7 @@ function atec_wpca_pcache_delete_comment($comment)
 {
 	global $atec_wpca_settings;
 	$salt=$atec_wpca_settings['salt']??'';
-	if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
+	if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
 	atec_wpca_delete_page($salt.'_p', $comment->comment_post_ID);
 }
 

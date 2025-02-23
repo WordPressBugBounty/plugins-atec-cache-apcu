@@ -12,8 +12,7 @@ function atec_wpca_set_object_cache($options)
 	$isOC			= $content && str_contains($content,'atec-apcu-object-cache');
 
 	if ($content && !$isOC) return 'Another „object-cache.php“ file exists. Please deactivate it first';
-	if (filter_var($options['ocache']??0,258)) 
-	{ if (!$afs->copy(plugin_dir_path(__DIR__).'install/object-cache.php', $targetPath, true)) return 'Object-Cache installation failed'; }
+	if (filter_var($options['ocache']??0,258)) { if (!$afs->copy(plugin_dir_path(__DIR__).'install/object-cache.php', $targetPath, true)) return 'Object-Cache installation failed'; }
 	else
 	{
 		if (!$afs->unlink($targetPath)) return 'Removing „object-cache.php“ failed';

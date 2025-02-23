@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) { exit(); }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.68
+* Version: 2.1.72
 * Requires at least:4.9
 * Tested up to: 6.7
 * Tested up to PHP: 8.4.2
@@ -24,7 +24,7 @@ function atec_wpca_settings($opt): bool { global $atec_wpca_settings; return fil
 $atec_wpca_apcu_enabled	= extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings 			= get_option('atec_WPCA_settings',[]);
 
-wp_cache_set('atec_wpca_version','2.1.68');
+wp_cache_set('atec_wpca_version','2.1.72');
 
 if (is_admin()) 
 {
@@ -97,23 +97,12 @@ if (is_admin())
 				}
 			}
 			
-			if (defined('WP_APCU_KEY_SALT'))
-			{
-				function atec_wpca_alloptions($value, $option)
-				{
-					$alloptions = wp_cache_get('alloptions','options');
-					if (isset($alloptions[$option])) wp_cache_delete('alloptions','options');
-					return $value;
-				}
-				add_action('pre_update_option', 'atec_wpca_alloptions', 10, 2);
-			}
-			
 			if ($atec_wpca_ocache || $atec_wpca_pcache)
 			{
 				function atec_wpca_delete_tag_cache($term_id, $tt_id, $taxo): void { if ($taxo==='post_tag') atec_wpca_flush_actions('tag'); }
 				function atec_wpca_flush_actions($args)
 				{
-					if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
+					if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
 					foreach((array) $args as $arg)
 					{
 						switch ($arg)
@@ -160,8 +149,7 @@ if (is_admin())
 	(function() {
 		
 		$atec_query = atec_query();
-		// @codingStandardsIgnoreStart
-		// This is not a FORM request, it is just a test, whether an options.php request is related to the plugin, thus register-settings must be loaded or otherwise can be skipped
+		// @codingStandardsIgnoreStart | This is not a FORM request, it is just a test, whether an options.php request is related to the plugin.
 		if (preg_match('/atec_wpca$|atec_wpca&settings-updated|atec_wpca&nav=Settings/', $atec_query)
 		|| (str_contains($atec_query,'wp-admin/options.php') && isset($_POST['atec_WPCA_settings'])))		
 		@require('includes/atec-cache-apcu-register_settings.php'); 

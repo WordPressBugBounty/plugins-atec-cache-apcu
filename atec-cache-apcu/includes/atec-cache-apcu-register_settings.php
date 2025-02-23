@@ -29,7 +29,8 @@ function atec_wpca_settings_fields()
 	$options			= get_option($option_group,[]);
 
 	$optName = 'atec_wpca_fix_cache';
-	$atec_wpca_fix_cache = filter_var(get_option($optName),258); delete_option($optName);
+	$atec_wpca_fix_cache = get_option($optName);
+	if ($atec_wpca_fix_cache) delete_option($optName);
 
 	$atec_wpca_ocache = filter_var($options['ocache']??0,258);
 	$atec_wpca_pcache = filter_var($options['cache']??0,258);
@@ -67,7 +68,7 @@ function atec_wpca_settings_fields()
 			
 			if ($deletePC)
 			{
-				if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');
+				if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');
 				atec_wpca_delete_page_cache_all();
 			}
 	
@@ -77,11 +78,15 @@ function atec_wpca_settings_fields()
 				$result = atec_wpca_set_object_cache($options);
 				if ($result!=='') 
 				{
-					if (!function_exists('atec_header')) @require('atec-tools.php');	
-					atec_notice($notice, 'warning', $result);
-					update_option( 'atec_wpca_debug', $notice, false);
+					$options['ocache']=0; update_option($option_group,$options); 
+					atec_new_admin_notice('warning',$result);
 				}
-				else wp_redirect(admin_url().'admin.php?page=atec_wpca');
+				else 
+				{
+					if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');
+					atec_wpca_delete_wp_cache();
+					wp_redirect(admin_url().'admin.php?page=atec_wpca');
+				}
 			}
 			
 		}

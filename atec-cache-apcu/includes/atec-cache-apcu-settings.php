@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) { exit(); }
 
 class ATEC_wpcu_settings { 
 	
-function __construct($url,$nonce) {
+function __construct($url,$nonce,$action) {
 	
 $optName='atec_WPCA_settings';
 $options=get_option($optName,[]);

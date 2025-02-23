@@ -15,6 +15,7 @@ PRE { font-family: monospace, monospace; font-size: 1em }
 SMALL { font-size: 90% }
 INPUT::placeholder { color: #bbb; }
 
+.wp-core-ui .button { min-height: 30px !important; padding: 0 8px !important; }
 BUTTON SPAN { vertical-align: middle; }
 BUTTON SPAN:nth-child(2) { display: inline-block; height: 15px; vertical-align: bottom; }
 .button { line-height: 1em !important; }
@@ -126,7 +127,7 @@ P, .atec-box-white { font-size: 1.1em; line-height: 1.55em; }
 .atec-g-100 { grid-template-columns: 1fr; }
 
 .atec-page { padding: 20px 20px 0 0; display: grid; width: auto; grid-template-areas: "header" "main"; grid-template-rows: 1fr; }
-.atec-header { grid-area: header; height: 58px; }
+.atec-header { grid-area: header; height: 65px; }
 .atec-main { grid-area: main; margin-bottom: 10px; overflow: auto; }
 .atec-footer { margin: 0 20px 0 0; color:#777; display: block; }
 .atec-footer A { text-decoration: none; }
@@ -136,6 +137,9 @@ P, .atec-box-white { font-size: 1.1em; line-height: 1.55em; }
 
 #wpbody-content { padding-bottom: 40px; }
 .notice { z-index: 1; margin-left: 0; padding: 0 8px; }
+.atec-page .notice { width: fit-content; }
+.atec-page .notice p { margin: 0.25em 0; }
+.atec-page .notice-dismiss  { padding: 0.5em; }
 
 @media only screen and (max-width: 1280px) 
 {

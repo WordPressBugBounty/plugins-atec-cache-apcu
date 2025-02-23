@@ -18,7 +18,7 @@ if ($atec_wpca_apcu_enabled)
 {    
 	if (in_array($action,['delete','deleteAll']))
 	{
-		if (!function_exists('atec_wpca_delete_wp_cache')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
+		if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
 		if ($action==='deleteAll')
 		{
 			echo '

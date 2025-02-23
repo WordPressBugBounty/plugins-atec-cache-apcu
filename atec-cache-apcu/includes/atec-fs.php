@@ -23,6 +23,7 @@ public function touch($path, $time=0, $atime=0): bool { return $this->afs->touch
 
 // @codingStandardsIgnoreStart
 public function exists($path): bool { return @file_exists($path); }		// file or directory
+// public function filectime($path) { return @file_exists($path)?@filectime($path):false; }		
 public function install($dir,$uploadDir,$arr,&$s) : void
 { foreach($arr as $key=>$value) { $s = $s && @copy(plugin_dir_path($dir).'install'.DIRECTORY_SEPARATOR.$key, $uploadDir.DIRECTORY_SEPARATOR.$value); } }
 public function is_dir($dir): bool { @is_dir($dir); }	

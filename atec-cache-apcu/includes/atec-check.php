@@ -72,7 +72,7 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 function atec_checkbox($args): void
 {
 	$option 	= get_option($args['opt-name'],[]); $field=$args['name']; 
-	$value 		= 	filter_var($option[$field]??0,258)?1:0;
+	$value 		= 	filter_var($option[$field]??0,258)?1:0; // FILTER_VALIDATE_BOOLEAN | wp_validate_boolean($option[$field]??0)?true:false;
 	echo '
 	<div class="atec-ckbx">
 		<label class="switch" for="check_', esc_attr($field), '">
