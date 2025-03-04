@@ -19,7 +19,7 @@
 .atec_checkbox_button_div { display:flex; height:30px; background: #f0f0f0; border: solid 1px #2271b1; border-radius: 3px; padding:6px 6px 2px 6px; }
 
 .atec-ckbx .switch { display: inline-block; height: 22px; position: relative; width: 44px; }
-.atec-ckbx-mini .switch { display: inline-block; height: 16px; position: relative; width: 32px; }
+.atec-ckbx-mini .switch { vertical-align: text-top; display: inline-block; height: 16px; position: relative; width: 32px; margin-top: 1px; }
 
 .atec-ckbx .switch input { display:none; }
 .atec-ckbx .slider { position: absolute; background-color: rgba(242, 95, 92, 0.75); bottom: 0; left: 0; right: 0; top: 0; transition: .4s; cursor: pointer; }

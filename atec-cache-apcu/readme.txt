@@ -1,24 +1,24 @@
 === atec Cache APCu ===
 Contributors: DocJoJo
-Tags: APCu-Object-Cache and the only APCu based page-cache plugin available.
+Tags: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
 Requires at least:4.9
 Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.72
+Stable tag: 2.1.79
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-APCu-Object-Cache and the only APCu based page-cache plugin available.
+Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
 
 == Description ==
 
 This plugin provides a super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
+
 Using an object-cache will speed up your site – APCu is the fastest cache, compared against the two other memory-based cache options Redis and Memcached.
 
-– Object caching involves storing variables and database queries thereby speeding up PHP execution times. This reduces the load on your server, and delivers content to your visitors faster.
-- Page caching refers to caching the content of a whole page on the server-side. Later when the same page is requested again, its content will be served from the cache instead of regenerating it from scratch.
+The „atec-cache-apcu“ object cache not only replaces WordPress's core cache class with a persistent alternative, delivering significant performance gains, but it also incorporates advanced methods that boost caching efficiency by up to 16.67%, optimizing your site’s performance even further.
 
 === Specifications ===
 
@@ -40,8 +40,20 @@ Privacy policy: https://atecplugins.com/privacy-policy/
 
 == Frequently Asked Questions ==
 
-- Use WP-CLI
+– What is Object caching?
+Object caching involves storing variables and database queries thereby speeding up PHP execution times. This reduces the load on your server, and delivers content to your visitors faster.
+
+– What is Page caching?
+Page caching refers to caching the content of a whole page on the server-side. Later when the same page is requested again, its content will be served from the cache instead of regenerating it from scratch.
+
+- Does the object-cache also work in WP-CLI?
 If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php.ini – otherwise object-cache will not work.
+
+- Is the page cache multisite compatibel?
+This plugin isn’t optimized for multisite environments. Since multisite setups require incorporating a blog ID — a feature not supported by this plugin — we recommend using our "mega-cache" plugin instead.
+
+- Is the page cache multi-language compatibel?
+This depends on the translation plugin being used. When translations are performed on the fly, the page or post ID remains unchanged, preventing "atec-cache-apcu" from detecting any differences. Please use our "mega-cache" plugin instead.
 
 == Screenshots ==
 
@@ -53,6 +65,27 @@ If you use WP-CLI to run .php scripts, please set "apc.enable_cli=1" in your php
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.79 [2025.03.04] =
+* Framework changes
+
+= 2.1.78 [2025.03.03] =
+* New OC install routine
+
+= 2.1.77 [2025.03.02] =
+* New OC install routine
+
+= 2.1.76 [2025.02.28] =
+* atec_wpca_oc_stats
+
+= 2.1.75 [2025.02.26] =
+* add_action(\'init\', function() { @require(\'atec-cache-apcu-pcache-cb.php\'); 
+
+= 2.1.74 [2025.02.24] =
+* Fixed callback
+
+= 2.1.73 [2025.02.23] =
+* alloptions unserialize
 
 = 2.1.72 [2025.02.23] =
 * Flush Cache Indicator

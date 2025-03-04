@@ -16,13 +16,14 @@ echo '
 
 if ($atec_wpca_apcu_enabled)
 {    
-	if (in_array($action,['delete','deleteAll']))
+	if ($action==='flush')
 	{
+		$type = atec_clean_request('type');
 		if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
-		if ($action==='deleteAll')
+		if ($type==='PCache')
 		{
 			echo '
-			<div class="notice is-dismissible">
+			<div class="notice is-dismissible atec-mb-10">
 				<p>', esc_attr__('Flushing','atec-cache-apcu'), ' PCache ... ';
 					atec_flush(); atec_wpca_delete_page_cache_all();
 					echo 
@@ -30,16 +31,16 @@ if ($atec_wpca_apcu_enabled)
 				</p>
 			</div>';
 		}
-		elseif ($action==='delete')
+		elseif ($type==='delete')
 		{
-			$id=atec_clean_request('id');
-			if ($id!=='') 
+			if (($id=atec_clean_request('id'))!=='') 
 			{
 				$ex=explode('_',$id);
 				if (isset($ex[2])) atec_wpca_delete_page($ex[0].'_'.$ex[1], $ex[2]);
 			}
 		}
 	}
+
 	if (!empty($apcu_it=class_exists('APCUIterator')?new APCUIterator():[]))
 	{
     	echo '
@@ -77,8 +78,8 @@ if ($atec_wpca_apcu_enabled)
 						if ($isCat || $isTag || $isArchive) { $ex = explode('|',$match[2]); $id = (int) $ex[0]; $page = $ex[1]; }
 						else { $id = (int) $match[2]; $page=0; }
 						$type		= $isCat?'category':($isTag?'tag':($isArchive?'archive':get_post_type($id)));
-						$title			= $isCat?get_cat_name($id):($isTag?get_tag($id)->name:($isArchive?substr($id,0,4).'/'.substr($id,4,2):get_the_title($id)));
-						$link			= $isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$siteUlr.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2,'0',STR_PAD_LEFT):get_permalink($id)));
+						$title			= $id===0?'Homepage':($isCat?get_cat_name($id):($isTag?get_tag($id)->name:($isArchive?substr($id,0,4).'/'.substr($id,4,2):get_the_title($id))));
+						$link			= $id===0?get_home_url().'/':($isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$siteUlr.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2,'0',STR_PAD_LEFT):get_permalink($id))));
 						if ($isFeed) $link.='feed/';
 						if ($page!=0) { $link=((str_contains($link, '?cat=') || str_contains($link, '?tag='))?$link.'&paged=':rtrim($link,'/').'/page/').$page; }
 						$short_url 	= preg_replace('/(^https?:\/\/)'.$reg.'/', '', $link);
@@ -93,7 +94,7 @@ if ($atec_wpca_apcu_enabled)
 							<td class="atec-nowrap">', esc_attr(size_format($entry['mem_size'])), '</td>
 							<td>', esc_html($title), '</td>
 							<td><a href="', esc_url($link), '" target="_blank">', esc_url($short_url), '</a></td>';
-							atec_create_button('delete&nav=Page_Cache','trash',true,$url,$salt.'_'.$match[1].'_'.$match[2],$nonce);
+							atec_create_button('flush&type=delete&nav=Page_Cache','trash',true,$url,$salt.'_'.$match[1].'_'.$match[2],$nonce);
 						echo '
 						</tr>';						    
 		    		}
@@ -103,7 +104,7 @@ if ($atec_wpca_apcu_enabled)
 			echo '
     		</tbody>
     	</table>';
-    	if ($c>0) atec_nav_button($url,$nonce,'deleteAll','Page_Cache','#trash '.esc_attr__('Empty page cache','atec-cache-apcu'));
+    	if ($c>0) atec_nav_button($url,$nonce,'flush&type=PCache','Page_Cache','#trash '.esc_attr__('Empty page cache','atec-cache-apcu'));
 	}
 	else { atec_error_msg(__('No page cache data available','atec-cache-apcu')); }
 }

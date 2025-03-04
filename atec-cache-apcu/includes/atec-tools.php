@@ -6,7 +6,7 @@ define('ATEC_TOOLS_INC',true); // downward comp. Feb 25, remove later
 
 function atec_get_upload_dir($p): string { return wp_get_upload_dir()['basedir'].'/'.($p==='mega-cache'?'':'atec-').$p; }
 // Replaced by ATEC_fs, used in *activation & *uninstall Feb. 25, remove later
-function atec_info($str): void { atec_badge($str,'','info'); }
+// function atec_info($str): void { atec_badge($str,'','info'); }
 // Replaced by atec_info_msg, before Feb. 25, remove later
 function atec_get_version($slug): string { return wp_cache_get('atec_'.esc_attr($slug).'_version'); }
 // Was also only used in atec_header() until Feb. 25, remove later
@@ -20,7 +20,8 @@ function atec_una($navDefault='')
 {
 	$nav = atec_clean_request('nav');
 	if ($nav==='') $nav=$navDefault;
-	return (object) array('url' => atec_get_url(), 'nonce' => wp_create_nonce(atec_nonce()), 'action' => atec_clean_request('action'), 'nav' => $nav);
+	$navs = $navDefault==='Dashboard'?['#admin-home Dashboard']:[];
+	return (object) array('url' => atec_get_url(), 'nonce' => wp_create_nonce(atec_nonce()), 'action' => atec_clean_request('action'), 'nav' => $nav, 'navs' => $navs);
 }
 
 function atec_p($txt): void { echo '<p class="atec-mb-0">', esc_html($txt), '.</p>'; }
@@ -46,11 +47,7 @@ function atec_icon($dir,$icon,$margin=15): void
 }
 
 function atec_loader_dots($c=7): void
-{
-	echo '<div class="atec-loader-dots atec-dilb">';
-	for ($i=0;$i<$c;$i++) echo '<span></span>';
-	echo '</div>';
-}
+{ echo '<div class="atec-loader-dots atec-dilb">'; for ($i=0;$i<$c;$i++) echo '<span></span>'; echo '</div>'; }
 
 function atec_check_admin_bar($slug,$url,$nonce,$nav): void
 {
@@ -71,7 +68,7 @@ function atec_little_ext_box($ext): void
 {
 	$enabled 	= extension_loaded(strtolower($ext));
 	$bg 			= $enabled?'#f0fff0':'#fff0f0';
-	echo '<span title="', esc_attr($ext), ' extension ', esc_attr($enabled?'enabled':'disabled'), '" class="atec-badge atec-dilb atec-mr-5" style="height: 28px; background:', esc_attr($bg), '"><strong>',
+	echo '<span title="', esc_attr($ext), ' extension ', esc_attr($enabled?'enabled':'disabled'), '" class="atec-badge atec-dilb atec-mr-5" style="background:', esc_attr($bg), '"><strong>',
 	esc_attr($ext), '</strong></span>';
 }
 
@@ -125,10 +122,7 @@ function atec_integrity_check_banner($dir):void
 	$link_no=str_replace('integrity=true','integrity=false',$link_yes);
 	echo '
 	<div class="atec-sticky-left" style="height:36px;" title="Allow one time connection to https://atecplugins.com on plugin activation.">
-		<div class="atec-dilb atec-fs-10">
-			Connect to atecplugins.com<br>
-			<div class="atec-fs-8" style="margin-top: -4px;">One time connection on activation.</div>
-		</div>
+		<div class="atec-dilb atec-fs-10">Connect to atecplugins.com<br><div class="atec-fs-8" style="margin-top: -4px;">One time connection on activation.</div></div>
 		<div class="atec-dilb atec-vat atec-mt-5">
 			<a style="background: rgba(0, 180, 0, 0.5); color:white !important;" class="atec-integritry atec-fs-12" href="', esc_url($link_yes), '">YES</a>
 			<a style="background: rgba(180, 0, 0, 0.5); color:white !important;" class="atec-integritry atec-fs-12" href="', esc_url($link_no), '">NO</a>
@@ -147,7 +141,7 @@ function atec_license_banner($dir): bool
 		<a class="atec-nodeco atec-', ($licenseOk?'green':'blue') ,'" href="', esc_url($link), '">';
 			atec_dash_span('awards','atec-'.($licenseOk?'green':'blue'),'margin-right: 4px;');
 			echo ($mega!==''?'<span style="font-weight:500">'.esc_attr($mega).'</span>':''),
-			($licenseOk?esc_attr__('„PRO“ version','atec-cache-apcu'):esc_attr__('Upgrade to PRO version','atec-cache-apcu')), '.',
+			($licenseOk?esc_attr__('„PRO“ version','atec-cache-apcu'):esc_attr__('Upgrade to „PRO“','atec-cache-apcu')), '.',
 		'</a>
 	</div>';
 	return $licenseOk;
@@ -175,11 +169,11 @@ function atec_pro_feature($desc='',$small=false): bool
 				echo 
 				'<div class="atec-dilb atec-blue atec-badge atec-fs-12" style="background: #f9f9ff; border: solid 1px #dde; margin: 0; padding: 4px 5px;">',
 					'<div class="atec-dilb atec-vat">'; atec_dash_span('awards','atec-blue atec-fs-14','padding-top: 2px;'); echo '</div>',
-					'<div class="atec-dilb atec-vat">Upgrade to PRO version', str_starts_with($desc,'<br>')?'.':' '; atec_br($desc); echo '.</div>',
+					'<div class="atec-dilb atec-vat">Upgrade to „PRO“', str_starts_with($desc,'<br>')?'.':' '; atec_br($desc); echo '.</div>',
 				'</div>';
 				$desc='';
 			}
-			else atec_badge('PRO feature - please upgrade','','blue');
+			else atec_badge('„PRO“ feature - please upgrade','','blue');
 		echo '
 			</a>
 		</div>';
@@ -197,7 +191,7 @@ function atec_pro_block($inline='',$more=null): void
 		<div class="atec-dilb">';
 			if ($more) { atec_br($more); echo '.<br>'; }
 			echo 
-			'<a class="atec-nodeco atec-blue" href="', esc_url($link), '">Please upgrade to PRO version<strong>', ($inline!==''?' '.esc_attr($inline):''), '</strong>.</a>';
+			'<a class="atec-nodeco atec-blue" href="', esc_url($link), '">Please upgrade to „PRO“ version<strong>', ($inline!==''?' '.esc_attr($inline):''), '</strong>.</a>';
 		echo
 		'</div>
 	</div><br>';
@@ -206,7 +200,7 @@ function atec_pro_block($inline='',$more=null): void
 function atec_pro_only($licenseOk=null): void
 { 
 	if (is_null($licenseOk)) $licenseOk=atec_check_license();
-	if (!$licenseOk)	atec_pro_block('','This is a PRO ONLY plugin.<br>A license is required to use the basic functions');
+	if (!$licenseOk)	atec_pro_block('','This is a „PRO“ ONLY plugin.<br>A license is required to use the basic functions');
 }
 
 function atec_nav_tab_dashboard($url, $nonce, $nav, $dir=''): void
@@ -216,7 +210,7 @@ function atec_single_nav_tab($url,$nonce,$nav,$actNav,$iconPath,$icon,$str,$marg
 {
 	// @codingStandardsIgnoreStart | Image is not an attachement
 	echo '<a style="margin-right: ', esc_attr($margin), 'px;" href="', esc_url($url), '&nav=', esc_attr($actNav), '&_wpnonce=', esc_attr($nonce), '" class="nav-tab', ($nav===$actNav?' nav-tab-active':''), '">';
-		if (in_array($icon,['info','update'])) echo '<span class="', esc_attr(atec_dash_class($icon,'atec-blue')), '"></span>';
+		if (in_array($icon,['info','update','code-standards'])) echo '<span class="', esc_attr(atec_dash_class($icon,'atec-blue')), '"></span>';
 		else echo '<img class="nav-icon" src="', esc_url($iconPath.$icon.'.svg'), '"> ', ($icon===strtolower($str)?'':esc_attr($str));
 	echo '</a>';
 	// @codingStandardsIgnoreEnd
@@ -224,29 +218,24 @@ function atec_single_nav_tab($url,$nonce,$nav,$actNav,$iconPath,$icon,$str,$marg
 
 function atec_nav_tab($url, $nonce, $nav, $arr, $break=999, $licenseOk=null, $highlight='', $about=false, $update=false, $debug=false): void
 {
-	$imgPath	= plugins_url('assets/img/',__DIR__);
-	$iconPath = $imgPath.'icons/';
-	$mega 		= str_contains($url, 'wpmc');
-	$link			= 'https://'.($mega?'wpmegcache':'atecplugins').'.com/';
-	$dashArr 	= ['admin-home','admin-plugins','awards','admin-generic','archive','info','editor-code','editor-table','admin-comments','backup','hourglass','admin-tools','update','admin-settings','database','forms','groups'];
+	$iconPath = plugins_url('assets/img/',__DIR__).'icons/';
+	$link			= 'https://'.(str_contains($url, 'wpmc')?'wpmegcache':'atecplugins').'.com/';
+	$dashArr 	= ['admin-home','admin-plugins','awards','admin-generic','archive','info','editor-code','editor-table','admin-comments','backup','hourglass','admin-tools','update','admin-settings','database','forms','groups','code-standards'];
+	$noPRO = (is_null($licenseOk) || !$licenseOk) && $break!==999;
 	echo 
-	'<h2 class="nav-tab-wrapper" style="', esc_attr(is_null($licenseOk) || $licenseOk?'margin-top: 2px; height:31px;':'margin-top: -5px; height:51px;'), '">';
+	'<h2 class="nav-tab-wrapper"', $noPRO?' style="margin-top: -10px;"':'', '>';
 		$c 	= 0;
 		$reg = '/#([\-|\w]+)\s(.*)/i';
 		foreach($arr as $a) 
 		{ 
 			$c++;
 			preg_match($reg, $a, $matches);
-			$nice=$matches[2]??$a;
-			$nice=str_replace([' ','.','-','/'],'_',$nice);
-			$nice=str_replace(['(',')'],'',$nice);
-			$active=$nav==$nice;		
-			$proNav=$c>$break;
+			$nice=str_replace(['(',')'],'',str_replace([' ','.','-','/'],'_',$matches[2]??$a));
 			echo 
-			'<div class="atec-dilb atec-fs-12" style="margin-right: ', $c===$break?'0.5em':'0', '">';
-				if (!is_null($licenseOk) && $licenseOk!==true) echo '<div class="atec-dilb atec-pro" style="padding-left: 10px;">', $proNav?'PRO':'', '</div><br style="line-height: 2px;">';
-				echo '
-				<a href="', esc_url($url), '&nav=', esc_attr($nice), '&_wpnonce=', esc_attr($nonce), '" class="nav-tab ', ($active?' nav-tab-active':''), ($nice==$highlight?' atec-under':''), '">';
+			'<div class="atec-dilb atec-fs-12"', $c===$break?' style="margin-right: 0.5em;"':'', '>';
+				if ($noPRO) echo '<div class="atec-db atec-pro" style="height:15px; padding-left:10px;">', $c>$break?'PRO':'&nbsp;', '</div>';
+				echo
+				'<a href="', esc_url($url.'&nav='.$nice.'&_wpnonce='.$nonce), '" class="nav-tab ', ($nav==$nice?' nav-tab-active':''), ($nice==$highlight?' atec-under':''), '">';
 					// @codingStandardsIgnoreStart | Image is not an attachement
 					if (isset($matches[2])) 
 					{
@@ -261,11 +250,10 @@ function atec_nav_tab($url, $nonce, $nav, $arr, $break=999, $licenseOk=null, $hi
 			</div>';
 		}
 		echo '
-		<div class="atec-dilb atec-right">';
-			if (!is_null($licenseOk) && $licenseOk!==true) echo '<div class="atec-dilb atec-pro"></div><br style="line-height: 2px;">';
+		<div class="atec-dilb atec-right"', $noPRO?' style="padding-top:24px;"':'', '>';
 			if ($update) atec_single_nav_tab($url,$nonce,$nav,'Update',$iconPath,'update','Update');
 			if ($about) atec_single_nav_tab($url,$nonce,$nav,'About',$iconPath,'about','About');
-			if ($debug) atec_single_nav_tab($url,$nonce,$nav,'Debug',$iconPath,'bug','Debug');
+			if ($debug) atec_single_nav_tab($url,$nonce,$nav,'Debug',$iconPath,'code-standards','Debug');
 			if (!str_contains($url, 'atec_group')) atec_single_nav_tab($url,$nonce,$nav,'Info',$iconPath,'info','Info',10);
 		echo '
 		</div>
@@ -349,7 +337,7 @@ function atec_missing_class_check($class=''): void
 		<div class="atec-dilb atec-vam">A required class-file is missing – please ';
 		if (is_plugin_active('atec-deploy/atec-deploy.php')) echo 'use <a href="', esc_url(admin_url().'admin.php?page=atec_wpdp'), '">';
 		else echo 'download/activate <a href="https://atecplugins.com/WP-Plugins/atec-deploy.zip">';
-		echo 'atec-deploy</a> to install the PRO version of this plugin.
+		echo 'atec-deploy</a> to install the „PRO“ version of this plugin.
 		</div>
 	</div>';
 }
@@ -364,10 +352,7 @@ function atec_badge($strSuccess,$strFailed,$ok,$hide=false,$nomargin=false,$bloc
 	echo 
 	'<div class="atec-badge atec-', ($block?'db':'dilb'), ' atec-fit', ($nomargin==true?' atec-mr-0':''), '"', ($md5!==''?' id="'.esc_attr($md5).'"':''), ' style="font-size: 13px !important; background:', esc_attr($bg), '">
 		<div class="atec-dc" style="width:20px; padding-right:5px;"><span class="', esc_attr(atec_dash_class($icon,$color)), '"></span></div>
-		<div class="atec-dc atec-vam" style="color: ', ($ok==='blue'?'#2271B1':($ok==='warning'?'orange':'black')), '">';
-			atec_br($ok?$strSuccess:$strFailed);
-		echo 
-		'.</div>
+		<div class="atec-dc atec-vam" style="color: ', ($ok==='blue'?'#2271B1':($ok==='warning'?'orange':'black')), '">'; atec_br($ok?$strSuccess:$strFailed); echo '.</div>
 	</div>';
 	if ($md5!=='') atec_reg_inline_script('badge', 'setTimeout(()=> { jQuery("#'.esc_attr($md5).'").slideUp(); }, 750);', true);
 }
@@ -386,18 +371,20 @@ function atec_progress_div(): void
 function atec_progress(): void { ob_start(); atec_flush(); }
 function atec_flush(): void 
 { 
-	if (@ob_get_length()>0) @ob_end_flush(); 
+	//if (@ob_get_length()>0) @ob_end_flush(); 
 	if (@ob_get_level() > 0) @ob_flush();
 	@flush(); 
 }
 
-function atec_help($id,$title,$hide=false,$margin=true): void
+function atec_info($id,$title): void { atec_help($id,$title,false,true,true); }
+
+function atec_help($id,$title,$hide=false,$margin=true,$info=false): void
 { 
 	echo '
-	<div id="', esc_attr($id), '_help_button" class="button atec-help-button" style="margin-top: ', $margin?'2':'0', 'px !important;" onclick="return showHelp(\'', esc_attr($id), '\');">';
-		atec_dash_span('editor-help','atec-orange',''); echo '&nbsp;<span style="vertical-align: bottom;">', esc_attr($title), '</span>',
+	<div id="', esc_attr($id), '_help_button" class="button atec-help-button" style="', ($info?'border-color:#ccc !important;':''), '" onclick="return showHelp(\'', esc_attr($id), '\');">';
+		atec_dash_span($info?'info':'editor-help','atec-'.($info?'lightgrey':'orange'),'vertical-align: middle;'); echo '&nbsp;<span style="padding-top: 3px; vertical-align: middle;">', esc_attr($title), '</span>',
 	'</div>';
-	atec_reg_inline_script('help', 'function showHelp(id) { jQuery("#"+id+"_help").removeClass("atec-dn").show(); jQuery("#"+id+"_help_button").remove(); return false; }');
+	atec_reg_inline_script('help', 'function showHelp(id) { jQuery("#"+id+"_help").removeClass("atec-dn").addClass("atec-db"); jQuery("#"+id+"_help_button").remove(); return false; }');
 }
 
 function atec_get_url(): string
@@ -430,10 +417,9 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 	<div class="atec-header">
 		<h3 class="atec-mb-0 atec-center" style="height: 24px; line-height: 0.85em;">';
 			// @codingStandardsIgnoreStart | Image is not an attachement
-			echo '<img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.($slug==='wpmc'?'wpmc':'wpa').'_icon.svg'),'" style="height:'.($slug===''?'20':'12').'px; '.($slug==='wpmc'?'padding-bottom:4px':'').'">&nbsp;';
+			echo '<img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.($slug==='wpmc'?'wpmc':'wpa').'_icon.svg'),'" style="margin-right: 5px; height:'.($slug===''?'20':'14').'px; '.($slug==='wpmc'?'padding-bottom:4px':'').'">';
 			if ($slug==='wpmc') echo '<span style="color:#2340b1;">Mega</span>-<span style="color:#fe5300;">Cache</span>';
-			elseif ($slug!=='') echo '<img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.esc_attr($slug).'_icon.svg'),'" style="height:20px;">&nbsp;';
-			else echo 'atec-Plugins';
+			elseif ($slug==='') echo 'atec-Plugins';
 			// @codingStandardsIgnoreEnd
 			if ($slug!=='') 
 			{
@@ -441,6 +427,7 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 				{
 					$fixName 	= str_replace(['Atec',' '],['atec','-'],ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$plugin)));
 					echo '&nbsp;', esc_html($fixName);
+					echo '<img alt="Plugin icon" src="',esc_url($imgBaseDir.'atec_'.esc_attr($slug).'_icon.svg'),'" style="margin:0 5px 0 10px; height:20px; vertical-align:bottom;">';
 				}
 				echo '<span class="atec-fs-10">&nbspv', esc_attr($ver), '</span>';
 			}
@@ -449,9 +436,7 @@ function atec_header($dir,$slug,$title,$sub_title=''): bool
 		$color='rgba(34, 113, 177, 0.33)';
 		echo '
 		<div class="atec-center atec-vat atec-mt-2">',
-			'<a class="atec-fs-12 atec-nodeco atec-btn-small atec-mt-0" style="border-color: ', esc_attr($color), ' ;" href="', esc_url($supportLink), '" target="_blank">';
-				atec_dash_span('sos'); echo '&nbsp;Plugin support',
-			'</a>';
+			'<a class="atec-fs-12 atec-nodeco atec-btn-small atec-mt-0" style="border-color: ', esc_attr($color), ' ;" href="', esc_url($supportLink), '" target="_blank">'; 	atec_dash_span('sos'); echo '&nbsp;Plugin support</a>';
 			if (in_array($slug,['wpci','wpd','wpdp','wppp']))
 			{
 				$url			= atec_get_url();
@@ -515,12 +500,12 @@ function atec_little_block_with_info($str,$arr,$class='',$buttons=[],$url='',$no
 			{ 
 				preg_match($reg, $key, $matches);
 				echo
-				'<span class="atec-dilb atec-bg-w atec-border-tiny atec-ml-10 atec-box-30">',
+				'<span class="atec-dilb atec-bg-w atec-border-tiny atec-ml-5">',
 					'<strong>'; 
 						// @codingStandardsIgnoreStart | Image is not an attachement
 						if (isset($matches[2])) echo '<img class="atec-sys-icon" src="', esc_url($iconPath.$matches[1].'.svg'), '">', esc_attr($matches[2]);
-						// @codingStandardsIgnoreEnd
 						else echo esc_attr($key);
+						// @codingStandardsIgnoreEnd
 					echo 
 					': </strong>',
 					'<span class="', esc_attr($class), '">';
@@ -545,7 +530,8 @@ function atec_little_block_with_button($str,$url,$nonce,$action,$nav,$button,$pr
 		$c=0;
 		foreach($action as $a)
 		{
-			echo '<div class="atec-dilb atec-vat', $float?' atec-right':' atec-ml-20', '">'; atec_nav_button($url,$nonce,$action[$c],$nav[$c],$button[$c],$primary[$c],$simple); echo '</div>';
+			echo 
+			'<div class="atec-dilb atec-vat', $float?' atec-right':' atec-ml-20', '">'; atec_nav_button($url,$nonce,$action[$c],$nav[$c],$button[$c],$primary[$c],$simple); echo '</div>';
 			$c++;
 		};
 	echo '

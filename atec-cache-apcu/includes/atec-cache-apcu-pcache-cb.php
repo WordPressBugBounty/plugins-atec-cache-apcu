@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) { exit(); }
 
 function atec_wpca_page_buffer_callback($buffer)
 {
-	if (($bufferLen=strlen($buffer))<1024) return $buffer;
+	if (($bufferLen = strlen($buffer))<1024) return $buffer;
 
 	global $atec_wpca_pcache_hit; 
 	if ($atec_wpca_pcache_hit??false) return $buffer;

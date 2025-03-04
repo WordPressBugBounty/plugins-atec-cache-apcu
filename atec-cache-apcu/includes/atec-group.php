@@ -15,9 +15,9 @@ private function atec_group_star_list($mega)
 {
 	echo 
 	'<div id="pro_package" style="display: none;">
-		<div class="atec-border-white atec-bg-w atec-fit" style="font-size: 16px !important; padding: 0 20px; text-align: left; margin:0 auto;">
+		<div class="atec-border-white atec-bg-w atec-fit atec-fs-16" style="padding: 0 15px; margin:0 auto;">
 			<ul class="atec-p-0">
-				<li>🎁 <strong>', $mega?'Seven additional storage options':esc_attr__('Including 32 valuable plugins','atec-cache-apcu'), '.</strong></li>
+				<li>🎁 <strong>', $mega?'Seven additional storage options':esc_attr__('Including 35 valuable plugins','atec-cache-apcu'), '.</strong></li>
 				<li style="line-height:5px;"><br></li>
 				<li>⭐ ', esc_attr__('Priority support','atec-cache-apcu'), '.</li>
 				<li>⭐ ', esc_attr__('Upgrades & updates','atec-cache-apcu'), '.</li>';
@@ -39,7 +39,6 @@ private function atec_fix_name($p) { return ucwords(str_replace(['-','apcu','web
 
 private function atec_group_badge($str,$option,$reverse=false) 
 {
-	$option = filter_var($option,258);
 	$str.=' is ';
 	if ($reverse) { $str1=$str.' OFF'; $str2=$str.' ON'; $option=!$option; }
 	else { $str1=$str.' ON'; $str2=$str.' OFF'; }
@@ -54,7 +53,7 @@ $url				= atec_get_url();
 $nonce 		= wp_create_nonce(atec_nonce());
 $action 		= atec_clean_request('action');
 $nav		 		= atec_clean_request('nav');
-if ($nav==='') $nav='Dashboard';
+if ($nav==='') $nav='All_Plugins';
 
 $atec_group_arr=[];
 require(__DIR__.'/atec-group-array.php');
@@ -86,25 +85,25 @@ if ($nav!=='License')
 
 echo 
 '<div class="atec-page">';
-	$licenseOk=atec_header(__DIR__,'','');
+	$licenseOk = atec_header(__DIR__,'','');
 	if ($integrityString!=='') { echo '<br><center>'; atec_success_msg($integrityString); echo '</center>'; }
 
 	echo 
 	'<div class="atec-main">';
 		atec_progress();	
-		atec_nav_tab($url, $nonce, $nav, ['#admin-home Dashboard','#admin-plugins Plugins Overview','#awards License']);
+		atec_nav_tab($url, $nonce, $nav, ['#admin-home Dashboard','#admin-plugins All Plugins','#awards License']);
 		
 		echo 
-		'<div class="atec-g atec-border" style="padding: 20px 10px;">';
-
+		'<div class="atec-g atec-border" style="margin-top: 31px;">';
+			atec_flush();
+			
 			if ($nav==='Dashboard')
 			{			
 				atec_little_block('Active plugins status and essential settings');
 				$activePlugins = get_option('active_plugins');
 				
 				echo 
-				'<small class="atec-mt-0">This dashboard shows the status of plugins performing some kind of background tasks – just for your convenience.</small>
-				<div class="atec-border">';
+				'<div class="atec-mb-10">';
 				foreach($atec_group_arr as $p)
 				{ 
 					$prefix	=	$afs->prefix($p['name']);
@@ -220,12 +219,10 @@ echo
 				}
 				echo 
 				'</div>
-				<div class="tablenav">';
-					atec_nav_button($url,$nonce,'_','Plugins_Overview','All atec-Plugins and features');
-				echo '
-				</div>';
+				<br class="atec-clear"><br><small class="atec-mt-0">The status of plugins performing background tasks.</small>
+				<div class="tablenav">'; atec_nav_button($url,$nonce,'_','All_Plugins','All atec-Plugins and features'); echo '</div>';
 			}
-			elseif ($nav=='Plugins_Overview')
+			elseif ($nav=='All_Plugins')
 			{
 				echo 
 				'<center>'; atec_little_block('All atec-Plugins and features'); echo '</center>
@@ -250,24 +247,22 @@ echo
 							$link=$a['wp']?'https://wordpress.org/plugins/'.$prefix.esc_attr($a['name']).'/':$atecplugins;
 							echo '
 							<td class="atec-nowrap"><a class="atec-nodeco" href="', esc_url($link) ,'" target="_blank">', esc_attr($this->atec_fix_name($a['name'])), '</a></td>';
-							if ($a['wp']) echo '
-								<td><a class="atec-nodeco" title="WordPress Playground" href="https://playground.wordpress.net/?plugin=', esc_attr($prefix.$a['name']), '&blueprint-url=https://wordpress.org/plugins/wp-json/plugins/v1/plugin/', esc_attr($prefix.$a['name']), '/blueprint.json" target="_blank"><span class="',esc_attr(atec_dash_class('welcome-view-site')), '"></span></a></td>';
+							if ($a['wp']) echo '<td><a class="atec-nodeco" title="WordPress Playground" href="https://playground.wordpress.net/?plugin=', esc_attr($prefix.$a['name']), '&blueprint-url=https://wordpress.org/plugins/wp-json/plugins/v1/plugin/', esc_attr($prefix.$a['name']), '/blueprint.json" target="_blank"><span class="',esc_attr(atec_dash_class('welcome-view-site')), '"></span></a></td>';
 							else 
 							{
 								$inReview=in_array($a['name'], $atec_review);
 								echo 
-								'<td>
-									<span title="', $inReview?esc_attr__('In review','atec-cache-apcu'):esc_attr__('In progress','atec-cache-apcu'), '"><span class="',esc_attr(atec_dash_class($inReview?'visibility':'')) ,'"></span>
-								</td>';
+								'<td><span title="', $inReview?esc_attr__('In review','atec-cache-apcu'):esc_attr__('In progress','atec-cache-apcu'), '"><span class="',esc_attr(atec_dash_class($inReview?'visibility':'')) ,'"></span></td>';
 							}
-							echo '<td>', $a['multi']?'<span class="'.esc_attr(atec_dash_class('yes')).'"></span>':'', '</td>';
+							echo 
+							'<td>', $a['multi']?'<span class="'.esc_attr(atec_dash_class('yes')).'"></span>':'', '</td>';
 							if ($installed) echo '<td title="Installed', ($active?' and active':''), '"><span class="',esc_attr(atec_dash_class(($active?'plugins-checked':'admin-plugins'), 'atec-'.($active?'green':'grey'))), '"></span></td>';
+							elseif ($a['pro']==='„PRO“ only' && !$licenseOk) echo '<td><span class="atec-grey ',esc_attr(atec_dash_class('dismiss')), '"></span></td>';
 							else echo '
-							<td>
-								<a title="Download from atecplugins.com" class="atec-nodeco atec-vam button button-secondary" style="padding: 0px 4px;" target="_blank" href="', esc_url($atecplugins), 'WP-Plugins/atec-', esc_attr($a['name']), '.zip" download><span style="padding-top: 4px;" class="', esc_attr(atec_dash_class('download','')), '"></span></a></td>';
+							<td><a title="Download from atecplugins.com" class="atec-nodeco atec-vam button button-secondary" style="padding: 0px 4px;" target="_blank" href="', esc_url($atecplugins), 'WP-Plugins/atec-', esc_attr($a['name']), '.zip" download><span style="padding-top: 4px;" class="', esc_attr(atec_dash_class('download','')), '"></span></a></td>';
 							echo '
-							<td>',esc_attr($a['desc']),'</td>
-							<td><small>',esc_attr($a['pro']),'</small></td>
+							<td>', esc_attr($a['desc']), '</td>
+							<td><small ', ($a['pro']==='„PRO“ only'?' class="atec-bold"':''), '>', esc_attr($a['pro']), '</small></td>
 							</tr>';
 						$c++;
 					} 
@@ -278,7 +273,7 @@ echo
 				<center>
 					<p class="atec-fs-12" style="max-width:80%;">',
 						esc_attr__('All our plugins are optimized for speed, size and CPU footprint with an average of only 1 ms CPU time','atec-cache-apcu'), '.<br>',
-						esc_attr__('Also, they share the same „atec-WP-plugin“ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.	<br>',
+						esc_attr__('Also, they share the same „atec-WP-plugin“ framework. Shared code will only load once across multiple plugins','atec-cache-apcu'), '.<br>',
 						esc_attr__('Tested with','atec-cache-apcu'), ': Linux (CloudLinux, Debian, Ubuntu), Windows & Mac-OS, Apache, NGINX & LiteSpeed.
 					</p>
 					<a class="atec-nodeco" class="atec-center" href="https://de.wordpress.org/plugins/search/atec/" target="_blank"><button class="button">', esc_attr__('Visit atec-plugins in the WordPress directory','atec-cache-apcu'), '.</button></a>
@@ -354,9 +349,9 @@ echo
 	</div>
 </div>';
 
-if ($license) @require('atec-footer.php');
-//atec_reg_inline_script('group','jQuery(".atec-page").css("gridTemplateRows","45px 1fr"); jQuery(".atec-progressBar").css("background","transparent");', true);
-	
+@require('atec-footer.php');
+
+
 }}
 
 new ATEC_group();

@@ -13,12 +13,20 @@ if ($wp_apcu_key_salt_exists) $arr['APCU salt (*)']=WP_APCU_KEY_SALT;
 
 if ($action==='deleteAll')
 {
-	if ($wp_apcu_key_salt_exists && class_exists('APCUIterator')) 
-	{
-		$apcu_it=new APCUIterator('/'.WP_APCU_KEY_SALT.'/');
-		if (iterator_count($apcu_it)!==0)
-		{ foreach ($apcu_it as $entry) { apcu_delete($entry['key']); } }
-	}
+	echo '
+	<div class="notice is-dismissible atec-mb-10">
+		<p>', esc_attr__('Flushing','atec-cache-apcu'), ' APCu ', esc_attr__('Cache','atec-cache-apcu') ,' ... ';
+
+		if ($wp_apcu_key_salt_exists && class_exists('APCUIterator')) 
+		{
+			$apcu_it=new APCUIterator('/'.WP_APCU_KEY_SALT.'/');
+			if (iterator_count($apcu_it)!==0)
+			{ foreach ($apcu_it as $entry) { apcu_delete($entry['key']); } }
+		}
+	
+		echo '<span class="atec-green">', esc_attr__('successful','atec-cache-apcu'), '</span>.
+		</p>
+	</div>';
 }
 elseif ($action==='delete')
 {
@@ -67,7 +75,7 @@ echo '
 			else { atec_error_msg(__('WP APCu Cache is empty','atec-cache-apcu')); echo '<br><br>'; }
 		}
 			
-		atec_little_block(__('Other persistent','atec-cache-apcu').' APCu '.__('Object-Cache','atec-cache-apcu'));
+		atec_little_block(__('Other persistent','atec-cache-apcu').' APCu '.__('Cache','atec-cache-apcu'));
 		atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Hits','atec-cache-apcu'),__('Size','atec-cache-apcu'),__('Value','atec-cache-apcu')]);
 			$salt = $wp_apcu_key_salt_exists?WP_APCU_KEY_SALT:'TEMP_KEY_SALT';
 			$c=0; $total=0;

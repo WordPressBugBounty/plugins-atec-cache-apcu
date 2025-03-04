@@ -7,8 +7,20 @@ function atec_nonce(): string { return atec_get_slug().'_nonce'; }
 function atec_get_slug(): string { preg_match('/\?page=([\w_]+)/', atec_query(), $match); return $match[1] ?? ''; }
 function atec_group_page($dir): void { if (!class_exists('ATEC_group')) @require(plugin_dir_path($dir).'includes/atec-group.php'); } 
 
-function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null): void
+function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null)
 { 
+	global $atec_cuc_cache;
+	if (empty($atec_cuc_cache))
+	{
+		$atec_cuc_cache=[];
+		$atec_cuc_cache['edit_posts']=current_user_can('edit_posts');
+		$atec_cuc_cache['edit_pages']=current_user_can('edit_pages');
+		$atec_cuc_cache['manage_options']=current_user_can('manage_options');		
+	}
+	
+	if (in_array($menu_slug,['atec_wpc','atec_wpdpp','atec_wpm','atec_wppo'])) { if (!($atec_cuc_cache['edit_posts'] || $atec_cuc_cache['edit_pages'])) return false; }
+	elseif (!$atec_cuc_cache['manage_options']) return false;
+	
 	if ($cb==null) { $cb=$menu_slug; }
 
 	$pluginUrl=plugin_dir_url($dir);
@@ -30,6 +42,7 @@ function atec_wp_menu($dir,$menu_slug,$title,$single=false,$cb=null): void
 		add_submenu_page($group_slug, $title, '<img src="'.esc_url($icon).'">&nbsp;'.$title, 'administrator', $menu_slug, $cb );
 		// @codingStandardsIgnoreEnd
 	}
+	return true;
 }
 
 function atec_admin_debug($name,$slug): void
@@ -45,5 +58,6 @@ function atec_admin_notice($type,$message,$hide=false): void
 	echo '<div ', ($hide?'id="'.esc_attr($hash).'" ':''), 'class="notice notice-',esc_attr($type),' is-dismissible"><p>',esc_attr($message),'</p></div>'; 
 	if ($hide) atec_reg_inline_script('admin_notice', 'setTimeout(()=> { jQuery("#'.esc_attr($hash).'").slideUp(); }, 10000);', true);
 }
+
 function atec_new_admin_notice($type,$message): void { add_action('admin_notices', function() use ( $type, $message ) { atec_admin_notice($type,$message); }); }
 ?>
