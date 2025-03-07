@@ -41,9 +41,9 @@ function atec_wpca_page_buffer_callback($buffer)
 		</script>';
 		$debugLen=strlen($debug);
 	}
-	$powered='<a style="font-size:0; margin:0;" href="https://atecplugins.com/">Powered by atecplugins.com</a>'; // 96
+	$powered='<a style="font-size:0; margin:0; color:transparent;" href="https://atecplugins.com/">Powered by atecplugins.com</a>';
 	if (function_exists('gzencode')) { $compressed = gzencode($buffer.$debug.$powered); $gzip=true; }
-	apcu_store($key.$suffix.'_'.$id,array($hash,$gzip,$gzip?$compressed:$buffer.$debug.$powered,$gzip?strlen($compressed):$bufferLen+$debugLen+96));
+	apcu_store($key.$suffix.'_'.$id,array($hash,$gzip,$gzip?$compressed:$buffer.$debug.$powered,$gzip?strlen($compressed):$bufferLen+$debugLen+115));
 	apcu_store($key.$suffix.'_h_'.$id,0);
 	unset($compressed); unset($content);
 	if (!empty($_COOKIE)) unset($_COOKIE);

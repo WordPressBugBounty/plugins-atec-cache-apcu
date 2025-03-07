@@ -5,8 +5,8 @@ class ATEC_info { function __construct($dir,$url=null,$nonce=null) {
 
 if (!class_exists('ATEC_fs')) @require('atec-fs.php');
 
-$iconPath 		= plugins_url('assets/img/atec-group/',__DIR__).atec_get_slug().'_icon.svg';
-$readme = (new ATEC_fs)->get(plugin_dir_path($dir).'readme.txt');
+$iconPath = plugins_url('assets/img/atec-group/',$dir).atec_get_slug().'_icon.svg';
+$readme 	= (new ATEC_fs)->get(plugin_dir_path($dir).'readme.txt');
 
 atec_little_block('Info'); 
 

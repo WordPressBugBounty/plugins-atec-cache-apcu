@@ -8,7 +8,7 @@ class ATEC_wpc_tools
 		$id1=uniqid();
 		$id2=uniqid();
 		echo '
-		<div class="atec-db atec-border ac_percent_block">
+		<div class="atec-db atec-border ac_percent_block" style="background: #f0f0f0;">
 			<div class="atec-dilb atec-fs-12">', esc_attr__('Hitrate','atec-cache-apcu'), '</div>
 			<div class="atec-dilb atec-right atec-fs-12">', esc_attr(round($hits,1)), '%</div>
 			<br>

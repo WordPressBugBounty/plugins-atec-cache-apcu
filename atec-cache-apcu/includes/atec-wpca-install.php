@@ -4,7 +4,7 @@ if (!function_exists('atec_header')) @require(__DIR__.'/atec-tools.php');
 
 add_action( 'admin_enqueue_scripts', function() 
 { 
-	atec_reg_style('atec',__DIR__,'atec-style.min.css','1.0.008');
+	atec_reg_style('atec',__DIR__,'atec-style.min.css','1.0.009');
 	
 	global $atec_active_slug;
 	if ($atec_active_slug!=='atec_group')

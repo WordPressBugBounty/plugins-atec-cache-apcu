@@ -1,8 +1,8 @@
-.tablenav { margin: 0; padding-top: 0; height: auto !important; }
-.tablenav .atec-ckbx label { margin: -4px 0 2px 4px !important; }
-.tablenav .alignleft { margin: 0 10px 5px 0; }
-.tablenav .alignleft:first-child { margin-left: 0px; }
-.tablenav .alignleft:last-child { margin-right: 0px; }
+.atec-main .tablenav { margin: 0; padding: 0; height: auto !important; }
+.atec-main .tablenav .atec-ckbx label { margin: -4px 0 2px 4px !important; }
+.atec-main .tablenav .alignleft { margin: 0 10px 5px 0; }
+.atec-main .tablenav .alignleft:first-child { margin-left: 0px; }
+.atec-main .tablenav .alignleft:last-child { margin-right: 0px; }
 
 .atec-form .form-table .remark { display: inline-block; font-size: 0.9em; font-weight: 400; padding-top: 5px; width: fit-content; }
 .atec-form .form-table { border:solid 1px #d0d0d0 !important; margin-bottom: 20px; width: auto; background: rgba(255, 255, 255, 0.6) !important; }

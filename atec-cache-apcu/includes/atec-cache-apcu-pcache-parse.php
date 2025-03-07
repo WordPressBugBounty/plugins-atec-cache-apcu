@@ -44,12 +44,12 @@ function atec_wpca_pcache_parse($wp_query)
 		if (is_home()) { $id = 0; $suffix='a'; }
 		else
 		{
-			$isPP = in_array($wp_query->post->post_type,['page','post']);
+			$isPP = in_array(($wp_query->post->post_type??''),['page','post']);
 			if (!$isPP) return 'INVALID_TYPE';
 			$id = $wp_query->post->ID;
 			$suffix	= 'p';
 		}
-		$hash = $wp_query->post->post_modified;
+		$hash = $wp_query->post->post_modified??'';
 		if (empty($hash)) return 'NO_TIME';
 	}
 	

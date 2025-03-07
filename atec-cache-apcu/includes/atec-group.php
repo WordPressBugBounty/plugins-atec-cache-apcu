@@ -207,7 +207,7 @@ echo
 										break;
 									case 'mega-cache':
 										global $atec_wpmc_settings; 
-										$this->atec_group_badge('Page-Cache',filter_var($atec_wpca_settings['cache']??0,258));
+										$this->atec_group_badge('Page-Cache',filter_var($atec_wpmc_settings['cache']??0,258));
 										break;
 								}
 								echo 

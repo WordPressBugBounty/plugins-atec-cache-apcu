@@ -140,8 +140,7 @@ function atec_license_banner($dir): bool
 	<div class="atec-sticky-right">
 		<a class="atec-nodeco atec-', ($licenseOk?'green':'blue') ,'" href="', esc_url($link), '">';
 			atec_dash_span('awards','atec-'.($licenseOk?'green':'blue'),'margin-right: 4px;');
-			echo ($mega!==''?'<span style="font-weight:500">'.esc_attr($mega).'</span>':''),
-			($licenseOk?esc_attr__('„PRO“ version','atec-cache-apcu'):esc_attr__('Upgrade to „PRO“','atec-cache-apcu')), '.',
+			echo ($licenseOk?esc_attr__('„PRO“ version','atec-cache-apcu'):esc_attr__('Upgrade to „PRO“','atec-cache-apcu')), '.',
 		'</a>
 	</div>';
 	return $licenseOk;
@@ -155,9 +154,9 @@ function atec_br($str) : void
 	foreach ($ex as $t) { $c++; echo esc_html($t), ($c<count($ex)?'<br>':''); }
 }
 
-function atec_pro_feature($desc='',$small=false): bool
+function atec_pro_feature($desc='',$small=false, $licenseOk=null): bool
 { 
-	$licenseOk=atec_check_license()===true; 
+	if (is_null($licenseOk)) $licenseOk=atec_check_license()===true; 
 	if (!$licenseOk) 
 	{ 
 		$link=get_admin_url().'admin.php?page=atec_group&license=true&_wpnonce='.esc_attr(wp_create_nonce('atec_license_nonce'));
@@ -177,7 +176,7 @@ function atec_pro_feature($desc='',$small=false): bool
 		echo '
 			</a>
 		</div>';
-		if ($desc!=='') { echo '<br><div class="atec-pro-box" style="background: #f9f9ff;"><h4 class="atec-fs-14 atec-mt-0">'; atec_br($desc); echo '.'; echo '</h4></div>'; 	}
+		if ($desc!=='') { echo '<br><div class="atec-pro-box"><h4>'; atec_br($desc); echo '.'; echo '</h4></div>'; 	}
 	}
 	return $licenseOk; 
 }
@@ -186,21 +185,22 @@ function atec_pro_block($inline='',$more=null): void
 {
 	$link=get_admin_url().'admin.php?page=atec_group&license=true&_wpnonce='.esc_attr(wp_create_nonce('atec_license_nonce'));
 	echo '
-	<div class="atec-dilb atec-pro-box" style="background: #f9f9ff; padding:2px 4px 2px 2px;">
-		<div class="atec-dilb atec-vat">'; atec_dash_span('awards','atec-blue atec-fs-14','padding-top: 2px;'); echo '</div>
-		<div class="atec-dilb">';
+	<div class="atec-df atec-pro-box">',
+		'<div class="atec-df1 atec-vat" style="max-width: 22px;">'; atec_dash_span('awards','atec-blue atec-fs-14','padding-top: 2px;'); echo '</div>',
+		'<div class="atec-df1 atec-vat atec-nowrap">';
 			if ($more) { atec_br($more); echo '.<br>'; }
 			echo 
 			'<a class="atec-nodeco atec-blue" href="', esc_url($link), '">Please upgrade to „PRO“ version<strong>', ($inline!==''?' '.esc_attr($inline):''), '</strong>.</a>';
 		echo
-		'</div>
-	</div><br>';
+		'</div>',
+	'</div><br>';
 }
 
-function atec_pro_only($licenseOk=null): void
+function atec_pro_only($licenseOk=null): bool
 { 
 	if (is_null($licenseOk)) $licenseOk=atec_check_license();
 	if (!$licenseOk)	atec_pro_block('','This is a „PRO“ ONLY plugin.<br>A license is required to use the basic functions');
+	return $licenseOk;
 }
 
 function atec_nav_tab_dashboard($url, $nonce, $nav, $dir=''): void
