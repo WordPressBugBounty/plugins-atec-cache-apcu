@@ -262,7 +262,7 @@ echo
 							<td><a title="Download from atecplugins.com" class="atec-nodeco atec-vam button button-secondary" style="padding: 0px 4px;" target="_blank" href="', esc_url($atecplugins), 'WP-Plugins/atec-', esc_attr($a['name']), '.zip" download><span style="padding-top: 4px;" class="', esc_attr(atec_dash_class('download','')), '"></span></a></td>';
 							echo '
 							<td>', esc_attr($a['desc']), '</td>
-							<td><small ', ($a['pro']==='„PRO“ only'?' class="atec-bold"':''), '>', esc_attr($a['pro']), '</small></td>
+							<td><small ', ($a['pro']==='„PRO“ only'?' class="atec-bold" style="color:#fd5201;"':''), '>', esc_attr($a['pro']), '</small></td>
 							</tr>';
 						$c++;
 					} 

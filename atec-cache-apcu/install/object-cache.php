@@ -3,7 +3,7 @@
 * Plugin Name:  atec APCu Object-Cache
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object Cache
-* Version: 1.0.12
+* Version: 1.0.16
 * Requires at least:4.9
 * Tested up to: 6.7
 * Tested up to PHP: 8.4.2
@@ -18,7 +18,7 @@
 */
 
 if (!defined('ABSPATH')) { exit(); }
-define('ATEC_APCU_OC_VERSION','1.0.12');
+define('ATEC_APCU_OC_VERSION','1.0.16');
 
 function wp_cache_init() { $GLOBALS['wp_object_cache'] = WP_Object_Cache::instance(); }
 function wp_cache_add($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->add($key, $data, $group, (int) $expire); }
@@ -212,11 +212,14 @@ class WP_Object_Cache
 		foreach ($keys as $key) { $values[$key] = $this->get($key, $group, $force); }
 		return $values;
 	}
+	
+	private 	function can_unserialize($v) 	{ return is_string($v) && preg_match('/^a:\d+:\{.*\}$/s', $v) && !preg_match('/[;}O]:\d+:"[^"]+"/s', $v); }
 
 	public function set($key, $var, $group = 'default', $expire = 0)
 	{   
 		if (!(is_int($key) || (is_string($key) && trim($key)!==''))) return false;
-		if ($key==='alloptions') { foreach($var as $k=>$v) { if (gettype($v)==='string' && preg_match('/a\:[\d]+\:{/',$v)) $var[$k]=unserialize($v); } }
+		if ($key==='alloptions') { foreach($var as $k=>$v) { if ($this->can_unserialize($v)) $var[$k]=unserialize($v); } }
+		elseif ($this->can_unserialize($var)) $var=unserialize($var);
 		$key = $this->build_key($key, $group);
 		$this->cache_sets++;
 		return isset($this->np_groups[$group]) ? $this->set_np($key, $var) : $this->set_p($key, $var, $expire);

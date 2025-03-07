@@ -371,7 +371,6 @@ function atec_progress_div(): void
 function atec_progress(): void { ob_start(); atec_flush(); }
 function atec_flush(): void 
 { 
-	//if (@ob_get_length()>0) @ob_end_flush(); 
 	if (@ob_get_level() > 0) @ob_flush();
 	@flush(); 
 }
@@ -488,11 +487,13 @@ function atec_little_block_with_info($str,$arr,$class='',$buttons=[],$url='',$no
 		if (!empty($buttons)) 
 			foreach ($buttons as $b)
 			{ 
-				echo '<div class="atec-dilb atec-mr-10 atec-vat">';
+				echo 
+				'<div class="atec-dilb atec-mr-10 atec-vat">';
 				$lower=strtolower($b);
 				if ($lower!==$b) atec_nav_button_confirm($url,$nonce,$lower,$nav,$lower==='update'?'Reload':'Delete');
 				else atec_nav_button($url,$nonce,$lower,$nav,$lower==='update'?'Reload':'Delete'); 
-				echo '</div>'; 
+				echo 
+				'</div>'; 
 			}
 		echo '
 		<div class="atec-dilb ', $right?'atec-right':'', '">';

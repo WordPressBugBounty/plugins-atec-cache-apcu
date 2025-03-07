@@ -31,10 +31,11 @@ if ($atec_active_slug!=='atec_group')
 	
 if (defined('WP_APCU_KEY_SALT')) 
 { 
-	if (!defined('ATEC_APCU_OC_VERSION') || ATEC_APCU_OC_VERSION!=='1.0.12')
+	if (!defined('ATEC_APCU_OC_VERSION') || ATEC_APCU_OC_VERSION!=='1.0.16')
 	{
 		@require(__DIR__.'/atec-wpca-set-object-cache.php'); 
 		atec_wpca_set_object_cache($atec_wpca_settings);
+		wp_cache_delete('alloptions','options');
 	}
 	
 	if (!$atec_wpca_apcu_enabled) 

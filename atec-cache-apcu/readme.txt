@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.80
+Stable tag: 2.1.82
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,12 @@ This depends on the translation plugin being used. When translations are perform
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.82 [2025.03.07] =
+* define(\'ATEC_APCU_OC_VERSION\',\'1.0.16\');
+
+= 2.1.81 [2025.03.07] =
+* Fixed object caching (unserialize)
 
 = 2.1.80 [2025.03.07] =
 * Fixed post_type
