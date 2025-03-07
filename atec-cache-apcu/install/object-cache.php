@@ -3,7 +3,7 @@
 * Plugin Name:  atec APCu Object-Cache
 * Plugin URI: https://atecplugins.com/
 * Description: APCu Object Cache
-* Version: 1.0.16
+* Version: 1.0.21
 * Requires at least:4.9
 * Tested up to: 6.7
 * Tested up to PHP: 8.4.2
@@ -18,7 +18,7 @@
 */
 
 if (!defined('ABSPATH')) { exit(); }
-define('ATEC_APCU_OC_VERSION','1.0.16');
+define('ATEC_APCU_OC_VERSION','1.0.21');
 
 function wp_cache_init() { $GLOBALS['wp_object_cache'] = WP_Object_Cache::instance(); }
 function wp_cache_add($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->add($key, $data, $group, (int) $expire); }

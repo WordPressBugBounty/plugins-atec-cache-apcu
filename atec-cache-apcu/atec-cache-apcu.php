@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) { exit(); }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.82
+* Version: 2.1.84
 * Requires at least:4.9
 * Tested up to: 6.7
 * Tested up to PHP: 8.4.2
@@ -24,7 +24,7 @@ function atec_wpca_settings($opt): bool { global $atec_wpca_settings; return fil
 $atec_wpca_apcu_enabled	= extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings 	= get_option('atec_WPCA_settings',[]);
 
-wp_cache_set('atec_wpca_version','2.1.82');
+wp_cache_set('atec_wpca_version','2.1.84');
 
 if (is_admin()) 
 {
@@ -169,17 +169,26 @@ else // not is_admin
 
 if ($atec_wpca_apcu_enabled && atec_wpca_settings('cache')) { @require(__DIR__.'/includes/atec-cache-apcu-pcache-cleanup.php'); }
 
-if (defined('WP_APCU_KEY_SALT') && function_exists('wp_cache_wpc_counts'))
+if (defined('WP_APCU_KEY_SALT'))
 {	
-	function atec_wpca_oc_stats() 
+	if (!defined('ATEC_APCU_OC_VERSION') || ATEC_APCU_OC_VERSION!=='1.0.21')
 	{
-		$key = WP_APCU_KEY_SALT.':atec_wpca_oc_stats';
-		$stats = apcu_fetch($key);
-		$current = wp_cache_wpc_counts();
-		if (!$stats) { $stats = $current; $stats['count']=1; $stats['ts']=time(); }
-		else { $stats['count']++; $stats['hits']+=$current['hits']; $stats['misses']+=$current['misses']; $stats['sets']+=$current['sets']; }
-		apcu_store($key, $stats);
+		@require(__DIR__.'/includes/atec-wpca-set-object-cache.php'); 
+		atec_wpca_set_object_cache(array('ocache'=>true));
 	}
-	register_shutdown_function('atec_wpca_oc_stats');
+
+	if (function_exists('wp_cache_wpc_counts'))
+	{
+		function atec_wpca_oc_stats() 
+		{
+			$key = WP_APCU_KEY_SALT.':atec_wpca_oc_stats';
+			$stats = apcu_fetch($key);
+			$current = wp_cache_wpc_counts();
+			if (!$stats) { $stats = $current; $stats['count']=1; $stats['ts']=time(); }
+			else { $stats['count']++; $stats['hits']+=$current['hits']; $stats['misses']+=$current['misses']; $stats['sets']+=$current['sets']; }
+			apcu_store($key, $stats);
+		}
+		register_shutdown_function('atec_wpca_oc_stats');
+	}
 }
 ?>
