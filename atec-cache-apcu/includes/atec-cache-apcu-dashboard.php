@@ -91,7 +91,7 @@ echo
 
 							<div class="atec-border-white atec-dilb atec-fit atec-vat atec-mr-10">
 								<h4>WP ', esc_attr__('Object Cache','atec-cache-apcu'), ' '; atec_enabled($wp_enabled);
-									echo ($wp_enabled?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right atec-ml-20 button" id="WP_Ocache_flush" href="'.esc_url($url).'&action=flush&type=WP_Ocache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span><span>'.esc_attr__('Site','atec-cache-apcu').'</span></a>':''),
+									echo ($wp_enabled?' <a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class=" atec-float-right atec-ml-20 button" style="margin-top: -5px;" id="WP_Ocache_flush" href="'.esc_url($url).'&action=flush&type=WP_Ocache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span><span>'.esc_attr__('Site','atec-cache-apcu').'</span></a>':''),
 								'</h4><hr>';
 								if ($wp_enabled) { @require(__DIR__.'/atec-WPC-info.php'); new ATEC_WPcache_info($wpc_tools); }
 							echo '
@@ -99,7 +99,7 @@ echo
 							
 							<div class="atec-border-white atec-dilb atec-fit atec-vat">
 								<h4>APCu Cache'; atec_enabled($atec_wpca_apcu_enabled);
-								echo ($atec_wpca_apcu_enabled?'<a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class="atec-right atec-ml-20 button" id="APCu_flush" href="'.esc_url($url).'&action=flush&type=APCu_Cache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span><span>'.esc_attr__('Site','atec-cache-apcu').'</span></a>':''),
+								echo ($atec_wpca_apcu_enabled?'<a title="'.esc_attr__('Empty cache','atec-cache-apcu').'" class=" atec-float-right atec-ml-20 button" style="margin-top: -5px;" id="APCu_flush" href="'.esc_url($url).'&action=flush&type=APCu_Cache&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span><span>'.esc_attr__('Site','atec-cache-apcu').'</span></a>':''),
 								'</h4><hr>';
 								if ($atec_wpca_apcu_enabled) { @require(__DIR__.'/atec-APCu-info.php'); new ATEC_APCu_info($wpc_tools); }
 								else 
@@ -118,7 +118,7 @@ echo
 							'<div>
 							
 								<div class="atec-border-white atec-dilb atec-fit atec-vat">
-								<h4>WP OC Overall Statistics<a title="'.esc_attr__('Reset statistics','atec-cache-apcu').'" class="atec-right atec-ml-20 button" href="'.esc_url($url).'&action=flush&type=OC_Stats&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span></a></h4><hr>';
+								<h4>WP OC Overall Statistics<a title="'.esc_attr__('Reset statistics','atec-cache-apcu').'" class=" atec-float-right atec-ml-20 button" style="margin-top: -5px;" href="'.esc_url($url).'&action=flush&type=OC_Stats&nav=Cache&_wpnonce='.esc_attr($nonce).'"><span class="'.esc_attr(atec_dash_class('trash')).'"></span></a></h4><hr>';
 								
 								$diff 		= time()-($ts = $stats['ts']??0);
 								$dayFrac	= $diff/86400;

@@ -27,10 +27,10 @@ function atec_button_confirm($url,$nav,$nonce,$action,$dash='trash'): void
 {
 	echo '
 	<td>
-		<div class="alignleft atec-btn-bg" style="background: #f0f0f0; min-width:35px; white-space: nowrap;">
+		<div class="atec-float-left atec-btn-bg" style="background: #f9f9f9; min-width:35px; white-space: nowrap;">
 			<input title="Confirm action" type="checkbox" onchange="const $btn=jQuery(this).parent().find(\'button\'); $btn.prop(\'disabled\',!$btn.prop(\'disabled\'));">
 			<a href="', esc_url($url), '&action=', esc_attr($action), '&nav=', esc_attr($nav), '&_wpnonce=', esc_attr($nonce),'">
-				<button style="padding: 0; margin:0; background:#f0f0f0 !important; border:none; line-height: 20px !important; min-height:20px !important;" disabled="true" class="button button-secondary"><span style="padding:0px;" class="'.esc_attr(atec_dash_class($dash)).'"></span></button>
+				<button style="padding: 0; margin:0px; background:#f9f9f9; border:none; line-height: 20px !important; min-height:20px !important;" disabled="true" class="button button-secondary"><span class="'.esc_attr(atec_dash_class($dash)).'"></span></button>
 			</a>
 		</div>
 	</td>';
@@ -49,7 +49,7 @@ function atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce): vo
 
 function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,$pro=null): void
 {
-	echo '<div class="alignleft" style="', $pro===false?'background: #f0f0f0; border: solid 1px #d0d0d0; border-radius: 3px; marin-right: 10px;':'' ,'">';
+	echo '<div class=" atec-float-left" style="', $pro===false?'background: #f9f9f9; border: solid 1px #d0d0d0; border-radius: var(--px-3); marin-right: 10px;':'' ,'">';
 	if ($pro===false) 
 	{
 		$disabled=true;
@@ -59,7 +59,7 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 			<span class="atec-dilb atec-fs-9"><span class="', esc_attr(atec_dash_class('awards','atec-blue atec-fs-16')), '"></span>PRO feature – please upgrade.</span>
 		</a><br>';
 	}
-	echo '<div class="atec_checkbox_button_div atec-dilb">', esc_attr($str); atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce); echo '</div></div>';
+	echo '<div class="atec_checkbox_button_div atec-dilb">', esc_attr($str), '&nbsp;&nbsp;&nbsp;'; atec_checkbox_button($id,$str,$disabled,$option,$url,$param,$nonce); echo '</div></div>';
 }
 
 function atec_checkbox($args): void

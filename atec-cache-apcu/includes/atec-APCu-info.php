@@ -52,7 +52,7 @@ if ($apcu_cache)
 	elseif ($percent===0) 
 	{
 		atec_p(__('Not in use','atec-cache-apcu'));
-		atec_reg_inline_script('APCu_flush', 'jQuery("#APCu_flush").hide();',true);
+		atec_reg_inline_script('wpx_APCu_flush', 'jQuery("#APCu_flush").hide();',true);
 	}
 	
 	$testKey='atec_apcu_test_key';

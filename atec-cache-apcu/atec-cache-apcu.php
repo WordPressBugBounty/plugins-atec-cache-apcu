@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) { exit(); }
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.84
+* Version: 2.1.86
 * Requires at least:4.9
 * Tested up to: 6.7
 * Tested up to PHP: 8.4.2
@@ -24,7 +24,7 @@ function atec_wpca_settings($opt): bool { global $atec_wpca_settings; return fil
 $atec_wpca_apcu_enabled	= extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings 	= get_option('atec_WPCA_settings',[]);
 
-wp_cache_set('atec_wpca_version','2.1.84');
+wp_cache_set('atec_wpca_version','2.1.86');
 
 if (is_admin()) 
 {
@@ -109,7 +109,7 @@ if (is_admin())
 								
 				$atec_query = atec_query();
 				// @codingStandardsIgnoreStart | This is not a FORM request, it is just a test, whether an options.php request is related to the plugin.
-				if (preg_match('/atec_wpca$|atec_wpca&settings-updated|nav=Settings|action=flushWPCA/', $atec_query)
+				if (preg_match('/atec_wpca$|atec_wpca&settings-updated|nav=Settings|&flushWPCA/', $atec_query)
 				|| (str_contains($atec_query,'wp-admin/options.php') && isset($_POST['atec_WPCA_settings'])))		
 				@require('includes/atec-cache-apcu-register_settings.php'); 
 				// @codingStandardsIgnoreEnd

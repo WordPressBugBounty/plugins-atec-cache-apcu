@@ -22,7 +22,7 @@ function atec_wpca_sanitize_fields($input)
 function atec_wpca_settings_fields()
 { 
 	$atec_query = atec_query();
-	if (str_contains($atec_query,'action=flushWPCA')) wp_cache_delete('alloptions','options');
+	if (str_contains($atec_query,'&flushWPCA')) wp_cache_delete('alloptions','options');
 	
 	if (!function_exists('atec_opt_arr')) @require('atec-check.php');
 	
@@ -78,7 +78,7 @@ function atec_wpca_settings_fields()
 		{
 			if (!function_exists('atec_wpca_set_object_cache')) @require(__DIR__.'/atec-wpca-set-object-cache.php'); 
 			$result = atec_wpca_set_object_cache($options);
-			if ($result==='') wp_redirect(admin_url().'admin.php?page=atec_wpca&action=flushWPCA&_wpnonce='.wp_create_nonce('atec_wpca_nonce'));
+			if ($result==='') wp_redirect(admin_url().'admin.php?page=atec_wpca&flushWPCA');
 			else 
 			{
 				if (filter_var($options['ocache']??0,258)) { $options['ocache']=0; $update=true; }

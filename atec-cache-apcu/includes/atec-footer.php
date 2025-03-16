@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) { exit(); }
 			if (!$mega) echo '&middot; <a class="atec-nodeco" href="',esc_url(get_admin_url().'admin.php?page=atec_group'),'">atec-',  esc_attr__('plugins','atec-cache-apcu'), ' – ', esc_attr__('Group','atec-cache-apcu'), '</a>';
 			echo '
 		</span>
-		<span style="width: fit-content;" class="atec-dilb atec-right atec-mr-10">
+		<span style="width: fit-content;" class="atec-dilb  atec-float-right atec-mr-10">
 			© 2023/25 <a href="https://', esc_attr($domain), '/" target="_blank" class="atec-nodeco">', esc_attr($domain), '</a>
 		</span>
 	</div>';
