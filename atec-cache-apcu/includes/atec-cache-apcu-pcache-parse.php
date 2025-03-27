@@ -1,9 +1,8 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 function atec_wpca_pcache_parse($wp_query)
 { 	 
-
 	$isArchive=$wp_query->is_archive;
 	
 	$hash = '';
@@ -33,6 +32,10 @@ function atec_wpca_pcache_parse($wp_query)
 		}
 		elseif ($isArchive)
 		{
+			// if ($wp_query->is_post_type_archive) {
+			// 	$id = $wp_query->query_vars['post_type'] ?? '';
+			// 	$suffix = 'pt';
+			// }			
 			$id=($wp_query->query_vars['year']??'').($wp_query->query_vars['monthnum']??'');
 			if (empty($id)) return 'ARCH_EMPTY';
 			$id.='|'.$wp_query->query_vars['paged'];

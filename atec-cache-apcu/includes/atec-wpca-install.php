@@ -1,6 +1,6 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
-if (!function_exists('atec_header')) @require(__DIR__.'/atec-tools.php');	
+if (!defined('ABSPATH')) { exit; }
+if (!function_exists('atec_header')) require(__DIR__.'/atec-tools.php');	
 
 add_action( 'admin_enqueue_scripts', function() 
 { 
@@ -17,11 +17,11 @@ add_action( 'admin_enqueue_scripts', function()
 	
 if ($atec_active_slug!=='atec_group') 
 { 
-	function atec_wpca(): void { @require(__DIR__.'/atec-cache-apcu-dashboard.php'); }
+	function atec_wpca(): void { require(__DIR__.'/atec-cache-apcu-dashboard.php'); }
 
 	add_action('admin_init', function() 
 	{
-		if (!function_exists('atec_load_pll')) { @require(__DIR__.'/atec-translation.php'); }
+		if (!function_exists('atec_load_pll')) { require(__DIR__.'/atec-translation.php'); }
 		atec_load_pll(__DIR__,'cache-apcu');
 	});
 

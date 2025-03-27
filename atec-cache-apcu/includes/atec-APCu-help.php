@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 atec_help('apcu',__('Recommended settings','atec-cache-apcu'));
 echo '

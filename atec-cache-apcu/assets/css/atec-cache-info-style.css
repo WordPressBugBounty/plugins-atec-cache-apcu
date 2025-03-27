@@ -1,5 +1,5 @@
-.ac_percent_div  { width:170px; display: flex; height:9px; background:white; box-sizing: border-box; overflow: hidden; white-space: nowrap; border-radius: var(--px-3); border: var(--border-grey); }
-.ac_percent_div SPAN { height:7px; display: inline-flex; }		
+.ac_percent_div  { width:170px; display: flex; height:9px; box-sizing: border-box; overflow: hidden; white-space: nowrap; border-radius: var(--px-3); border: var(--border-grey); margin-top: 3px; }
+.ac_percent_div SPAN { height:7px; display: inline-flex; transition: width 0.5s ease-in-out; }		
 .ac_percent_block { width:180px; padding: 3px 5px 5px 5px; background: var(--bg-w6); margin-bottom: 10px; }
 
 .atec-page H4 { font-size: 17px; }

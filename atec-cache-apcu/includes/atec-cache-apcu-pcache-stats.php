@@ -1,13 +1,12 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 class ATEC_wpcu_pcache { function __construct($url, $nonce, $action) {
 
-global $atec_wpca_apcu_enabled;	
-global $atec_wpca_settings;
+global $atec_wpca_apcu_enabled, $atec_wpca_settings;
 $salt=$atec_wpca_settings['salt']??'';
-
-$arr=array('Zlib'=>(@ini_get('zlib.output_compression')??'Off'?'On':'Off'), 'PCache salt'=>$salt);
+$is_zlib_enabled = filter_var(ini_get('zlib.output_compression'), FILTER_VALIDATE_BOOLEAN);
+$arr=array('Zlib'=>$is_zlib_enabled?'On':'Off', 'PCache salt'=>$salt);
 atec_little_block_with_info(__('Cached pages and posts','atec-cache-apcu'),$arr);
 
 echo '
@@ -19,7 +18,7 @@ if ($atec_wpca_apcu_enabled)
 	if ($action==='flush')
 	{
 		$type = atec_clean_request('type');
-		if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
+		if (!function_exists('atec_wpca_delete_page_cache_all')) require(__DIR__.'/atec-cache-apcu-pcache-tools.php');			
 		if ($type==='PCache')
 		{
 			echo '
@@ -62,7 +61,7 @@ if ($atec_wpca_apcu_enabled)
 			<tbody>';					    
 	    		$c=0; $size=0;
 	    		$reg=preg_replace('/\//','\/',preg_replace('/https?:\/\//','',get_home_url()));
-				$reg_apcu = '/atec_WPCA_'.$salt.'_([f|p|c|t|a]+)_([\d|\|]+)/';
+				$reg_apcu = '/atec_WPCA_'.$salt.'_([fpcta]+)_([\d|]+)/';
 				$siteUlr=get_site_url();
 	    		foreach ($apcu_it as $entry) 
 	    		{							
@@ -90,7 +89,7 @@ if ($atec_wpca_apcu_enabled)
 							<td>', esc_attr($id), '</td>
 							<td>', esc_attr($isCat?$page:''), '</td>
 							<td>', ($isFeed?' <span class="'.esc_attr(atec_dash_class('yes')).'"></span>':''), '</td>
-							<td>', esc_attr(apcu_fetch('atec_WPCA_'.$salt.'_'.$match[1].'_h_'.$match[2])), '</td>
+							<td>', esc_attr(apcu_fetch('atec_WPCA_'.$salt.'_'.$match[1].'_h_'.$match[2])??'-/-'), '</td>
 							<td class="atec-nowrap">', esc_attr(size_format($entry['mem_size'])), '</td>
 							<td>', esc_html($title), '</td>
 							<td><a href="', esc_url($link), '" target="_blank">', esc_url($short_url), '</a></td>';
@@ -99,7 +98,7 @@ if ($atec_wpca_apcu_enabled)
 						</tr>';						    
 		    		}
 	    		}
-        	if ($c>0) echo '<tr class="atec-table-tr-bold"><td colspan="2"></td><td>',esc_attr(number_format($c)),'</td><td></td><td></td><td></td><td class="atec-nowrap">',esc_attr(size_format($size)),'</td><td colspan="3"></td></tr>';
+        	if ($c>0) echo '<tr class="atec-table-tr-bold"><td colspan="2"></td><td>',esc_html(number_format($c)),'</td><td></td><td></td><td></td><td class="atec-nowrap">',esc_attr(size_format($size)),'</td><td colspan="3"></td></tr>';
 			else echo '<tr><td colspan="10">-/-</td></tr>';
 			echo '
     		</tbody>

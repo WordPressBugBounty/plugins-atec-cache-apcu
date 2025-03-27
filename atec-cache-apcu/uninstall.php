@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 wp_cache_delete('atec_wpca_version');
 
 (function() {

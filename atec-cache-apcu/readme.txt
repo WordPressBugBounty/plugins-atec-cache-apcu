@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.86
+Stable tag: 2.1.87
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -66,6 +66,9 @@ This depends on the translation plugin being used. When translations are perform
 
 == Changelog ==
 
+= 2.1.87 [2025.03.27] =
+* New OC enabling
+
 = 2.1.86 [2025.03.16] =
 * New style.css and check.css
 
@@ -100,7 +103,7 @@ This depends on the translation plugin being used. When translations are perform
 * atec_wpca_oc_stats
 
 = 2.1.75 [2025.02.26] =
-* add_action(\'init\', function() { @require(\'atec-cache-apcu-pcache-cb.php\'); 
+* add_action(\'init\', function() { require(\'atec-cache-apcu-pcache-cb.php\'); 
 
 = 2.1.74 [2025.02.24] =
 * Fixed callback

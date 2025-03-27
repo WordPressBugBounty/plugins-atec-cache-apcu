@@ -3,21 +3,21 @@ if (!defined('ABSPATH')) { exit(); }
 
 class ATEC_group {
 	
-private function atec_group_is_plugin_active($plugins,$plugin)
+private static function atec_group_is_plugin_active($plugins,$plugin)
 {
 	foreach ($plugins as $p) { if (str_starts_with($p,$plugin)) return $p; }
 	return false;
 }
 
-private function atec_clean_request_license($t): string { return atec_clean_request($t,'atec_license_nonce'); } 
+private static function atec_clean_request_license($t): string { return atec_clean_request($t,'atec_license_nonce'); } 
 
-private function atec_group_star_list($mega)
+private static function atec_group_star_list($mega)
 {
 	echo 
 	'<div id="pro_package" style="display: none;">
 		<div class="atec-border-white atec-bg-w atec-fit atec-fs-16" style="padding: 0 15px; margin:0 auto;">
 			<ul class="atec-p-0">
-				<li>🎁 <strong>', $mega?'Seven additional storage options':esc_attr__('Including 35 valuable plugins','atec-cache-apcu'), '.</strong></li>
+				<li>🎁 <strong>', $mega?'Seven additional storage options':esc_html__('Including 35 valuable plugins','atec-cache-apcu'), '.</strong></li>
 				<li style="line-height:5px;"><br></li>
 				<li>⭐ ', esc_attr__('Priority support','atec-cache-apcu'), '.</li>
 				<li>⭐ ', esc_attr__('Upgrades & updates','atec-cache-apcu'), '.</li>';
@@ -35,9 +35,9 @@ private function atec_group_star_list($mega)
 		</div>';
 }
 
-private function atec_fix_name($p) { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); }
+private static function atec_fix_name($p) { return ucwords(str_replace(['-','apcu','webp','svg','htaccess'],[' ','APCu','WebP','SVG','HTaccess'],$p)); }
 
-private function atec_group_badge($str,$option,$reverse=false) 
+private static function atec_group_badge($str,$option,$reverse=false) 
 {
 	$str.=' is ';
 	if ($reverse) { $str1=$str.' OFF'; $str2=$str.' ON'; $option=!$option; }
@@ -58,14 +58,14 @@ if ($nav==='') $nav='All_Plugins';
 $atec_group_arr=[];
 require(__DIR__.'/atec-group-array.php');
 
-$license 			= $this->atec_clean_request_license('license');
+$license 			= self::atec_clean_request_license('license');
 if ($license==='') $license = atec_clean_request('license');
 if ($license==='true') $nav='License';
 
-$plugin = $this->atec_clean_request_license('plugin');
+$plugin = self::atec_clean_request_license('plugin');
 if ($plugin==='') $plugin = atec_clean_request('plugin');
 
-$integrity				= $this->atec_clean_request_license('integrity');
+$integrity				= self::atec_clean_request_license('integrity');
 $integrityString 	= '';
 if ($integrity!=='')
 {
@@ -111,7 +111,7 @@ echo
 					$essentialPlugins = ['backup','cache-apcu','cache-memcached','cache-redis','debug','deploy','developer','limit-login','login-url','optimize','profiler','stats','smtp-mail','temp-admin','webp','mega-cache'];
 					if ($installed)
 					{
-						$active = $this->atec_group_is_plugin_active($activePlugins,$prefix.$p['name']);
+						$active = self::atec_group_is_plugin_active($activePlugins,$prefix.$p['name']);
 						if ($active && in_array($p['name'], $essentialPlugins))
 						{
 							echo 
@@ -120,7 +120,7 @@ echo
 								echo 
 								'<p class="atec-bold atec-mb-0 atec-mr-10 atec-border-bottom">
 									<img class="atec-plugin-icon" src="', esc_url($goupAssetPath.'atec_'.$p['slug'].'_icon.svg'), '" style="height: 16px;">&nbsp;', 
-									'<a href="', esc_url(admin_url().'admin.php?page=atec_'.$p['slug']) ,'" class="atec-nodeco">', $this->atec_fix_name($p['name']), '</a>',
+									'<a href="', esc_url(admin_url().'admin.php?page=atec_'.$p['slug']) ,'" class="atec-nodeco">', self::atec_fix_name($p['name']), '</a>',
 								'</p>';
 								// @codingStandardsIgnoreEnd								
 								echo
@@ -131,7 +131,7 @@ echo
 									case 'backup': 
 										$atec_wpb_settings=get_option('atec_WPB_settings',[]);
 										$automatic = filter_var($atec_wpb_settings['automatic']??0,258);
-										$this->atec_group_badge('Automatic backup',$automatic);
+										self::atec_group_badge('Automatic backup',$automatic);
 										if ($automatic)
 										{
 											echo 
@@ -153,40 +153,40 @@ echo
 										break;
 									case 'cache-apcu':
 										global $atec_wpca_settings; 
-										$this->atec_group_badge('Object-Cache',defined('WP_APCU_KEY_SALT'));
-										$this->atec_group_badge('Page-Cache',filter_var($atec_wpca_settings['cache']??0,258));
+										self::atec_group_badge('Object-Cache',defined('WP_APCU_KEY_SALT'));
+										self::atec_group_badge('Page-Cache',filter_var($atec_wpca_settings['cache']??0,258));
 										break;				
 									case 'cache-memcached':
-										$this->atec_group_badge('Object-Cache',defined('WP_MEMCACHED_KEY_SALT'));
+										self::atec_group_badge('Object-Cache',defined('WP_MEMCACHED_KEY_SALT'));
 										break;									
 									case 'cache-redis':
-										$this->atec_group_badge('Object-Cache',defined('WP_REDIS_KEY_SALT'));
+										self::atec_group_badge('Object-Cache',defined('WP_REDIS_KEY_SALT'));
 										break;	
 									case 'debug': 
-										$this->atec_group_badge('WP_DEBUG',defined('WP_DEBUG') && WP_DEBUG,true);
-										$this->atec_group_badge('WP_DEBUG_DISPLAY',defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY,true);
-										$this->atec_group_badge('WP_DEBUG_LOG',defined('WP_DEBUG_LOG') && WP_DEBUG_LOG,true);
+										self::atec_group_badge('WP_DEBUG',defined('WP_DEBUG') && WP_DEBUG,true);
+										self::atec_group_badge('WP_DEBUG_DISPLAY',defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY,true);
+										self::atec_group_badge('WP_DEBUG_LOG',defined('WP_DEBUG_LOG') && WP_DEBUG_LOG,true);
 										break;																		
 									case 'deploy': 
-										$this->atec_group_badge('Auto deploy',get_option('atec_WPDP_settings',false));
+										self::atec_group_badge('Auto deploy',get_option('atec_WPDP_settings',false));
 										break;
 									case 'developer': 
-										$this->atec_group_badge('Developer console',get_option('atec_WPDV_settings',false));
+										self::atec_group_badge('Developer console',get_option('atec_WPDV_settings',false));
 										break;
 									case 'limit-login': 
 										atec_success_msg('Limit login is active');
 										break;						
 									case 'login-url': 
-										$this->atec_group_badge('Custom login URL',(get_option('atec_WPLU_settings',[])['url']??'')!=='');
+										self::atec_group_badge('Custom login URL',(get_option('atec_WPLU_settings',[])['url']??'')!=='');
 										break;	
 									case 'optimize': 
 										$arr=get_option('atec_WPO_settings',[]); $active='';
 										if (getType($arr)==='array') foreach($arr as $a) { $active.=$a; break; }
-										$this->atec_group_badge('Optimizing',$active!=='');
+										self::atec_group_badge('Optimizing',$active!=='');
 										break;									
 									case 'profiler': 
-										$this->atec_group_badge('Profiler',defined('ATEC_MU_PROFILER') && ATEC_MU_PROFILER,true);
-										$this->atec_group_badge('PP profiler',defined('ATEC_MU_PP_PROFILER') && ATEC_MU_PP_PROFILER,true);								
+										self::atec_group_badge('Profiler',defined('ATEC_MU_PROFILER') && ATEC_MU_PROFILER,true);
+										self::atec_group_badge('PP profiler',defined('ATEC_MU_PP_PROFILER') && ATEC_MU_PP_PROFILER,true);								
 										break;		
 									case 'stats': 
 										atec_success_msg('Statistics logging is active');
@@ -202,11 +202,11 @@ echo
 										atec_badge('No temp admins defined','Some temp admins are active',!$tempUsers);
 										break;
 									case 'webp': 
-										$this->atec_group_badge('WebP conversion',get_option('atec_wpwp_active',false));
+										self::atec_group_badge('WebP conversion',get_option('atec_wpwp_active',false));
 										break;
 									case 'mega-cache':
 										global $atec_wpmc_settings; 
-										$this->atec_group_badge('Page-Cache',filter_var($atec_wpmc_settings['cache']??0,258));
+										self::atec_group_badge('Page-Cache',filter_var($atec_wpmc_settings['cache']??0,258));
 										break;
 								}
 								echo 
@@ -246,7 +246,7 @@ echo
 							$atecplugins='https://atecplugins.com/';
 							$link=$a['wp']?'https://wordpress.org/plugins/'.$prefix.esc_attr($a['name']).'/':$atecplugins;
 							echo '
-							<td class="atec-nowrap"><a class="atec-nodeco" href="', esc_url($link) ,'" target="_blank">', esc_attr($this->atec_fix_name($a['name'])), '</a></td>';
+							<td class="atec-nowrap"><a class="atec-nodeco" href="', esc_url($link) ,'" target="_blank">', esc_attr(self::atec_fix_name($a['name'])), '</a></td>';
 							if ($a['wp']) echo '<td><a class="atec-nodeco" title="WordPress Playground" href="https://playground.wordpress.net/?plugin=', esc_attr($prefix.$a['name']), '&blueprint-url=https://wordpress.org/plugins/wp-json/plugins/v1/plugin/', esc_attr($prefix.$a['name']), '/blueprint.json" target="_blank"><span class="',esc_attr(atec_dash_class('welcome-view-site')), '"></span></a></td>';
 							else 
 							{
@@ -261,7 +261,7 @@ echo
 							else echo '
 							<td><a title="Download from atecplugins.com" class="atec-nodeco atec-vam button button-secondary" style="padding: 0px 4px;" target="_blank" href="', esc_url($atecplugins), 'WP-Plugins/atec-', esc_attr($a['name']), '.zip" download><span style="padding-top: 4px;" class="', esc_attr(atec_dash_class('download','')), '"></span></a></td>';
 							echo '
-							<td>', esc_attr($a['desc']), '</td>
+							<td>', esc_html($a['desc']), '</td>
 							<td><small ', ($a['pro']==='„PRO“ only'?' class="atec-bold" style="color:#fd5201;"':''), '>', esc_attr($a['pro']), '</small></td>
 							</tr>';
 						$c++;
@@ -292,7 +292,7 @@ echo
 					// @codingStandardsIgnoreEnd
 					echo $mega?'Mega-Cache „PRO“ package':esc_attr__('atec-Plugins „PRO“ package','atec-cache-apcu'), 
 					'</h3>';
-					$this->atec_group_star_list($mega);
+					self::atec_group_star_list($mega);
 					echo 
 					'<div class="atec-db atec-fit atec-box-white" style="margin: 25px auto; padding-bottom:0;">';
 						if ($mega)

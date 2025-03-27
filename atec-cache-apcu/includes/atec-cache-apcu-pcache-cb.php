@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 function atec_wpca_page_buffer_callback($buffer)
 {
@@ -11,7 +11,7 @@ function atec_wpca_page_buffer_callback($buffer)
 	global $wp_query, $atec_wpca_pcache_params;
 	if (is_null($atec_wpca_pcache_params))
 	{
-		@require('atec-cache-apcu-pcache-parse.php');
+		require('atec-cache-apcu-pcache-parse.php');
 		$atec_wpca_pcache_params = atec_wpca_pcache_parse($wp_query);
 	}
 	

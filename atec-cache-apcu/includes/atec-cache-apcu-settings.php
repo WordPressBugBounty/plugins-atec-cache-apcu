@@ -1,18 +1,19 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 class ATEC_wpcu_settings { 
 	
 function __construct($url,$nonce,$action) {
-
+	
 $optName='atec_WPCA_settings';
 $options=get_option($optName,[]);
 
 $arr = [];
 if (defined('ATEC_APCU_OC_VERSION')) $arr['OC']=ATEC_APCU_OC_VERSION;
 if (defined('WP_APCU_KEY_SALT')) $arr['OC salt']=WP_APCU_KEY_SALT;
-$arr['PC salt']=$options['salt']??'';
-$arr['Zlib']=ini_get('zlib.output_compression')?'#yes-alt':'#dismiss';
+$arr['PC salt']=$options['salt']??'-/-';
+$is_zlib_enabled = filter_var(ini_get('zlib.output_compression'), FILTER_VALIDATE_BOOLEAN);
+$arr['Zlib']=$is_zlib_enabled?'#yes-alt':'#dismiss';
 
 atec_little_block_with_info('APCu - '.__('Settings','atec-cache-apcu'), $arr);
 
@@ -24,11 +25,7 @@ $error = '';
 if ($atec_wpca_ocache!==defined('WP_APCU_KEY_SALT')) { $error = 'KEY_SALT is '.(defined('WP_APCU_KEY_SALT')?'defined':'not defined'); }
 elseif (!$atec_wpca_pcache && $atec_wpca_advanced) $error = 'MU_PAGE_CACHE is defined';
 
-if ($error!=='')
-{
-	atec_error_msg('The cache settings are inconsistent ('.$error.'), please save again with the respective choice');
-	delete_option('atec_wpca_last_cache');
-}
+if ($error!=='') { atec_error_msg('The cache settings are inconsistent ('.$error.'). Please save again to auto-fix it'); }
 
 echo '	
 <div class="atec-g atec-g-50">
@@ -83,7 +80,9 @@ echo '
 					echo 
 					'<hr class="atec-mb-10">
 					<div class="atec-form">';
-						settings_fields($slug.'_PC'); do_settings_sections($slug.'_PC'); submit_button(__('Save','atec-cache-apcu')); 
+						settings_fields($slug.'_PC'); 
+						do_settings_sections($slug.'_PC'); 
+						submit_button(__('Save','atec-cache-apcu')); 
 					echo 
 					'</div>
 				</form>';

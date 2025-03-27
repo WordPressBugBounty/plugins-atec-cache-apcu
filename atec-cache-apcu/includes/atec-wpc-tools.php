@@ -1,9 +1,9 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 class ATEC_wpc_tools
 {
-	public function hitrate($hits,$misses)
+	public static function hitrate($hits,$misses)
 	{
 		$id1=uniqid();
 		$id2=uniqid();
@@ -23,20 +23,19 @@ class ATEC_wpc_tools
 		'); 		
 	}
 
-	public function usage($percent)
+	public static function usage($percent)
 	{
 		$id1=uniqid();
 		echo '
 		<div class="atec-db atec-border ac_percent_block">
 			<div class="atec-dilb atec-fs-12">', esc_attr__('Usage','atec-cache-apcu'), '</div>
-			<div class="atec-dilb  atec-float-right atec-fs-12">', esc_attr(round($percent,1)), '%</div>
-			<br>
-			<div class="ac_percent_div"><span id="atec_usage_'.esc_attr($id1).'" class="" style="background-color:orange;"></span></div>
+			<div class="atec-dilb  atec-float-right atec-fs-12">', esc_attr(round($percent,1)), '%</div><br>
+			<div class="ac_percent_div"><span id="atec_usage_'.esc_attr($id1).'" style="background-color:orange;"></span></div>
 		</div>';
 		atec_reg_inline_script('wpx_anim_usage','jQuery("#atec_usage_'.esc_attr($id1).'").animate({ width: "'.($percent).'%" }, 1000);'); 
 	}
 	
-	public function flushing_start($type)
+	public static function flushing_start($type)
 	{
 		echo 
 		'<div class="atec-badge atec-db atec-mb-10 atec-bg-w6" style="padding: 5px 10px 5px 10px;">
@@ -46,7 +45,7 @@ class ATEC_wpc_tools
 			atec_flush();
 	}
 
-	public function flushing_end($result)
+	public static function flushing_end($result)
 	{
 		$str = $result?__('success','atec-cache-apcu'):__('failed','atec-cache-apcu');
 			echo 

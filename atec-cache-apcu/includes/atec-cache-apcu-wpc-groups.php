@@ -1,22 +1,25 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 class ATEC_apcu_wpc_groups { 
 	
-private function atec_wpcu_parse_alloptions($v1,$v2)
+private static function atec_wpcu_parse_alloptions($v1,$v2)
 {
-	$arr = [];
 	foreach($v1 as $k=>$v) { if (!is_null($v) && gettype($v)==='array') $v1[$k]=serialize($v); }
 	foreach($v2 as $k=>$v) { if (!is_null($v) && gettype($v)==='array') $v2[$k]=serialize($v); }
 	foreach($v1 as $k=>$v)
 	{
-		if (isset($v2[$k])) { if ($v!==$v2[$k]) $arr[]='Key: '.$k.' '.$v.' != '.$v2[$k]; }
-		else $arr[]='Key: '.$k.' n/a';
+		if (isset($v2[$k])) 
+		{ 
+			if ($v!==$v2[$k]) 
+			{
+				echo '<tr><td class="atec-nowrap">', esc_attr($k), '</td><td class="atec-anywrap">', esc_html($v), '</td></tr>';
+			}
+		}
 	}
-	return $arr;
 }
 
-function __construct($url, $nonce, $action, $prefix, $wpc_tools) {
+function __construct($url, $nonce, $action, $prefix) {
 	
 if ($action==='delete') 
 { 
@@ -35,14 +38,15 @@ echo '
 		{	
 			atec_table_header_tiny(['#',__('Key','atec-cache-apcu'),__('Value','atec-cache-apcu'),'APCu?','==','']);
 
-			$c = 0; $total = 0; $allArr = [];
+			$c = 0; $total = 0; 
+			$alloptArr = $alloptAPCuArr = [];
 			$search = WP_APCU_KEY_SALT.':';
 			ksort($wpc_arr);
 			foreach($wpc_arr as $key=>$value) 
 			{
 				$c++;
 				$apcu = apcu_fetch($key);
-				$stripped = str_replace($search,'',$key);				
+				$stripped = str_replace($search,'',$key);		
 				$a1 = maybe_serialize($value);
 				if ($apcu) 
 				{
@@ -50,7 +54,7 @@ echo '
 					$eq = $a1===$a2;
 					$i2	= $eq?'yes-alt':'dismiss';
 					$c2	= 'atec-'.($eq?'green':'red');
-					if (str_contains($stripped,'alloptions') && !$eq) $allArr=$this->atec_wpcu_parse_alloptions($value,$apcu);
+					if (str_contains($stripped,'alloptions') && !$eq) { $alloptArr=$value; $alloptAPCuArr=$apcu; }
 				}
 				$i1	= $key?'yes-alt':'dismiss';
 				$c1	= 'atec-'.($key?'green':'red');
@@ -67,12 +71,15 @@ echo '
 				</tr>';
 			}
 			atec_table_footer();
-			
-			if (!empty($allArr))
+
+			if (!empty($alloptArr))
 			{
 				echo
-				'<h4>„alloptions“</h4><div class="atec-box-white atec-fit atec-small atec-anywrap">';
-				foreach($allArr as $v) echo $v.'<br>';
+				'<h4>„alloptions“</h4>
+				<div class="atec-box-white atec-fit atec-small atec-anywrap">';
+				atec_table_header_tiny([__('Key','atec-cache-apcu'),__('Value','atec-cache-apcu')]);
+					self::atec_wpcu_parse_alloptions($alloptArr,$alloptAPCuArr);
+				atec_table_footer();
 				echo
 				'</div>';
 			}

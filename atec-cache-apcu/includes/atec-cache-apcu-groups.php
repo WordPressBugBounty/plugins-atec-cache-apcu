@@ -1,9 +1,9 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 class ATEC_apcu_groups { 
 
-function __construct($url, $nonce, $action, $prefix, $wpc_tools) {
+function __construct($url, $nonce, $action, $prefix) {
 
 $salt=get_option('atec_WPCA_settings',[])['salt']??'';
 $arr=array('PC salt'=>$salt);

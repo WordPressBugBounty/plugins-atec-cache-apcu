@@ -1,11 +1,11 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 
 /**
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.1.86
+* Version: 2.1.87
 * Requires at least:4.9
 * Tested up to: 6.7
 * Tested up to PHP: 8.4.2
@@ -19,22 +19,27 @@ if (!defined('ABSPATH')) { exit(); }
 * Text Domain:  atec-cache-apcu
 */
 
-function atec_wpca_settings($opt): bool { global $atec_wpca_settings; return filter_var($atec_wpca_settings[$opt]??0,258)?true:false; }
+	// wp_cache_delete('alloptions','options');
+	// wp_cache_delete('users');
+
+if (str_contains(add_query_arg(null,null),'&flushWPCA')) wp_cache_flush();
+
+function atec_wpca_settings($opt): bool { global $atec_wpca_settings; return (bool) filter_var($atec_wpca_settings[$opt]??0,258); }
 
 $atec_wpca_apcu_enabled	= extension_loaded('apcu') && apcu_enabled();
 $atec_wpca_settings 	= get_option('atec_WPCA_settings',[]);
 
-wp_cache_set('atec_wpca_version','2.1.86');
+wp_cache_set('atec_wpca_version','2.1.87');
 
 if (is_admin()) 
 {
-	register_activation_hook(__FILE__, function() { @require('includes/atec-wpca-activation.php'); });
-	register_deactivation_hook(__FILE__, function() { @require('includes/atec-wpca-deactivation.php'); });
+	register_activation_hook(__FILE__, function() { require('includes/atec-wpca-activation.php'); });
+	register_deactivation_hook(__FILE__, function() { require('includes/atec-wpca-deactivation.php'); });
 	
-	if (!function_exists('atec_plugin_settings')) @require('includes/atec-admin.php');
-	add_filter( 'plugin_action_links_'.plugin_basename(__FILE__), 'atec_plugin_settings', 10, 2);
+	if (!function_exists('atec_plugin_settings')) require('includes/atec-admin.php');
+	add_filter('plugin_action_links_'.plugin_basename(__FILE__), [ATEC_Admin::class, 'plugin_settings'], 10, 2);
 	
-	if (!function_exists('atec_query')) @require('includes/atec-init.php');
+	if (!function_exists('atec_query')) require('includes/atec-init.php');
 	
 	(function() {
 
@@ -99,11 +104,7 @@ if (is_admin())
 				}
 				else
 				{
-					function atec_wpca_add_action_info($actions) 
-					{
-						$links = array('<span style="color:red !important;">'.esc_attr__('APCu extension required','atec-cache-apcu').'!</span>');
-						return array_merge($actions, $links);
-					}
+					function atec_wpca_add_action_info($actions) { return array_merge($actions, array('<span style="color:red !important;">'.esc_attr__('APCu extension required','atec-cache-apcu').'!</span>')); }
 					add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'atec_wpca_add_action_info' );
 				}
 								
@@ -111,7 +112,7 @@ if (is_admin())
 				// @codingStandardsIgnoreStart | This is not a FORM request, it is just a test, whether an options.php request is related to the plugin.
 				if (preg_match('/atec_wpca$|atec_wpca&settings-updated|nav=Settings|&flushWPCA/', $atec_query)
 				|| (str_contains($atec_query,'wp-admin/options.php') && isset($_POST['atec_WPCA_settings'])))		
-				@require('includes/atec-cache-apcu-register_settings.php'); 
+				require('includes/atec-cache-apcu-register_settings.php'); 
 				// @codingStandardsIgnoreEnd
 			
 			}
@@ -124,7 +125,7 @@ if (is_admin())
 				function atec_wpca_delete_tag_cache($term_id, $tt_id, $taxo): void { if ($taxo==='post_tag') atec_wpca_flush_actions('tag'); }
 				function atec_wpca_flush_actions($args)
 				{
-					if (!function_exists('atec_wpca_delete_page_cache_all')) @require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
+					if (!function_exists('atec_wpca_delete_page_cache_all')) require(__DIR__.'/includes/atec-cache-apcu-pcache-tools.php');
 					foreach((array) $args as $arg)
 					{
 						switch ($arg)
@@ -159,21 +160,21 @@ if (is_admin())
 					
 	})();
 
-	if (in_array($atec_active_slug=atec_get_slug(), ['atec_group','atec_wpca'])) @require('includes/atec-wpca-install.php');
+	if (in_array($atec_active_slug=atec_get_slug(), ['atec_group','atec_wpca'])) require('includes/atec-wpca-install.php');
 }
 else // not is_admin
 {
 	if ($atec_wpca_apcu_enabled && !defined('WP_APCU_MU_PAGE_CACHE') && atec_wpca_settings('cache'))
-		add_action('init', function() { @require(__DIR__.'/includes/atec-cache-apcu-pcache.php'); }, -1);
+		add_action('init', function() { require(__DIR__.'/includes/atec-cache-apcu-pcache.php'); }, -1);
 }
 
-if ($atec_wpca_apcu_enabled && atec_wpca_settings('cache')) { @require(__DIR__.'/includes/atec-cache-apcu-pcache-cleanup.php'); }
+if ($atec_wpca_apcu_enabled && atec_wpca_settings('cache')) { require(__DIR__.'/includes/atec-cache-apcu-pcache-cleanup.php'); }
 
 if (defined('WP_APCU_KEY_SALT'))
 {	
 	if (!defined('ATEC_APCU_OC_VERSION') || ATEC_APCU_OC_VERSION!=='1.0.21')
 	{
-		@require(__DIR__.'/includes/atec-wpca-set-object-cache.php'); 
+		require(__DIR__.'/includes/atec-wpca-set-object-cache.php'); 
 		atec_wpca_set_object_cache(array('ocache'=>true));
 	}
 

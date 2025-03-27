@@ -17,7 +17,8 @@
 * Text Domain:  atec-apcu-object-cache
 */
 
-if (!defined('ABSPATH')) { exit(); }
+declare(strict_types=1);
+if (!defined('ABSPATH')) { exit; }
 define('ATEC_APCU_OC_VERSION','1.0.21');
 
 function wp_cache_init() { $GLOBALS['wp_object_cache'] = WP_Object_Cache::instance(); }

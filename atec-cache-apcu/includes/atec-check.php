@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) { exit(); }
+if (!defined('ABSPATH')) { exit; }
 define('ATEC_CHECK_INC',true); // just for backwards compatibility
 
 function atec_sanitize_textarea(&$input,$arr)
@@ -15,7 +15,10 @@ function atec_sanitize_text(&$input,$arr)
 { foreach($arr as $a) $input[$a] = sanitize_text_field($input[$a]??''); }
 
 function atec_sanitize_text_in_array(&$input,$inArr)
-{ foreach($inArr as $key=>$arr) in_array($input[$key]??'', $arr)?sanitize_text_field($input[$key]):$arr[0]; }	
+{ 
+	foreach($inArr as $key=>$arr) 
+	{ if (isset($input[$key])) $input[$key] = in_array($input[$key], $arr)?sanitize_text_field($input[$key]):$arr[0]; }	
+}
 
 function atec_sanitize_boolean(&$input,$arr)
 { foreach($arr as $b) $input[$b] = filter_var($input[$b]??0,258); }
@@ -65,7 +68,6 @@ function atec_checkbox_button_div($id,$str,$disabled,$option,$url,$param,$nonce,
 function atec_checkbox($args): void
 {
 	$option = get_option($args['opt-name'],[]); $field=$args['name']; 
-	// FILTER_VALIDATE_BOOLEAN | wp_validate_boolean($option[$field]??0)?true:false;
 	echo '
 	<div class="atec-ckbx">
 		<label class="switch" for="check_', esc_attr($field), '">
@@ -101,6 +103,6 @@ function atec_input_password($args): void { atec_input_text($args,$type='passwor
 function atec_input_textarea($args): void
 {
 	$option = get_option($args['opt-name'],[]); $field=$args['name'];
-	echo '<textarea style="resize:both;" rows="', (($args['size']??'')===''?'2':esc_attr($args['size'])), '" cols="30" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']">', esc_textarea($option[$field]??''), '</textarea>';
+	echo '<textarea id="textarea_', esc_attr($field), '" style="resize:both;" rows="', (($args['size']??'')===''?'2':esc_attr($args['size'])), '" cols="30" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']">', esc_textarea($option[$field]??''), '</textarea>';
 }
 ?>
