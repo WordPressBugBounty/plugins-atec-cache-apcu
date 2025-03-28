@@ -116,7 +116,7 @@ function atec_check_license($licenseCode=null, $siteName=null): bool
 	$include=__DIR__.'/atec-pro.php';
 	if (!class_exists('ATEC_pro') && file_exists($include)) @include_once($include);
 	// @codingStandardsIgnoreEnd
-	if (class_exists('ATEC_pro')) return ATEC_pro::atec_pro_check_license($licenseCode, $siteName);
+	if (class_exists('ATEC_pro')) return (new ATEC_pro)->atec_pro_check_license($licenseCode, $siteName);
 	return false;
 }
 

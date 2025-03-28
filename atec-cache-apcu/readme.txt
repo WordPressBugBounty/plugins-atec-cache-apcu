@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 Requires CP: 1.7
 Tested up to PHP: 8.4.1
-Stable tag: 2.1.89
+Stable tag: 2.1.90
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,9 @@ This depends on the translation plugin being used. When translations are perform
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.1.90 [2025.03.28] =
+* class:: fix
 
 = 2.1.89 [2025.03.28] =
 * New OC enabling
