@@ -37,35 +37,31 @@ function atec_wpca_settings_fields()
 		$lastSettings 			= get_option($lastOptName,[]);
 		$update					= false;
 		$atec_wpca_pcache 	= filter_var($options['cache']??0,258);
-		
-		$deletePC = atec_bool_changed($options,$lastSettings,'debug');
-		if (empty($lastSettings) || $atec_wpca_pcache!==filter_var($lastSettings['cache']??0,258))
-		{ 
-			if (!class_exists('ATEC_fs')) require('atec-fs.php');
-			$afs = new ATEC_fs();
+		$deletePC 				= atec_bool_changed($options,$lastSettings,'debug');
+
+		if (!class_exists('ATEC_fs')) require('atec-fs.php');
+		$afs = new ATEC_fs();
 			
-			if ($afs->exists(trailingslashit(WP_CONTENT_DIR).'advanced-cache.php'))
+		if ($afs->exists(trailingslashit(WP_CONTENT_DIR).'advanced-cache.php'))
+		{
+			if ($atec_wpca_pcache) { $options['cache']=0; update_option($lastOptName,$options); }
+			atec_new_admin_notice('warning','Another „advanced-cache.php“ file already exists. Please deactivate it first');
+		}
+		else
+		{
+			$atec_wpca_adv_page_cache_filename='atec-wpca-adv-page-cache-pro.php';
+			$MU_advanced_cache_path=trailingslashit(WPMU_PLUGIN_DIR).'@'.$atec_wpca_adv_page_cache_filename;
+			if ($atec_wpca_pcache)
 			{
-				if ($atec_wpca_pcache) { $options['cache']=0; update_option($lastOptName,$options); }
-				atec_new_admin_notice('warning','Another „advanced-cache.php“ file already exists. Please deactivate it first');
-			}
-			else
-			{
-				$deletePC = true;			
-				$atec_wpca_adv_page_cache_filename='atec-wpca-adv-page-cache-pro.php';
-				$MU_advanced_cache_path=WPMU_PLUGIN_DIR.'/@'.$atec_wpca_adv_page_cache_filename;
-				if ($atec_wpca_pcache)
+				if ($options['salt']??''==='') { $options['salt']=hash('crc32', get_bloginfo(), FALSE); }
+				if (!function_exists('atec_header')) require(__DIR__.'/atec-tools.php');	
+				if (atec_check_license())
 				{
-					if ($options['salt']??''==='') { $options['salt']=hash('crc32', get_bloginfo(), FALSE); }
-					if (!function_exists('atec_header')) require(__DIR__.'/atec-tools.php');	
-					if (atec_check_license())
-					{
-						if ($afs->mkdir(WPMU_PLUGIN_DIR)) 
-							$afs->copy(plugin_dir_path(__DIR__).'install/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
-					}
+					if ($afs->mkdir(WPMU_PLUGIN_DIR)) 
+						$afs->copy(plugin_dir_path(__DIR__).'install/'.$atec_wpca_adv_page_cache_filename,$MU_advanced_cache_path);
 				}
-				else $afs->unlink($MU_advanced_cache_path);
 			}
+			else { $deletePC = true; $afs->unlink($MU_advanced_cache_path); }
 		}
 		
 		if ($deletePC)
