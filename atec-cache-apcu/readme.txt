@@ -1,42 +1,52 @@
 === atec Cache APCu ===
 Contributors: DocJoJo
-Tags: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-Requires at least:4.9
-Tested up to: 6.7
-Requires PHP: 7.4
+Tags: apcu, object cache, page cache, performance, persistent cache
 Requires CP: 1.7
-Tested up to PHP: 8.4.1
-Stable tag: 2.1.90
+Tested up to: 6.8
+Requires at least:4.9
+Requires PHP: 7.4
+Tested up to PHP: 8.4.5
+Stable tag: 2.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
+Super fast APCu-based Object Cache and the only APCu-powered Page Cache plugin for WordPress.
 
 == Description ==
 
-This plugin provides a super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
+<code>atec Cache APCu</code> provides a drop-in object-cache and optional page cache, built entirely on APCu.
 
-Using an object-cache will speed up your site – APCu is the fastest cache, compared against the two other memory-based cache options Redis and Memcached.
+It replaces WordPress’s core cache with a fast, persistent alternative — offering major performance gains, especially on single-server setups.
 
-The „atec-cache-apcu“ object cache not only replaces WordPress's core cache class with a persistent alternative, delivering significant performance gains, but it also incorporates advanced methods that boost caching efficiency by up to 16.67%, optimizing your site’s performance even further.
+APCu is faster than Redis and Memcached in low-latency scenarios. This plugin uses advanced logic that improves object cache efficiency by up to 16.67%.
+
+The optional page cache is the only APCu-powered full-page cache for WordPress, and includes cache exclusion rules, cache flushing and profiler/debugging options.
 
 === Specifications ===
 
-Requires: APCu extension.
-Size: only 160 KB
-CPU footprint (idle): <5 ms.
+* Size: only 160 KB
+* CPU footprint (idle): <5 ms.
+* Includes object cache drop-in and optional full page cache  
+* Profiler and debug options for diagnostics
 
-== 3rd party as a service ==
+== Requirements ==
 
-Once, when activating the plugin, an integrity check is requested from our server (https://atecplugins.com/) – if you give your permission.
+* APCu extension enabled  
+
+== Third-Party Services ==
+
+= Integrity check =
+
+Once, when activating the plugin, an integrity check is requested from our server – if you give your permission.
+Source: https://atecplugins.com/
 Privacy policy: https://atecplugins.com/privacy-policy/
 
 == Installation ==
 
-1. Upload the plugin folder to the `/wp-content/plugins/` directory or through the `Plugins` menu.
-2. Activate the plugin through the `Plugins` menu in WordPress.
-3. Click "atec Cache APCu" link in admin menu bar.
-4. Enable Page-Cache in the `Settings` tab.
+1. Upload the plugin to <code>/wp-content/plugins/</code> or install via the WP admin panel.  
+2. Activate the plugin from the Plugins menu.
+3. Select "atec Cache APCu" link in admin menu bar.
+4. Enable Object-Cache and Page-Cache in the settings panel.
 
 == Frequently Asked Questions ==
 
@@ -55,6 +65,26 @@ This plugin isn’t optimized for multisite environments. Since multisite setups
 - Is the page cache multi-language compatibel?
 This depends on the translation plugin being used. When translations are performed on the fly, the page or post ID remains unchanged, preventing "atec-cache-apcu" from detecting any differences. Please use our "mega-cache" plugin instead.
 
+= Does this work with WooCommerce? =
+Partly. Cart, checkout, and account pages are automatically excluded from the page cache.
+
+= Will this work on shared hosting? =
+Ye – if APCu is available. It is ideal for VPS or dedicated servers.
+
+= Can I use Redis or Memcached with this? =
+No. This plugin is APCu-only and does not require other memory caches.
+
+= What makes this faster than other solutions? =
+It uses pure APCu without network latency, with optimized logic for set/get/flush and auto-purging support.
+
+== „PRO“ Features ==
+
+- AOC Mode (Advanced Object Cache)
+Advanced Object Cache Mode – takes full advantage of APCu’s in-memory array support, eliminating unnecessary serialize()/unserialize() cycles and boosting PHP performance on every request.
+
+- APC Mode (Advanced Page Cache)
+Advanced Page Cache is a „PRO“-level optimization that activates earlier than regular page cache — before most WordPress logic even runs.
+
 == Screenshots ==
 
 1. Settings
@@ -66,17 +96,64 @@ This depends on the translation plugin being used. When translations are perform
 
 == Changelog ==
 
-= 2.1.90 [2025.03.28] =
-* class:: fix
+= 2.3.2 [2025.06.18] =
+* Nonce issus fixed
+
+= 2.3.1 [2025.06.17] =
+* SVN Update
+
+= 2.3.0 [2025.06.15] =
+* AWF NextStep
+
+= 2.2.19 [2025.06.15] =
+* Framework change
+
+= 2.2.18 [2025.06.12] =
+* Removed MU PC
+
+= 2.2.17 [2025.05.30] =
+* AWF update
+
+= 2.2.3 [2025.05.29] =
+* Framework: New DASHBOARD, removed WIDGET
+
+= 2.2.2 [2025.05.23] =
+* Framework testing
+
+= 2.2.1 [2025.05.15] =
+* new autoloader
+
+= 2.2.0 [2025.05.07] =
+* New OC v2.0.0
+
+= 2.1.98 [2025.05.03] =
+* 	INIT::maybe_load_assets(__DIR__, \'atec_wpdp\');
+
+= 2.1.97 [2025.04.30] =
+* AWF now fully namespaced
+* Minor fixes and profiler tweak
+
+= 2.1.95 [2025.04.23] =
+* NAMESPACE implemented
+* Object cache logger upgrade
+
+= 2.1.94 [2025.04.23] =
+* before profiler_debug removed
+
+= 2.1.93 [2025.04.06] =
+* Framework change
+
+= 2.1.92 [2025.04.05] =
+* alloptions/cron fix
+
+= 2.1.91 [2025.04.03] =
+* New FS
 
 = 2.1.89 [2025.03.28] =
 * New OC enabling
 
 = 2.1.88 [2025.03.28] =
 * Always save settings
-
-= 2.1.87 [2025.03.27] =
-* New OC enabling
 
 = 2.1.86 [2025.03.16] =
 * New style.css and check.css
@@ -103,9 +180,6 @@ This depends on the translation plugin being used. When translations are perform
 * Framework changes
 
 = 2.1.78 [2025.03.03] =
-* New OC install routine
-
-= 2.1.77 [2025.03.02] =
 * New OC install routine
 
 = 2.1.76 [2025.02.28] =
@@ -174,9 +248,6 @@ This depends on the translation plugin being used. When translations are perform
 = 2.1.55 [2025.02.03] =
 * Spanish translation
 
-= 2.1.54 [2025.02.03] =
-* Spanish translation
-
 = 2.1.53 [2025.02.03] =
 * includes/atec-cache-apcu-pcache-tools.php
 
@@ -189,19 +260,10 @@ This depends on the translation plugin being used. When translations are perform
 = 2.1.50 [2025.02.02] =
 * French translation by Stephane
 
-= 2.1.49 [2025.02.02] =
-* russian translation
-
-= 2.1.48 [2025.02.02] =
-* var_dump
-
 = 2.1.47 [2025.02.02] =
 * Framework changes (atec-check)
 
 = 2.1.46 [2025.02.02] =
-* Added settings sanitizing
-
-= 2.1.45 [2025.02.01] =
 * Added settings sanitizing
 
 = 2.1.44 [2025.01.29] =
@@ -237,9 +299,6 @@ This depends on the translation plugin being used. When translations are perform
 = 2.1.34 [2025.01.17] =
 * Check button replaced
 
-= 2.1.33 [2025.01.17] =
-* Check button replaced
-
 = 2.1.32 [2025.01.17] =
 * new atec-check
 
@@ -271,7 +330,7 @@ This depends on the translation plugin being used. When translations are perform
 * Fixed APcu Groups
 
 = 2.1.22 [2024.12.30] =
-* Fixed WP_APCU_KEY_SALT
+* Fixed ATEC_OC_KEY_SALT
 
 = 2.1.21 [2024.12.27] =
 * Advanced page cache
@@ -280,9 +339,6 @@ This depends on the translation plugin being used. When translations are perform
 * Fixed style sheet
 
 = 2.1.19 [2024.12.21] =
-* Clean up
-
-= 2.1.18 [2024.12.21] =
 * Clean up
 
 = 2.1.17 [2024.12.21] =
@@ -310,7 +366,7 @@ This depends on the translation plugin being used. When translations are perform
 * Improved plugin activation routine
 
 = 2.1.9 [2024.11.27] =
-* Cleanup routine moved up one level; Defined ATEC_WP_MEMORY_ADMIN_BAR
+* Cleanup routine moved up one level; Defined ATEC_admin_bar_memory
 
 = 2.1.8 [2024.11.23] =
 * Fixed admin Flush button
@@ -376,9 +432,6 @@ This depends on the translation plugin being used. When translations are perform
 = 1.8.9, 1.9.0 [2024.08.08] =
 * license code, cache fix
 
-= 1.8.8 [2024.07.29] =
-* inline_style
-
 = 1.8.7 [2024.07.23] =
 * pcache_delete_all
 
@@ -403,12 +456,6 @@ This depends on the translation plugin being used. When translations are perform
 = 1.6.7 [2024.06.26] =
 * deploy
 
-= 1.6.5, 1.6.6 [2024.06.20] =
-* update
-
-= 1.6.4 [2024.06.16] =
-* update
-
 = 1.6.3 [2024.06.10] =
 * no more submenu
 
@@ -416,9 +463,6 @@ This depends on the translation plugin being used. When translations are perform
 * bug fix
 
 = 1.5.8, 1.5.9 [2024.06.07] =
-* atec-check
-
-= 1.5.7 [2024.06.06] =
 * atec-check
 
 = 1.5.6 [2024.06.05] =
@@ -438,14 +482,8 @@ This depends on the translation plugin being used. When translations are perform
 * translation
 
 = 1.5.1 [2024.05.23] =
-* PCache show debug
+* PCache fix & show debug
 * Cache product pages
-
-= 1.5 [2024.05.22] =
-* PCache fix
-
-= 1.4.9 [2024.05.21] =
-* false|string
 
 = 1.4.8 [2024.05.18] =
 * x-cache-enabled
@@ -457,17 +495,11 @@ This depends on the translation plugin being used. When translations are perform
 * new atec-wp-plugin-framework
 * new object_cache.php, Version: 1.2
 
-= 1.4.1 [2024.05.03] =
-* optimized
-
 = 1.4.0 [2024.04.29] =
 * register_activation_hook
 
 = 1.3.5 [2024.04.14] =
 * server info
-
-= 1.3.4 [2024.04.02] =
-* bug fix
 
 = 1.3.3 [2024.04.01] =
 * requestUrl | port

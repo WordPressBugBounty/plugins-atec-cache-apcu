@@ -1,16 +1,22 @@
 <?php
-if (!defined('ABSPATH')) { exit; }
+defined('ABSPATH') || exit;
+
+use ATEC\FS;
+use ATEC\WPCA;
 
 (function() {
-	if (!class_exists('ATEC_fs')) require('atec-fs.php');
-	$afs = new ATEC_fs();
-	
-	if (defined('WP_APCU_KEY_SALT'))
+
+	if (defined('ATEC_OC_ACTIVE_APCU'))
 	{
 		wp_cache_flush();
-		$afs->unlink(trailingslashit(WP_CONTENT_DIR).'object-cache.php'); 
+		FS::unlink(FS::trailingslashit(WP_CONTENT_DIR).'object-cache.php');
 	}
-	$MU_advanced_cache_path=WPMU_PLUGIN_DIR.'/@atec-wpca-adv-page-cache-pro.php';
-	$afs->unlink($MU_advanced_cache_path); 
+	
+	if (WPCA::settings('p_cache'))
+	{
+		require(__DIR__.'/atec-wpca-install-pcache.php');
+		\ATEC_WPCA\Install_PCache::init(false);
+	}
+
 })();
 ?>

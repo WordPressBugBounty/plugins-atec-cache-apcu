@@ -1,12 +1,8 @@
 <?php
-if (!defined('ABSPATH')) { exit; }
-wp_cache_delete('atec_wpca_version');
+defined('ABSPATH') || exit;
+if (!defined('ATEC_LOADER')) require __DIR__ . '/includes/ATEC/LOADER.php';
 
-(function() {
-	$arr = ['cache','clear','minify','gzip'];
-	foreach ($arr as $a) { delete_option('atec_WPCA_p_'.$a.'_enabled'); }
+delete_option('atec_wpca_last_cache');
 
-	$arr = ['atec_WPCA_settings','atec_wpca_last_cache'];
-	foreach ($arr as $a) { delete_option($a); }
-})();
+\ATEC\INIT::delete_settings('wpca');
 ?>

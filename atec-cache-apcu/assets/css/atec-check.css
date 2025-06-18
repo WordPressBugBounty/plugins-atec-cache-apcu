@@ -1,20 +1,15 @@
-.atec-form .form-table { display: block; margin-bottom: 10px; width: fit-content; background: var(--bg-form) !important; border-radius: var(--px-4); border: var(--border-lightgrey); padding: 5px 10px 0px 10px; }
-.atec-form .form-table TBODY { display: table; }
-.atec-form .form-table TH	{ width: fit-content !important; white-space: wrap; }
-.atec-form .form-table TH, .atec-form .form-table TD { border-bottom: dashed 1px #fdfdfd; padding: 5px; font-weight: 500; font-size: 14px; }
-.atec-form .form-table TD { display: table-cell !important; vertical-align: baseline; }
-.atec-form .form-table TR:last-child TH, .atec-form .form-table TR:last-child TD { border-color: transparent; }
-.atec-form .form-table SELECT, .atec-form .form-table INPUT { min-height: auto !important; }
-.atec-form .form-table INPUT[type="submit"] { line-height: 28px !important; }
-.atec-form LABEL { font-weight: 600; display: inline-block; margin-bottom: 5px; }
+.atec-mini-switch-box 
+{
+	display: flex; gap: 5px; height: 26px; min-width: 72px; padding: 1px 0 0 4px;
+	background: var(--bg-button); border: solid 1px var(--c-link-light); border-radius: var(--px-5); 
+}
 
-.atec-page FORM H2 { font-size: 1.15em; }
-.atec-page FORM H2:first-of-type { margin-top: 0; }
-
-#atec_admin_bar { width: 0; font-size: 16px !important; }
-#atec_admin_bar input[type="checkbox"] { margin-left: -10px; }
-
-.atec_checkbox_button_div { display:flex; height:30px; background: var(--bg-button); border: var(--border-button); border-radius: var(--px-3); padding:2px 6px 26px 6px; }
+.atec_checkbox_button_div 
+{ 
+	display:flex; height:32px; color: var(--c-link); background: white; border: var(--border-button); border-radius: var(--px-3); 
+	width: fit-content; padding:3px 10px 26px 8px; 
+}
+.atec-ckbx { display: inline-block; }
 .atec-ckbx .switch { display: inline-block; height: 20px; position: relative; width: 40px; }
 .atec-ckbx-mini .switch { vertical-align: text-top; display: inline-block; height: 16px; position: relative; width: 32px; margin-top: 1px; }
 
@@ -34,4 +29,3 @@
 .atec-ckbx-mini .slider.round { border-radius: 16px; }
 
 .atec-ckbx .slider.round:before { border-radius: 50%; }
-  

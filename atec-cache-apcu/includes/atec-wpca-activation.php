@@ -1,15 +1,18 @@
 <?php
-if (!defined('ABSPATH')) { exit; }
+defined('ABSPATH') || exit;
 
-(function() {	
-	if (!function_exists('atec_header')) require(__DIR__.'/atec-tools.php');
-	atec_integrity_check(__DIR__);
+use ATEC\INIT;
+use ATEC\FS;
+
+(function() {
+
+	FS::mkdir(WPMU_PLUGIN_DIR);
 	
-	$optName 	= 'atec_WPCA_settings';
-	$options		= get_option($optName,[]);
-	if ($options['salt']??''==='') $options['salt'] = hash('crc32', get_bloginfo(), FALSE);
-	$options['ocache'] 	= false;
-	$options['cache'] 		= false;
-	update_option($optName, $options);
+	$settings = INIT::get_settings('wpca');
+		if ($settings['salt']??''=== '') $settings['salt'] = hash('crc32', get_bloginfo(), FALSE);
+		$settings['o_cache'] 	= false;
+		$settings['p_cache'] 		= false;
+	INIT::update_settings('wpca', $settings);
+
 })();
 ?>
