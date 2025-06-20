@@ -99,7 +99,7 @@ private static function plugin_div($p)
 			$result = self::wpas_count_spam();
 			self::group_badge('Anti SPAM', true, $p->slug , 'Settings', false, $result);
 			break;
-			
+
 		case 'backup':
 			$settings = INIT::get_settings('wpb');
 			$active = INIT::bool($settings['automatic'] ?? 0);
@@ -107,18 +107,15 @@ private static function plugin_div($p)
 			$latest = $wpb_dir!=='' ? self::wpb_latest_backup($wpb_dir) : [];
 			self::group_badge('Automatic', $active, $p->slug, 'Settings', false, $latest);
 			break;
-			
+
 		case 'banner':
-			$active = INIT::get_settings('wpbn', 'enabled');
-			self::group_badge('Banner', $active, $p->slug);
+			self::group_badge('Banner', INIT::get_settings('wpbn', 'enabled'), $p->slug);
 			break;
-			
+
 		case 'bunny':
-			$settings = INIT::get_settings('wpbu');
-			$active = ($atec_WPBU_settings['zone']??'')!== '';
-			self::group_badge('CDN Zone', $active, $p->slug,'Settings');
+			self::group_badge('CDN Zone', INIT::get_settings('wpbu', 'zone') !== '', $p->slug,'Settings');
 			break;
-			
+
 		case 'cache-apcu':
 			global $atec_wpca_settings;
 			$atec_wpca_pc = INIT::bool($atec_wpca_settings['cache'] ?? 0);
@@ -126,30 +123,23 @@ private static function plugin_div($p)
 			self::group_badge('Page Cache', $atec_wpca_pc, $p->slug,'Settings');
 			if ($atec_wpca_pc) self::wpca_count_pages();
 			break;
-			
+
 		case 'cache-memcached':
 			self::group_badge('Object Cache',defined('ATEC_OC_DRIVER') && ATEC_OC_DRIVER=== 'Memcached', $p->slug,'Settings');
 			break;
-			
+
 		case 'cache-redis':
 			self::group_badge('Object Cache',defined('ATEC_OC_DRIVER') && ATEC_OC_DRIVER=== 'Redis', $p->slug,'Settings');
 			break;
-			
-		case 'cache-tune':
-			$settings = INIT::get_settings('wpct');
-			$active = INIT::bool($settings['cache'] ?? 0);
-			self::group_badge('Page Cache', $active, $p->slug);
-			break;
-			
+
 		case 'config':
 			$settings = INIT::get_settings('wpco');
 			$active = !empty($settings);
 			self::group_badge('Config', $active, $p->slug);
 			break;
-			
+
 		case 'database':
-			$active = INIT::get_settings('wpb','auto_timedout');
-			self::group_badge('Transitions', $active, $p->slug);
+			self::group_badge('Transitions', INIT::get_settings('wpdb','auto_timedout'), $p->slug);
 			break;
 
 		case 'debug':
@@ -158,77 +148,65 @@ private static function plugin_div($p)
 			self::group_badge('D_LOG',defined('WP_DEBUG_LOG') && WP_DEBUG_LOG, $p->slug,'Debug',true);
 			self::group_badge('SAVEQUERIES',defined('SAVEQUERIES') && SAVEQUERIES, $p->slug,'Queries',true);
 			break;
-			
+
 		case 'deploy':
 			self::group_badge('Auto deploy',INIT::get_settings('wpdp'), $p->slug);
 			break;
-			
+
 		case 'developer':
-			$settings = INIT::get_settings('wpdv');
-			$active = INIT::bool($settings['console'] ?? 0);
-			self::group_badge('Console', $active, $p->slug, '', true);
+			self::group_badge('Console', INIT::get_settings('wpdv', 'console'), $p->slug, '', true);
 			break;
-			
+
 		case 'svg':
 		case 'duplicate-page-post':
 			self::group_badge('Active', true, $p->slug);
 			break;
-	
+
 		case 'hook-inspector':
-			$settings = INIT::get_settings('wphi');
-			$active = INIT::bool($settings['enabled'] ?? 0);
-			self::group_badge('Logging', $active, $p->slug,'',true);
+			self::group_badge('Logging', INIT::get_settings('wphi', 'enabled'), $p->slug,'',true);
 			break;
-			
+
 		case 'limit-login':
 			$result = self::wpll_count_blocked();
 			self::group_badge('Protected', true, $p->slug, '', false, $result);
 			break;
-			
+
 		case 'login-url':
-			$settings = INIT::get_settings('wplu');
-			$active = ($settings['url']??'')!== '';
-			self::group_badge('Custom URL', $active, $p->slug,'Settings');
+			self::group_badge('Custom URL', INIT::get_settings('wplu', 'url') !== '', $p->slug,'Settings');
 			break;
-			
+
 		case 'maintenance-mode':
-			$active = INIT::get_settings('wpmtm', 'enabled');
-			self::group_badge('Maintenance', $active, $p->slug);
+			self::group_badge('Maintenance', INIT::get_settings('wpmtm', 'enabled'), $p->slug);
 			break;
-			
+
 		case 'mega-cache':
-			$settings = INIT::get_settings('wpmc');
-			$active = INIT::bool($settings['cache'] ?? 0);
-			self::group_badge('Page Cache', $active, $p->slug,'Settings');
+			self::group_badge('Page Cache', INIT::get_settings('wpmc', 'cache'), $p->slug,'Settings');
 			break;
-			
+
 		case 'profiler':
 			$settings = INIT::get_settings('wppr');
-			$processes = INIT::bool($settings['processes'] ?? 0);
-			$pages = INIT::bool($settings['pages'] ?? 0);
-			self::group_badge('Profiler',$processes, $p->slug,'Processes',true);
-			self::group_badge('PP Profiler',$pages, $p->slug,'Pages',true);
+			self::group_badge('Profiler',INIT::bool($settings['processes'] ?? 0), $p->slug,'Processes',true);
+			self::group_badge('PP Profiler',INIT::bool($settings['pages'] ?? 0), $p->slug,'Pages',true);
 			break;
-			
+
 		case 'stats':
 			$result = ['label' => 'Visitors lately', 'text' => (int) INIT::get_settings('wps','today')];
 			self::group_badge('Active', true, $p->slug, '', false, $result);
 			break;
-			
+
 		case 'smtp-mail':
-			self::group_badge('Settings tested', get_option('WPSM_mail_tested'), $p->slug, 'Settings');
+			self::group_badge('Settings tested', INIT::get_settings('wpsm', 'mail_tested'), $p->slug, 'Settings');
 			break;
-			
+
 		case 'temp-admin':
 			$result = self::wpta_count_users();
 			self::group_badge('', true, $p->slug);
 			break;
-			
+
 		case 'webp':
-			$active = INIT::get_settings('wpwp','enabled');
-			self::group_badge('Conversion', $active, $p->slug);
+			self::group_badge('Conversion', INIT::get_settings('wpwp','enabled'), $p->slug);
 			break;
-			
+
 		default:
 			self::group_badge('', true, $p->slug);
 			break;

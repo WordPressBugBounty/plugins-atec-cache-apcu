@@ -2,10 +2,9 @@
 defined('ABSPATH') || exit;
 
 use ATEC\INIT;
-use ATEC\TRANSLATE;
 use ATEC\WPCA;
 
-add_action('admin_init', function() { TRANSLATE::load_pll(__DIR__, 'cache-apcu'); });
+add_action('plugins_loaded', function() { \ATEC\TRANSLATE::load_pll(__DIR__, 'cache-apcu'); });
 
 if (!WPCA::apcu_enabled())
 {

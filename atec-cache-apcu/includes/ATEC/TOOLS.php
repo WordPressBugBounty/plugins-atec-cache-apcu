@@ -225,20 +225,24 @@ public static function progress(): void { ob_start(); self::flush(); }
 
 public static function flush(): void
 {
-	while (ob_get_level() > 0)
+	while (true)
 	{
+		if (ob_get_level() <= 0) break;
+
 		$status = ob_get_status();
-		if (!empty($status['name']) && str_contains($status['name'], 'gzhandler')) { break; }	// gzhandler buffers often trigger: "Failed to send buffer of zlib output compression"
-		@ob_end_flush();
+		if (!empty($status['name']) && str_contains($status['name'], 'gzhandler')) break;
+
+		if (!@ob_end_flush()) break;
 	}
 	@flush();
 }
+
 
 // PROGRESS AREA START
 
 // DASH AREA START
 
-private static $dashArr = ['admin-comments', 'admin-generic', 'admin-home', 'admin-plugins', 'admin-settings', 'admin-site', 'admin-tools', 'analytics', 'archive', 'awards', 'backup', 'businessman', 'clipboard', 'code-standards', 'controls-play', 'cover-image', 'database', 'editor-code', 'editor-removeformatting', 'editor-table', 'forms', 'groups', 'hourglass', 'info', 'insert', 'list-view', 'performance', 'trash', 'translation', 'update'];
+private static $dashArr = ['admin-comments', 'admin-generic', 'admin-home', 'admin-plugins', 'admin-settings', 'admin-site', 'admin-tools', 'analytics', 'archive', 'awards', 'backup', 'businessman', 'clipboard', 'code-standards', 'controls-play', 'cover-image', 'database', 'database-add', 'editor-code', 'editor-removeformatting', 'editor-table', 'forms', 'groups', 'hourglass', 'info', 'insert', 'list-view', 'performance', 'trash', 'translation', 'update'];
 
 public static function dash_class($icon, $class = ''): string
 { return 'dashicons dashicons-' . $icon . ($class ? ' ' . $class : ''); }
@@ -604,7 +608,6 @@ public static function p_info($str, $bold=false, $class= ''): void
 	$str = INIT::trailingdotit($str); 
 	echo '<div class="atec-badge atec-box-info', ($class!== '' ? ' '.esc_html($class) : ''), '">';
 		echo '<div>🔹</div>';
-		// phpcs:ignore
 		echo '<div ', ($bold ? ' atec-bold' : ''), '">', wp_kses_post($str), '</div>';
 	echo '</div>';
 }
@@ -672,7 +675,6 @@ public static function safe_redirect($una, $action=null, $nav=null, $args = []):
 public static function redirect($una, $action=null, $nav=null, $args = []): void
 {
 	self::reg_inline_script('redirec', 'window.location.assign("'.INIT::build_url($una, $action, $nav, $args).'");');
-	self::flush();
 }
 
 public static function clean_request_bool($key) : bool
@@ -913,7 +915,7 @@ public static function page_header($una, $break=999, $about=false, $update=false
 	'<div class="atec-page">';
 		$licenseOk = self::header($una);
 
-		if ($break<0) $break = $licenseOk ? 999 : abs($break);
+		//if ($break<0) $break = $licenseOk ? 999 : abs($break);
 
 		echo
 		'<div class="atec-main">';

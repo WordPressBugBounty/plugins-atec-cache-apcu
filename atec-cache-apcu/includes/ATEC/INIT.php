@@ -148,7 +148,7 @@ final class INIT {
 			$caller = $bt[1];
 			$file = str_replace(WP_CONTENT_DIR, '', $caller['file'] ?? '[unknown file]');
 			$line = $caller['line'] ?? '[unknown line]';
-			error_log("INIT::error_log() called from $file:$line");	// phpcs:ignore
+			error_log("error_log() called from $file:$line");	// phpcs:ignore
 		}
 		is_scalar($args) ? error_log($args) : error_log(print_r($args,true));		// phpcs:ignore
 	}
@@ -321,15 +321,26 @@ final class INIT {
 
 	public static function plugin_prefix($p): string { return in_array($p, ['mega-cache', 'cache-tune']) ? '' : 'atec-'; }
 
-	public static function plugin_by_dir($dir) : string
+	public static function normalize_path(string $path): string
 	{
-		$normalized_path = str_replace('\\', '/', $dir);										// Windows compatible
-		$plugin_path = str_replace(WP_PLUGIN_DIR . '/', '', $normalized_path);	// Remove WP_PLUGIN_DIR from the path to isolate the plugin directory
-		return explode('/', $plugin_path)[0];														// Get the plugin name (first part of the path)
+		$path = str_replace('\\', '/', $path);												// Replace backslashes with forward slashes
+		$path = preg_replace('|(?<!:)/+|', '/', $path);									// Remove redundant slashes (except double-slash at start for network shares)
+		if (isset($path[1]) && $path[1] === ':') $path = ucfirst($path);		// Uppercase Windows drive letter if present
+		return $path;
 	}
-
-	// public static function plugin_dir($plugin) : string
-	// { return WP_PLUGIN_DIR . '/' . $plugin; }
+	
+	public static function plugin_by_dir($dir): string
+	{
+		$dir = self::normalize_path($dir);
+		$pluginDir = self::normalize_path(WP_PLUGIN_DIR);
+	
+		if (!$dir || !$pluginDir || strpos($dir, $pluginDir) !== 0) return '';
+	
+		$relative = substr($dir, strlen($pluginDir)); // Strip base dir
+		$parts = explode('/', ltrim($relative, '/'));
+	
+		return $parts[0] ?? '';
+	}
 
 	public static function plugin_url($plugin) : string
 	{ return WP_PLUGIN_URL . '/' . $plugin; }

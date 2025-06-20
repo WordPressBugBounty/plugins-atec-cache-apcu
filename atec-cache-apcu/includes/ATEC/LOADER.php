@@ -12,6 +12,11 @@ if (!defined('ATEC_LOADER')) define('ATEC_LOADER', '1.0.1');
 
 final class LOADER {
 	
+private static function normalize_path($path) 
+{
+	return str_replace('\\', '/', $path);
+}
+
 public static function autoload($class)
 {
 	static $loaded = [];
@@ -60,13 +65,15 @@ public static function autoload($class)
 		if (isset($call['file'])) { $caller_path=$call['file']; break; }
 	}
 	
-	if ($caller_path!== '') 
+	if ($caller_path !== '')
 	{
-		preg_match('#'.preg_quote(WP_PLUGIN_DIR, '#').'/([^/]+)#', $caller_path, $match);
+		$caller_path = self::normalize_path($caller_path);
+		$wp_plugin_dir = self::normalize_path(WP_PLUGIN_DIR);
+
+		preg_match('#'.preg_quote($wp_plugin_dir, '#').'/([^/]+)#', $caller_path, $match);
 		if (isset($match[1]))
 		{
-			$plugin = $match[1];
-			$local_path = WP_PLUGIN_DIR . '/' . $plugin . '/includes/ATEC/' . $relative_class. '.php';
+			$local_path = self::normalize_path($wp_plugin_dir . '/' . $match[1] . '/includes/ATEC/' . $relative_class. '.php');
 			if (file_exists($local_path)) 
 			{
 				require $local_path;
