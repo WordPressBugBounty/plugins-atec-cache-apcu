@@ -206,6 +206,23 @@ final class DB
 	
 		return $result !== false;
 	}
+	
+	public static function insert(string $table, array $data): bool
+	{
+		global $wpdb;
+	
+		if (empty($table) || empty($data)) return false;
+	
+		$format = [];
+		foreach ($data as $value)
+		{
+			if (is_int($value)) $format[] = '%d';
+			elseif (is_float($value)) $format[] = '%f';
+			else $format[] = '%s';
+		}
+	
+		return (bool) $wpdb->insert($table, $data, $format);
+	}
 
 	private static array $customTables = ['wpmc' => 'mega_cache'];
 

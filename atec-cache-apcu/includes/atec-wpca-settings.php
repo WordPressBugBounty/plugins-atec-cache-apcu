@@ -68,8 +68,8 @@ return function($una)
 				echo
 				'<hr>';
 
-				$licenseOk = TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('object cache', 'atec-cache-apcu'), true);
-				if (!$licenseOk) echo '<br class="atec-mb-20">';
+				$license_ok = TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('object cache', 'atec-cache-apcu'), true);
+				if (!$license_ok) echo '<br class="atec-mb-20">';
 
 				echo 
 				'<div class="atec-row">';
@@ -135,8 +135,8 @@ return function($una)
 				echo
 				'<hr>';
 
-				$licenseOk = TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('page cache', 'atec-cache-apcu'), true);
-				if (!$licenseOk) echo '<br class="atec-mb-20">';
+				$license_ok = TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('page cache', 'atec-cache-apcu'), true);
+				if (!$license_ok) echo '<br class="atec-mb-20">';
 
 				echo 
 				'<div class="atec-row">';

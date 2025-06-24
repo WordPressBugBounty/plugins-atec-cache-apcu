@@ -60,12 +60,19 @@ final class CHECK
 
 	// BUTTON AREA START
 
-	public static function checkbox_button($una, $action, $nav, $option, $disabled=false): void
+	public static function checkbox_button_td($una, $action, $nav, $option, $disabled = false, $class = ''): void
+	{ 
+		echo '<td>';
+		self::checkbox_button($una, $action, $nav, $option, $disabled, $class);
+		echo '</td>';
+	}
+
+	public static function checkbox_button($una, $action, $nav, $option, $disabled = false, $class = ''): void
 	{
 		$id = uniqid('atec');
 		$href=INIT::build_url($una, $action, $nav);
 		echo '
-		<div class="atec-ckbx">
+		<div class="atec-ckbx', esc_html($class !== '' ? ' '.$class : ''), '">
 			<label class="switch" for="check_', esc_attr($id), '" ', ($disabled ? 'class="check_disabled"' : ' onclick="location.href=\''.esc_url($href).'\'"'), '>
 				<input name="check_', esc_attr($id), '"', ($disabled ? 'disabled="true"' : ''), ' type="checkbox" value="1"', checked(INIT::bool($option),true,true), '>
 				<div class="slider round"></div>

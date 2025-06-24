@@ -23,13 +23,13 @@ public static function init($p_cache)
 	$target_path = WP_CONTENT_DIR.'/advanced-cache.php';
 	$content = FS::get($target_path);
 
-	if ($content && (!str_contains($content, 'atec-apcu-page-cache')))
+	if ($content && (!(str_contains($content, 'atec-apcu-page-cache') || str_contains($content, 'atec-cache-apcu-adv-page-cache'))))
 	{ return 'Another '.$error_str.' already exists - please deactivate it first'; }
 		
 	if ($p_cache) 
 	{
 		// Advanced cache is a PRO feature. Things must be handled here in case of PRO status being changed.
-		if (TOOLS::pro_license())
+		if (TOOLS::pro_license('wpca'))
 		{
 			if (!FS::copy($install_path, $target_path)) return 'Installing '.$error_str.' failed.';
 		}

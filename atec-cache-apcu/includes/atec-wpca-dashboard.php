@@ -17,7 +17,7 @@ use ATEC\WPCA;
 		TOOLS::add_nav($una, WPCA::settings('p_cache'), '#blog Page Cache');
 	}
 
-	if (is_null( $licenseOk = TOOLS::page_header($una, 999, false, false, defined('ATEC_OC_ACTIVE_APCU')) )) return;
+	if (is_null( $license_ok = TOOLS::page_header($una, 999, false, false, defined('ATEC_OC_ACTIVE_APCU')) )) return;
 
 		switch ($una->nav)
 		{

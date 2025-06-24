@@ -43,62 +43,77 @@ riq3aeQVZ8yllQ3bbwIDAQAB
 		return $host;
 	}
 
-	public static function pro_check_license($licenseCode=null, $siteName=null, $slug=null)
+	private static function pro_transient($option_key, $option_key_MULTI) : bool
 	{
-		$optionBaseName = 'atec_license_code';
-		$optionBaseName_MULTI = $optionBaseName.'_MULTI';
+		return get_transient($option_key) || get_transient($option_key_MULTI);
+	}
+	
+	public static function pro_check_license($license_code_param = null, $site_host = null, $slug = null)
+	{
 		if (is_null($slug)) $slug = INIT::slug();
-		$suffix = $slug=== 'atec_wpmc' ? '_MEGA' : ($slug=== 'atec_wpct' ? '_CT4W' : '');
-		$option_key= $optionBaseName.$suffix;
-		if (!$licenseCode)
+		$suffix = $slug=== 'wpmc' ? '_MEGA' : '';
+
+		$option_base = 'atec_license_code';
+		$option_key= $option_base.$suffix;
+		$option_key_MULTI = $option_base.'_MULTI';
+		
+		if (!$license_code_param)
 		{
-			if (get_transient($option_key)) return true;									// license status is cached
-			$licenseCode= get_option($option_key,'');									// get "atec", "mega" or "ct4w" license code from DB
-			if ($licenseCode=== '') $licenseCode= get_option($optionBaseName_MULTI,'');
+			if (self::pro_transient($option_key, $option_key_MULTI)) return true;	// license status is cached
+			$license_code = get_option($option_key);											// get "atec", "mega" or "ct4w" license code from DB
+			if (!$license_code) $license_code = get_option($option_key_MULTI);
 		}
-
-		if ($licenseCode=== '') return false; 					// 'Empty license code';
+		else $license_code = $license_code_param;
+		if (empty($license_code)) return false; 				// 'Empty license code';
+		
 		if (!extension_loaded('openssl')) return false; 	// 'OpenSSL extension is required to verify the license';
-		if (!$siteName) $siteName=wp_parse_url(get_site_url(),PHP_URL_HOST);
-		$siteName = self::get_root_domain($siteName);
+		if (!$site_host) $site_host = INIT::site_host();
+		$site_host = self::get_root_domain($site_host);
 
-		$decoded = base64_decode($licenseCode, true);
+		$decoded = base64_decode($license_code, true);
 		if ($decoded === false) return false;
-		$licenseOk = openssl_public_decrypt($decoded, $decrypted, self::ATEC_PUBLIC_KEY);
+		$decrypt_ok = openssl_public_decrypt($decoded, $decrypted, self::ATEC_PUBLIC_KEY);
 
-		if ($licenseOk)
+		$license_ok = false;
+		if ($decrypt_ok)
 		{
-			$licenseOk = in_array($decrypted,[$siteName.$suffix, $siteName.'_MULTI']);		// true if licenseCode is "atec", "mega" or "ct4w" – or a "multi" license
-			if ($licenseOk)
+			$license_ok = in_array($decrypted,[$site_host.$suffix, $site_host.'_MULTI']);		// true if licenseCode is "atec", "mega" or "ct4w" – or a "multi" license
+			if ($license_ok)
 			{
-				if (str_ends_with($decrypted, '_MULTI')) set_transient($optionBaseName_MULTI, true, 86400);
-				else set_transient($suffix=== '' ? $optionBaseName : $optionBaseName.$suffix, true, 86400); // "atec_license_code", "atec_license_code_MEGA", or "atec_license_code_CT4W"
-
+				if (str_ends_with($decrypted, '_MULTI')) set_transient($option_key_MULTI, true, 86400);
+				else set_transient($option_key, true, 86400);
 			}
 		}
-		if ($licenseOk) update_option($option_key, $licenseCode);		// set "atec", "mega" or "ct" license code | code can resolve to a MULTI license
-		else { delete_option($option_key); delete_transient($option_key); }
-		return $licenseOk;
+
+		if ($license_ok) 
+		{
+			if ($license_code_param) update_option($option_key, $license_code);		// set "atec" or "mega" | code can resolve to a MULTI license
+		}
+		else 
+		{ 
+			delete_option($option_key); delete_transient($option_key); 
+		}
+		return $license_ok;
 	}
 
 	public static function pro_form($una)
 	{
-		$optionBaseName = 'atec_license_code';
+		$option_base = 'atec_license_code';
 		$slug = $una->slug;
 		$suffix = $slug=== 'atec_wpmc' ? '_MEGA' : ($slug=== 'atec_wpct' ? '_CT4W' : '');
-		$option_key = $optionBaseName.$suffix;
+		$option_key = $option_base.$suffix;
 
-		$licenseCode = TOOLS::clean_request('licenseCode');
-		if ($licenseCode=== '') $licenseCode= get_option($option_key,'');
+		$license_code = TOOLS::clean_request('licenseCode');
+		if ($license_code=== '') $license_code= get_option($option_key,'');
 
-		$siteName = wp_parse_url(get_site_url(),PHP_URL_HOST);
-		$licenseOk = self::pro_check_license($licenseCode, $siteName, $slug);
+		$site_host = wp_parse_url(get_site_url(),PHP_URL_HOST);
+		$license_ok = self::pro_check_license($license_code, $site_host, $slug);
 
 		$imgSrc = plugins_url('/assets/img/atec-group/', dirname(__DIR__));
 		echo
 		'<div class="atec-db atec-center atec-m-20">';
 
-			if ($licenseOk) echo '<h4 class="atec-green atec-mt-10">Thank you for activating your „Lifetime-Site-License“.</h4>';
+			if ($license_ok) echo '<h4 class="atec-green atec-mt-10">Thank you for activating your „Lifetime-Site-License“.</h4>';
 			else TOOLS::reg_inline_script('group_pro_package', 'jQuery("#pro_package").show();');
 			
 			TOOLS::p('');
@@ -107,9 +122,9 @@ riq3aeQVZ8yllQ3bbwIDAQAB
 				\ATEC\SVG::echo('license');
 				echo
 				'<p class="atec-m-0 atec-mb-10">',
-					'<strong>Site name: </strong>', esc_attr($siteName), 
+					'<strong>Site name: </strong>', esc_attr($site_host), 
 				'</p>',
-				'<textarea cols="80" rows="3" name="licenseCode" class="atec-fs-10">', esc_textarea($licenseCode), '</textarea><br>',
+				'<textarea cols="80" rows="3" name="licenseCode" class="atec-fs-10">', esc_textarea($license_code), '</textarea><br>',
 				'<label class="atec-fs-12"><b>Paste your license code here</b></label>',
 				'<br><br>
 				<div class="atec-m-auto">';
@@ -118,11 +133,11 @@ riq3aeQVZ8yllQ3bbwIDAQAB
 				'</div>';
 			TOOLS::form_footer();
 			
-			if ($licenseCode!== '') 
+			if ($license_code!== '') 
 			{
 				TOOLS::p('');
 				echo '<div class="atec-m-auto">'; 
-					TOOLS::badge($licenseOk, 'The license code is#valid for your site', 'NOT valid');
+					TOOLS::badge($license_ok, 'The license code is#valid for your site', 'NOT valid');
 				echo '</div>';
 			}
 			

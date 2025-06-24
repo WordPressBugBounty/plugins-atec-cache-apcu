@@ -10,6 +10,11 @@ final class TOOLS
 
 // TOOLS AREA START
 
+public static function str_istarts_with(string $haystack, string $needle): bool 
+{
+	return strncasecmp($haystack, $needle, strlen($needle)) === 0;
+}
+
 public static function on_off($bool, $reverse = false): string 
 {
 	$label = $bool ? 'On' : 'Off';
@@ -42,7 +47,7 @@ public static function lazy_require_class(string $dir, string $path, string $cla
 	if (is_file($full_path)) 
 	{
 		require $full_path;
-		if ($class!= '')
+		if ($class !== '')
 		{
 			if (!str_contains($class, 'ATEC_')) $class = 'ATEC_'.$class;	// This will add class name or use full class if passed like "ATEC_WPC"
 			if (class_exists($class)) 
@@ -85,10 +90,10 @@ public static function percent_format($value, $decimals = 1)
 	return sprintf("%.{$decimals}f", $value) . '<small> %</small>';
 }
 
-public static function td_size_format($bytes, $decimals = 0, $class='') 
+public static function td_size_format($bytes, $decimals = 0, $class = '') 
 {
 	if (!$bytes) { echo '<td>-/-</td>'; return; }
-	echo '<td class="atec-nowrap atec-right', $class==='' ? '' : ' '.esc_html($class), '">';
+	echo '<td class="atec-nowrap atec-right', ($class !== '' ? ' '.esc_attr($class) : ''), '">';
 		echo wp_kses_post(self::size_format($bytes, $decimals));
 	echo '</td>';
 }
@@ -144,8 +149,8 @@ public static function una($dir, $nav_default = '')
 	return (object) $arr;
 }
 
-public static function p($str= '', $class= ''): void
-{ echo '<p class="atec-mb-'.($str!== '' ? '0' : '5'), esc_html($class=== '' ? '' : ' '.$class) , '">', esc_html($str!== '' ? INIT::trailingdotit($str) : '&nbsp;'), '</p>'; }
+public static function p($str = '', $class = ''): void
+{ echo '<p class="atec-mb-'.($str!== '' ? '0' : '5'), ($class !== '' ? ' '.esc_attr($class) : ''), '">', esc_html($str!== '' ? INIT::trailingdotit($str) : '&nbsp;'), '</p>'; }
 
 public static function enabled($enabled, $active=false): void
 {
@@ -245,7 +250,7 @@ public static function flush(): void
 private static $dashArr = ['admin-comments', 'admin-generic', 'admin-home', 'admin-plugins', 'admin-settings', 'admin-site', 'admin-tools', 'analytics', 'archive', 'awards', 'backup', 'businessman', 'clipboard', 'code-standards', 'controls-play', 'cover-image', 'database', 'database-add', 'editor-code', 'editor-removeformatting', 'editor-table', 'forms', 'groups', 'hourglass', 'info', 'insert', 'list-view', 'performance', 'trash', 'translation', 'update'];
 
 public static function dash_class($icon, $class = ''): string
-{ return 'dashicons dashicons-' . $icon . ($class ? ' ' . $class : ''); }
+{ return 'dashicons dashicons-' . $icon . ($class !== '' ? ' '.$class : ''); }
 
 public static function dash_span($dash, $class = '', $style = ''): void
 { echo '<span' . ($style ? ' style="' . esc_attr($style) . '"' : '') . ' class="' . esc_attr(self::dash_class($dash, $class)) . '"></span>'; }
@@ -269,7 +274,7 @@ private static function dash_and_button_div($dnb, string $class = ''): void
 	{
 		if ($dnb->button===true || (int)$dnb->button===1) { self::dash_span('yes-alt', 'atec-green'); }
 		elseif ($dnb->button=== '' || $dnb->button===false || $dnb->button===0) { self::dash_span('dismiss', 'atec-red'); }
-		elseif ($dnb->button !== '') echo '<span',  ($class ? ' class="' . esc_html($class) . '"' : ''), '>', esc_html($dnb->button), '</span>';
+		elseif ($dnb->button !== '') echo '<span',  ($class !== '' ? ' '.esc_attr($class) : ''), '>', esc_html($dnb->button), '</span>';
 	}
 }
 
@@ -295,56 +300,61 @@ public static function integrity_banner($dir) : void
 	'</div>';
 }
 
-public static function pro_license($licenseCode=null, $siteName=null): bool
+public static function pro_license($slug=null): bool
 {
-	if (class_exists('ATEC\PRO')) return PRO::pro_check_license($licenseCode, $siteName);
+	if (class_exists('ATEC\PRO')) return PRO::pro_check_license(null, null, $slug);
 	return false;
 }
 
 private static function pro_banner($slug): bool
 {
-	$licenseOk= self::pro_license();
+	$license_ok = self::pro_license($slug);
 	$href = INIT::build_url($slug, '', 'License');
 	echo
 	'<div id="atec_pro_banner" class="atec-sticky-right">
-		<a class="button atec-', ($licenseOk ? 'green' : 'blue') ,'" href="', esc_url($href), '" style="', ($licenseOk ? ' border: var(--border-lightgrey);' : ''), '">';
-			self::dash_span('awards', 'atec-'.($licenseOk ? 'green' : 'blue'));
+		<a class="button atec-', ($license_ok ? 'green' : 'blue') ,'" href="', esc_url($href), '" style="', ($license_ok ? ' border: var(--border-lightgrey);' : ''), '">';
+			self::dash_span('awards', 'atec-'.($license_ok ? 'green' : 'blue'));
 			echo
 			'<span>',
 				$slug=== 'wpmc' ? 'MC ' : ($slug=== 'wpct' ? 'CT4W ' : ''),
-				($licenseOk ? '„PRO“ version' : 'Upgrade to „PRO“'),
+				($license_ok ? '„PRO“ version' : 'Upgrade to „PRO“'),
 			'.</span>',
 		'</a>
 	</div>';
-	return $licenseOk;
+	return $license_ok;
 }
 
-public static function pro_feature($una, $desc= '', $small=false, $licenseOk=null): bool
+public static function pro_feature($una, $desc= '', $small=false, $license_ok=null, $break=false): bool
 {
 	
-	if (is_null($licenseOk)) $licenseOk= self::pro_license()===true;
-	if (!$licenseOk)
+	if (is_null($license_ok)) $license_ok= self::pro_license($una->slug)===true;
+	if (!$license_ok)
 	{
 		$href = INIT::build_url($una, '', 'License');
-		echo '
-		<div class="', ($desc!== ''?'atec-dilb':''), '">
+		echo
+		'<div class="', ($desc !== '' ? 'atec-dilb' : ''), '">
 			<a class="atec-dilb atec-nodeco atec-blue" href="', esc_url($href), '">';
 			if ($small)
 			{
 				echo
-				'<div class="atec-dilb atec-blue atec-badge atec-fs-12" style="background: #f9f9ff; border: solid 1px #dde; margin: 0; padding: 4px 5px;">',
-					'<div class="atec-dilb atec-vat">'; self::dash_span('awards', 'atec-blue atec-fs-14', 'padding-top: 2px;'); echo '</div>',
-					'<div class="atec-dilb atec-vat">Upgrade to „PRO“', str_starts_with($desc,'<br>')?'.':' '; self::br($desc); echo '.</div>',
+				'<div class="atec-badge atec-blue atec-fs-12" style="background: #f9f9ff; border: solid 1px #dde; margin: 0; padding: 4px 5px;">',
+					'<div class="atec-col atec-vat" style="max-width: 20px;">'; self::dash_span('awards', 'atec-blue atec-fs-14', 'padding-top: 2px;'); echo '</div>',
+					'<div class="atec-col">Upgrade to „PRO“', 
+						str_starts_with($desc,'<br>') ? '.' :' '; 
+						self::br(INIT::trailingdotit($desc)); 
+					echo 
+					'</div>',
 				'</div>';
 				$desc= '';
 			}
 			else self::msg('blue','„PRO“ feature - please upgrade');
-		echo '
-			</a>
+			echo 
+			'</a>
 		</div>';
-		if ($desc!== '') { echo '<br><div class="atec-pro-box"><h4>'; self::br($desc); echo '.'; echo '</h4></div>'; 	}
+		if ($desc!== '') { echo '<div class="atec-pro-box"><h4 class="atec-mt-0">'; self::br(INIT::trailingdotit($desc)); echo '</h4></div>'; 	}
+		if ($break) echo '<br>';
 	}
-	return $licenseOk; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	return $license_ok; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 public static function pro_block($una, $str = ''): void
@@ -352,8 +362,8 @@ public static function pro_block($una, $str = ''): void
 	$href = INIT::build_url($una, '', 'License');
 	$str =
 		$str === '' ?
-		'This is a „PRO“ ONLY plugin.<br>A license is required to use the basic functions' :
-		'Please upgrade to „PRO“ version '.$inline;
+		'This is a „PRO“ ONLY plugin.<br>A license is required to use the basic functions.' :
+		'Please upgrade to „PRO“ version '.INIT::trailingdotit($str);
 
 	echo
 	'<div class="atec-df atec-pro-box">',
@@ -362,13 +372,19 @@ public static function pro_block($una, $str = ''): void
 		echo 
 		'</div>',
 		'<div class="atec-df1 atec-vat atec-nowrap">',
-			'<a class="atec-nodeco atec-blue" href="', esc_url($href), '">', esc_html($str), '</a>',
+			'<a class="atec-nodeco atec-blue" href="', esc_url($href), '">';
+			self::br($str);
+			echo
+			'</a>',
 		'</div>',
-	'</div><br>';
+	'</div>';
 }
 
-public static function pro_only($una): void
-{ self::pro_block($una); }
+public static function pro_only($una, $break=false): void
+{ 
+	self::pro_block($una);
+	if ($break) self::clear();
+}
 
 public static function pro_missing($class= ''): void
 {
@@ -397,13 +413,13 @@ public static function add_nav(&$una, $option, $nav)
 public static function nav_tab_dashboard($una): void
 { $una->navs=['#admin-home Dashboard']; self::nav_tab($una); }
 
-private static function single_nav_tab($una, $act_nav, $icon, $button, $licenseOk=false, $break=false, $single=false) : void
+private static function single_nav_tab($una, $act_nav, $icon, $button, $license_ok=false, $break=false, $single=false) : void
 {
 	$href = INIT::build_url($una, '', $act_nav);
 	echo
 	'<div class="atec-dilb">',
 		'<div class="atec-db atec-pro" style="height:15px; padding-left:10px;">', 
-			(!$licenseOk && $break ? 'PRO' : '&nbsp;'), 
+			(!$license_ok && $break ? 'PRO' : '&nbsp;'), 
 		'</div>',
 		'<a href="', esc_url($href), '" class="nav-tab', ($single ? ' nav-tab-single' : ''), ($una->nav=== $act_nav ? ' nav-tab-active' : ''), '">';
 			if (!empty($icon))
@@ -417,10 +433,10 @@ private static function single_nav_tab($una, $act_nav, $icon, $button, $licenseO
 	</div>';
 }
 
-public static function nav_tab($una, $break=999, $licenseOk=null, $about=false, $update=false, $debug=false): void
+public static function nav_tab($una, $break=999, $license_ok=null, $about=false, $update=false, $debug=false): void
 {
 	self::progress();
-	$margin_top = $licenseOk ? '-15' : '-5';
+	$margin_top = $license_ok ? '-15' : '-5';
 	echo
 	'<h2 class="nav-tab-wrapper" style="padding: 0; margin: '.esc_attr($margin_top).'px 0 5px 0;">';
 		$c = 0;
@@ -429,8 +445,8 @@ public static function nav_tab($una, $break=999, $licenseOk=null, $about=false, 
 			$c++;
 			$dnb = self::dash_and_button($a);
 			$nice = str_replace(['(', ')'], '', str_replace([' ', '.', '-', '/'], '_', $dnb->button));
-			if (!$licenseOk && $c-1 === $break) echo '<div class="atec-dilb atec-mr-10"></div>';
-			self::single_nav_tab($una, $nice, $dnb->dash, $dnb->button, $licenseOk, $c > $break, false);
+			if (!$license_ok && $c-1 === $break) echo '<div class="atec-dilb atec-mr-10"></div>';
+			self::single_nav_tab($una, $nice, $dnb->dash, $dnb->button, $license_ok, $c > $break, false);
 		}
 
 		echo
@@ -487,7 +503,7 @@ public static function table_tr($tds = [], $tag = 'td', $class = ''): void
 	$class = str_replace('bold', 'atec-table-tr-bold', $class);
 	
 	$tag = $tag === '' ? 'td' : $tag; // fallback
-	echo '<tr', (!empty($class) ? ' class="'.esc_html($class).'"' : '') ,'>';
+	echo '<tr', esc_html($class !== '' ? ' class="'.$class.'"' : ''), '>';
 
 	$dash_reg = '/#([\-|\w]+)\s?(.*)/i';
 	foreach ($tds as $td)
@@ -527,20 +543,34 @@ public static function table_tr($tds = [], $tag = 'td', $class = ''): void
 	echo '</tr>';
 }
 
-public static function table_td($value= '', $class= '')
-{ echo '<td', ($class ? ' class="'.esc_attr($class).'"' : ''), '>', esc_html($value), '</td>'; }
+public static function table_td($td = '', $class= '')
+{
+	if (preg_match('/^(\d+)@(.*)$/', $td, $colMatches)) { $colspan = (int) $colMatches[1]; $td = $colMatches[2]; }
+	else $colspan = 1;
+	echo '<td colspan="'.esc_attr($colspan).'"', ($class !== '' ? ' class="'.esc_attr($class).'"' : ''), '>', wp_kses_post($td), '</td>'; 
+}
 
 // TABLE AREA END
 
-public static function button($una, $action, $nav= '', $button= '', $primary=false, $confirm=false): void
+private static function action_params($input) 
+{
+    $parts = explode('&', $input);
+    $action = array_shift($parts);
+    parse_str(implode('&', $parts), $params);
+    return [$action, $params];
+}
+
+public static function button($una, $action, $nav = '', $button = '', $primary = false, $confirm = false, $disabled = false): void
 {
 	$dnb = self::dash_and_button($button);
-	$href = INIT::build_url($una, $action, $nav);
+	if ($action !== '') { [$action, $args] = self::action_params($action); }
+	else $args = [];
+	$href = INIT::build_url($una, $action, $nav, $args);
 	echo 
 	'<div', ($confirm ? ' class="atec-btn-confirm"' : ''), '>';
 		if ($confirm) { echo '<input class="atec-mr-10" title="Confirm action" type="checkbox" onchange="jQuery(this).siblings(\'a\').toggleClass(\'atec-disabled-link\');">'; }
 		echo 
-		'<a href="', esc_url($href), '" class="button button-', ($primary ? 'primary' : 'secondary'), esc_html($confirm ? ' atec-disabled-link' : ''), '">';
+		'<a', $disabled ? ' disabled' : '', ' href="', esc_url($href), '" class="button button-', ($primary ? 'primary' : 'secondary'), ($confirm ? ' atec-disabled-link' : ''), '">';
 			self::dash_and_button_div($dnb);
 		echo 
 		'</a>
@@ -559,10 +589,11 @@ public static function button_confirm_td($una, $action, $nav, $button): void
 
 public static function dash_button($una, $action, $nav, $dash, $enabled, $id, $primary=false): void
 {
-	$href = INIT::build_url($una, $action, $nav, ['id' => $id]);
+	if ($enabled) $href = INIT::build_url($una, $action, $nav, ['id' => $id]);
+	else $href = '';
+	
 	echo 
-	'<a', 
-		esc_attr(!$enabled ? ' disabled ':''), ' href="', esc_url($href ), '" ',
+	'<a ', ($enabled ? '' : 'disabled '), ($href !== '' ? 'href="'.esc_url($href ).'" ' : ''),
 		'class="button ', esc_attr(self::dash_class($dash, 'button-'.($primary ? 'primary' : 'secondary'))), '">',
 	'</a>';
 }
@@ -606,7 +637,7 @@ public static function badge($ok, $str_success, $str_failed = '', $margin = fals
 public static function p_info($str, $bold=false, $class= ''): void
 {
 	$str = INIT::trailingdotit($str); 
-	echo '<div class="atec-badge atec-box-info', ($class!== '' ? ' '.esc_html($class) : ''), '">';
+	echo '<div class="atec-badge atec-box-info', ($class !== '' ? ' '.esc_attr($class) : ''), '">';
 		echo '<div>🔹</div>';
 		echo '<div ', ($bold ? ' atec-bold' : ''), '">', wp_kses_post($str), '</div>';
 	echo '</div>';
@@ -646,7 +677,7 @@ public static function form_header($una, $action= '', $nav= '', $id= '', $class=
 {
 	$href = INIT::build_url($una, $action, $nav);
 	echo
-	'<form class="atec-form', ($class ? ' '.esc_attr($class) : ''), '" method="post" action="'.esc_url($href).'">';
+	'<form class="atec-form', ($class !== '' ? ' '.esc_attr($class) : ''), '" method="post" action="'.esc_url($href).'">';
 		self::form_add_fields($una, $action, $nav, $id);
 }
 
@@ -658,6 +689,26 @@ public static function form_add_fields($una, $action = null, $nav = null, $id = 
 	$fields = [	'_wpnonce' => $una->nonce, 'action' => $action, 'nav' => $nav, 'id' => $id ];
 	foreach ($fields as $name => $value)
 		{ if (!is_null($value)) { echo '<input type="hidden" name="', esc_attr($name), '" value="', esc_attr($value), '">'; } }
+}
+
+public static function form_fake_check($str)
+{
+	echo
+	'<table class="form-table">
+		<tbody>
+			<tr>
+				<th scope="row">', esc_html($str), '</th>
+				<td>
+					<div class="atec-ckbx">
+						<label class="switch">
+							<input type="checkbox" disabled value="0">
+							<div class="slider round"></div>
+						</label>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>';
 }
 
 public static function submit_button($button= '', $inline=false)
@@ -674,7 +725,7 @@ public static function safe_redirect($una, $action=null, $nav=null, $args = []):
 
 public static function redirect($una, $action=null, $nav=null, $args = []): void
 {
-	self::reg_inline_script('redirec', 'window.location.assign("'.INIT::build_url($una, $action, $nav, $args).'");');
+	self::reg_inline_script('redirect', 'window.location.assign("'.INIT::build_url($una, $action, $nav, $args).'");');
 }
 
 public static function clean_request_bool($key) : bool
@@ -731,7 +782,7 @@ public static function reg_inline_style($id, $css_safe):void
 
 public static function reg_inline_script($id, $js_safe, $jquery=false):void
 {
-	$id = 'atec_'.$id;
+	$id = 'atec-'.$id;
 	wp_register_script($id, false, $jquery?array('jquery'):array(), '1.0.0', false); wp_enqueue_script($id); wp_add_inline_script($id, $js_safe);
 	self::flush();
 }
@@ -742,7 +793,7 @@ public static function load_atec_style($dir, $styles=[])
 	foreach($styles as $style) 	
 	{
 		$version = $versions[$style] ?? '1.0.1';
-		self::reg_style('atec_'.$style, $dir, 'atec-'.$style.'.min.css', $version);
+		self::reg_style('atec-'.$style, $dir, 'atec-'.$style.'.min.css', $version);
 	}
 }
 
@@ -773,8 +824,8 @@ public static function header($una): bool
 		? $wordpress . $plugin 
 		: ($una->slug === 'wpmc' ? 'wpmegacache' : 'atecplugins') . '.com/contact/';
 
-	$version			= wp_cache_get('atec_'.$una->slug.'_version', 'atec_np');
-	$licenseOk 		= self::pro_banner($una->slug);
+	$version		= wp_cache_get('atec_'.$una->slug.'_version', 'atec_np');
+	$license_ok 	= self::pro_banner($una->slug);
 	if (is_null(get_option('atec_allow_integrity_check',null))) self::integrity_banner($una->dir);
 
 	echo
@@ -836,15 +887,15 @@ public static function header($una): bool
 		
 	</div>';
 	self::flush();
-	return $licenseOk;
+	return $license_ok;
 }
 
-public static function little_block($str, $class= '', $info= ''): void
+public static function little_block($str, $class = '', $info= ''): void
 {
 	$str = str_replace(['<s>', '</s>'], ['<span class="atec-small">', '</span>'], $str);
 	echo 
 	'<div class="atec-db">
-		<div class="atec-dilb atec-head', esc_html($class=== ''? '' : ' '.$class), '">',
+		<div class="atec-dilb atec-head', ($class !== '' ? ' '.esc_attr($class) : ''), '">',
 			'<h3 class="atec dilb">', wp_kses_post($str), '</h3>',
 		'</div>'; 
 		if ($info!== '')
@@ -913,13 +964,13 @@ public static function page_header($una, $break=999, $about=false, $update=false
 {
 	echo
 	'<div class="atec-page">';
-		$licenseOk = self::header($una);
+		$license_ok = self::header($una);
 
-		//if ($break<0) $break = $licenseOk ? 999 : abs($break);
+		//if ($break<0) $break = $license_ok ? 999 : abs($break);
 
 		echo
 		'<div class="atec-main">';
-			self::nav_tab($una, $break, $licenseOk, $about, $update, $debug);
+			self::nav_tab($una, $break, $license_ok, $about, $update, $debug);
 
 			echo
 			'<div class="atec-g atec-border">';
@@ -945,7 +996,7 @@ public static function page_header($una, $break=999, $about=false, $update=false
 					return null;
 				}
 
-	return $licenseOk;
+	return $license_ok;
 }
 
 public static function page_footer($slug= ''): void
@@ -964,10 +1015,9 @@ public static function page_footer($slug= ''): void
 
 public static function footer($slug= '')
 {
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-	$loadTime = round((microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])*1000);
-	$domain	= $slug=== 'wpmc' ? 'wpmegacache' : ($slug=== 'wpct' ? 'cachetune' : 'atecplugins');
-	$href = INIT::admin_url('group');
+	$loadTime	= round((microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])*1000);	// phpcs:ignore
+	$domain		= $slug=== 'wpmc' ? 'wpmegacache' : 'atecplugins';
+	$href			= INIT::admin_url('group');
 	echo
 	'<div class="atec-footer atec-center atec-fs-12">
 		<span class="atec-ml-10" style="float:left;">

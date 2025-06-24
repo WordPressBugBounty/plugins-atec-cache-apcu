@@ -57,9 +57,9 @@ final class FS {
 		$upload_dir = self::upload_dir(str_replace('atec-', '', $plugin).$sub_dir);	// Base directory is uploads/plugin unless sub_dir is provided
 		self::mkdir($upload_dir);	// Ensure directory exists
 		$s = $s && (self::put($upload_dir.'/index.php', '<?php exit(403); ?>')!==false);	// Protect the directory
-		$s = $s && (self::put($upload_dir.'/.htaccess', 'Require local')!==false);// Protect the directory
+		$s = $s && (self::put($upload_dir.'/.htaccess', 'Require local')!==false);			// Protect the directory
 		foreach($arr as $key=>$value)
-		{ $s = $s && @copy($plugin_dir.'/install/'.$key, $upload_dir.'/'.$value); }
+		{ $s = $s && self::copy($plugin_dir.'/install/'.$key, $upload_dir.'/'.$value, true); }
 		return $upload_dir;
 	}
 	
@@ -130,13 +130,6 @@ final class FS {
 
 		return $error;
 	}
-	
-	private static function copy_includes($source, $target)
-	{
-		self::mkdir(WPMU_PLUGIN_DIR);
-		return self::copy(WP_PLUGIN_DIR.$source, WPMU_PLUGIN_DIR.$target);
-	}
-
 
 	// = = = = = WP_Filesystem replacement = = = = = //
 

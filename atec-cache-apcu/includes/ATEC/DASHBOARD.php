@@ -113,23 +113,24 @@ private static function plugin_div($p)
 			break;
 
 		case 'bunny':
-			self::group_badge('CDN Zone', INIT::get_settings('wpbu', 'zone') !== '', $p->slug,'Settings');
+			self::group_badge('CDN Zone', INIT::get_settings('wpbu', 'zone') !== '', $p->slug);
 			break;
 
 		case 'cache-apcu':
-			global $atec_wpca_settings;
-			$atec_wpca_pc = INIT::bool($atec_wpca_settings['cache'] ?? 0);
-			self::group_badge('Object Cache',defined('ATEC_OC_DRIVER') && ATEC_OC_DRIVER=== 'APCu', $p->slug,'Settings');
-			self::group_badge('Page Cache', $atec_wpca_pc, $p->slug,'Settings');
-			if ($atec_wpca_pc) self::wpca_count_pages();
+			$settings = INIT::get_settings('wpca');
+			$o_cache = INIT::bool($settings['o_cache'] ?? 0);
+			$p_cache = INIT::bool($settings['o_cache'] ?? 0);		
+			self::group_badge('Object Cache', $o_cache, $p->slug);
+			self::group_badge('Page Cache', $p_cache, $p->slug);
+			if ($p_cache) self::wpca_count_pages();
 			break;
 
 		case 'cache-memcached':
-			self::group_badge('Object Cache',defined('ATEC_OC_DRIVER') && ATEC_OC_DRIVER=== 'Memcached', $p->slug,'Settings');
+			self::group_badge('Object Cache', INIT::get_settings('wpcm', 'cache'), $p->slug);
 			break;
 
 		case 'cache-redis':
-			self::group_badge('Object Cache',defined('ATEC_OC_DRIVER') && ATEC_OC_DRIVER=== 'Redis', $p->slug,'Settings');
+			self::group_badge('Object Cache', INIT::get_settings('wpcr', 'cache'), $p->slug);
 			break;
 
 		case 'config':
@@ -150,7 +151,7 @@ private static function plugin_div($p)
 			break;
 
 		case 'deploy':
-			self::group_badge('Auto deploy',INIT::get_settings('wpdp'), $p->slug);
+			self::group_badge('Auto deploy', INIT::get_settings('wpdp', 'auto'), $p->slug);
 			break;
 
 		case 'developer':
@@ -285,10 +286,11 @@ private static function load_style()
 		.dashicons { width:20px; height:20px; }
 		.atec-page A.button { border-color: #e0e0e0 !important; background: #f6f6f6; padding: 0 !important; }
 		.atec-page .button { min-width: 24px !important; min-height: 24px !important; }
+		.atec-pro { align-self: start; margin-left: -5px; font-size: 10px; }
 		');
 }
 
-private static function block_start($min_height=20, $min_width=265)
+private static function block_start($min_height=20, $min_width=255)
 { echo '<div class="atec-dilb atec-box-white atec-vat" style="min-width: ', esc_attr($min_width), 'px; min-height: ', esc_attr($min_height), 'px; margin: 0 5px 5px 5px; padding: 5px 5px 0 5px;">'; }
 
 private static function block_end()
@@ -395,7 +397,7 @@ public static function init($plugin)
 							$plugin = $installed[$a->name];
 	
 							$fixed_name = INIT::plugin_fixed_name($a->name);
-							self::block_start(75, $a->name === 'debug' ? 510 : 250);
+							self::block_start(75, $a->name === 'debug' ? 520 : 255);
 								
 								self::row_start();
 									
@@ -404,7 +406,7 @@ public static function init($plugin)
 									{
 										$href = INIT::build_url($a->slug);
 										echo '<a class="atec-nodeco" href="', esc_url($href) ,'">', esc_attr($fixed_name), '</a>';
-										
+										if ($a->pro === 'PRO') echo '<div class="atec-pro">„PRO“</div>';
 										$href = INIT::build_url('group','pause', '', ['plugin'=>$installed[$a->name]]);
 										echo
 										'<div class="atec-row-right">',
@@ -446,7 +448,9 @@ public static function init($plugin)
 									\ATEC\SVG::echo($a->slug);
 									$href = INIT::build_url('group','play', '', ['plugin'=>$installed[$a->name]]);
 									echo 
-									esc_attr($fixed_name),
+									esc_attr($fixed_name);
+									if ($a->pro === 'PRO') echo '<div class="atec-pro">„PRO“</div>';
+									echo
 									'<div class="atec-row-right">',
 										'<a class="atec-nodeco button button-secondary" title="Activate" ',
 											'href="', esc_url($href), '">',
@@ -483,7 +487,7 @@ public static function init($plugin)
 									\ATEC\SVG::echo($a->slug);
 									echo
 									'<a class="atec-nodeco" href="', esc_url($href) ,'" target="_blank">', esc_attr(INIT::plugin_fixed_name($a->name)), '</a>';
-									if ($a->pro!== 'PRO') echo '<div class="atec-pro" style="align-self: start;">„PRO“</div>';
+									if ($a->pro === 'PRO') echo '<div class="atec-pro">„PRO“</div>';
 									echo
 									'<div class="atec-row-right">
 										<a title="Download from atecplugins.com" class="atec-nodeco button button-secondary atec-btn-small" ',
@@ -509,7 +513,7 @@ public static function init($plugin)
 				'<center>
 					<p class="atec-fs-12" style="max-width:80%; line-height: 1.4em;">
 						Optimized for speed, size, and minimal CPU footprint.<br>
-						Adds under <strong>0.2  <small>ms</small></strong> per plugin — native PHP, zero bloat.<br>
+						Adds under <strong>0.2 <small>ms</small></strong> per plugin — native PHP, zero bloat.<br>
 						Fully tested on Linux, Windows, macOS — Apache, NGINX, LiteSpeed.
 					</p>
 					<a class="atec-nodeco" class="atec-center button" href="https://de.wordpress.org/plugins/search/atec/" target="_blank">Visit all brand plugins in the WordPress directory.</a>

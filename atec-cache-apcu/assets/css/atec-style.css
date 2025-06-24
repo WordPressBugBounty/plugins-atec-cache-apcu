@@ -150,7 +150,7 @@
 
 .atec-pro			{ font-size:10px; color:white; font-weight: 600; height: 6px; text-shadow: 1px 1px 1px #333; }
 .atec-pro-btn	{ display: inline-block; font-weight: bold; width:28px; border: solid 1px white; border-radius: var(--px-3); height:20px; padding: 0 4px; font-size:8px; color:#333; }
-.atec-pro-box	{ display: inline-block; background: white; border: var(--border-grey); padding: 10px; margin-bottom: 10px; width: fit-content; }
+.atec-pro-box	{ display: inline-block; background: white; border: var(--border-grey); padding: 10px; width: fit-content; }
 .atec-pro-box H4 { font-size: 14px; line-height: 1.4em; margin: 0; }
 
 .atec-cursor		{ cursor: pointer !important; }
@@ -220,12 +220,12 @@
 .atec-pt-0			{ padding-top: 0px !important; }
 .atec-pt-10			{ padding-top: 10px !important; }
 
-.atec-fs-8				{ font-size: 8px; }
-.atec-fs-9				{ font-size: 9px; }
-.atec-fs-10			{ font-size: 10px; }
-.atec-fs-12			{ font-size: 12px; }
-.atec-fs-14			{ font-size: 14px; }
-.atec-fs-16			{ font-size: 16px; }
+.atec-fs-8			{ font-size: 8px !important; }
+.atec-fs-9			{ font-size: 9px !important; }
+.atec-fs-10			{ font-size: 10px !important; }
+.atec-fs-12			{ font-size: 12px !important; }
+.atec-fs-14			{ font-size: 14px !important; }
+.atec-fs-16			{ font-size: 16px !important; }
 
 .atec-sticky-left, .atec-sticky-right, .atec-notice { position:absolute; top: 10px; max-height: 30px; }
 .atec-notice { background: var(--c-f9); border: solid 1px white; padding: 2px 4px; border-radius: var(--px-3); }

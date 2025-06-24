@@ -3,6 +3,7 @@ defined('ABSPATH') || exit;
 
 use ATEC\INIT;
 use ATEC\TOOLS;
+use ATEC\WPC;
 use ATEC\WPCA;
 
 return function($una) 
@@ -15,10 +16,10 @@ return function($una)
 	switch ($una->action)
 	{
 		case 'flush':
-			flushing_start('PC');
+			WPC::flushing_start('PC');
 			if (!class_exists('ATEC_WPCA\\Tools')) require(__DIR__.'/atec-wpca-pcache-tools.php');
 			\ATEC_WPCA\Tools::delete_page_cache_all();
-			flushing_end(true);
+			WPC::flushing_end(true);
 			break;
 			
 		case 'delete':
@@ -50,7 +51,7 @@ return function($una)
 			$c=0; $size=0;
 			$reg=preg_replace('/\//', '\/',preg_replace('/https?:\/\//', '',get_home_url()));
 			$reg_apcu = '/atec_WPCA_'.$salt.'_([fpcta]+)_([\d|]+)/';
-			$siteUlr= get_site_url();
+			$site_url= INIT::site_url();
 			foreach ($apcu_it as $entry)
 			{
 				preg_match($reg_apcu, $entry['key'], $match);
@@ -68,7 +69,7 @@ return function($una)
 					
 					$type		= $isCat?'category':($isTag?'tag':($isArchive?'archive':get_post_type($id)));
 					$title			= $id===0?'Homepage':($isCat?get_cat_name($id):($isTag?get_tag($id)->name:($isArchive?substr($id,0,4).'/'.substr($id,4,2):get_the_title($id))));
-					$link			= $id===0?get_home_url().'/':($isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$siteUlr.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2, '0',STR_PAD_LEFT):get_permalink($id))));
+					$link			= $id===0?get_home_url().'/':($isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$site_url.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2, '0',STR_PAD_LEFT):get_permalink($id))));
 					if ($isFeed) $link.= 'feed/';
 					if ($page!=0) { $link=((str_contains($link, '?cat=') || str_contains($link, '?tag='))?$link.'&paged= ':rtrim($link, '/').'/page/').$page; }
 					

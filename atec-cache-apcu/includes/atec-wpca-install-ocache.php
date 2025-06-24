@@ -11,7 +11,8 @@ public static function init($option): string
 	$target_path = WP_CONTENT_DIR.'/object-cache.php';
 	$content = FS::get($target_path);
 
-	if ($content && (!str_contains($content, 'ATEC_OC_ACTIVE_APCU')))
+
+	if ($content && !(str_contains($content, 'ATEC_OC_ACTIVE_APCU') || str_contains($content, 'atec-apcu-object-cache')))
 	{ return 'Another „object-cache.php“ file exists. Please deactivate it first'; }
 
 	if ($option)
