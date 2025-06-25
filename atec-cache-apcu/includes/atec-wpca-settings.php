@@ -6,14 +6,13 @@ use ATEC\INIT;
 use ATEC\TOOLS;
 use ATEC\WPCA;
 
-return function($una) 
+return function($una, $license_ok) 
 {
-
 	$option_key= 'atec_WPCA_settings';
 
 	$arr = [];
-	if (defined('ATEC_OC_VERSION')) $arr['OC']= ATEC_OC_VERSION;
-	if (defined('ATEC_OC_KEY_SALT')) $arr['OC 🧂']= ATEC_OC_KEY_SALT;
+	if (defined('ATEC_OC_VERSION')) $arr['OC'] = ATEC_OC_VERSION;
+	if (defined('ATEC_OC_KEY_SALT')) $arr['OC 🧂'] = ATEC_OC_KEY_SALT;
 
 	$salt = WPCA::settings('salt');
 	$arr['PC 🧂'] = $salt!=='' ? $salt : '-/-';
@@ -24,22 +23,12 @@ return function($una)
 
 	$o_cache = WPCA::settings('o_cache');
 	$p_cache = WPCA::settings('p_cache');
-	$p_cache_detected = false;
-	
-	if ($p_cache)
-	{
-		$site_url = INIT::site_url();
-		$response = wp_remote_get(esc_url_raw($site_url), ['sslverify' => false,]);
-		if (!is_wp_error($response))
-		{
-			$p_cache_detected = INIT::bool(wp_remote_retrieve_header($response,'x-cache-enabled'));
-		}
-	}
 
-	$error = '';
-	if ($o_cache!==defined('ATEC_OC_ACTIVE_APCU')) $error = 'OC is '.(defined('ATEC_OC_ACTIVE_APCU') ? 'active' : 'not active');
-	elseif ($p_cache!==$p_cache_detected) $error = 'PC is '.($p_cache_detected ? 'active' : 'not active');
-	if ($error!== '') TOOLS::msg(false, 'The cache settings are inconsistent ('.$error.').<br>Please save again to auto-fix it');
+	if ($o_cache!==defined('ATEC_OC_ACTIVE_APCU')) 
+	{
+		$error = 'OC is '.(defined('ATEC_OC_ACTIVE_APCU') ? 'active' : 'not active');
+		TOOLS::msg(false, 'The cache settings are inconsistent ('.$error.').<br>Please save again to auto-fix it');
+	}
 
 	echo
 	'<div class="atec-g atec-g-50">
@@ -50,7 +39,10 @@ return function($una)
 
 				if (WPCA::apcu_enabled())
 				{
+					echo '<div class="atec-row" style="gap:0;">';
 					TOOLS::badge(defined('ATEC_OC_ACTIVE_APCU'), __('Object Cache', 'atec-cache-apcu').'#'.__('is active', 'atec-cache-apcu'), __('is inactive', 'atec-cache-apcu'));
+						if ($o_cache && $license_ok) TOOLS::msg(true, 'Advanced');
+					echo '</div>';
 					echo
 					'<hr class="atec-mb-10">
 					<div class="atec-custom-form">
@@ -68,8 +60,11 @@ return function($una)
 				echo
 				'<hr>';
 
-				$license_ok = TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('object cache', 'atec-cache-apcu'), true);
-				if (!$license_ok) echo '<br class="atec-mb-20">';
+				if (!$license_ok) 
+				{
+					TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('object cache', 'atec-cache-apcu'), true);
+					echo '<br class="atec-mb-20">';
+				}
 
 				echo 
 				'<div class="atec-row">';
@@ -96,8 +91,10 @@ return function($una)
 
 				if (WPCA::apcu_enabled())
 				{
-					TOOLS::badge($p_cache, __('Page Cache', 'atec-cache-apcu').'#'.__('is active', 'atec-cache-apcu'), __('is inactive', 'atec-cache-apcu'));
-
+					echo '<div class="atec-row" style="gap:0;">';
+						TOOLS::badge($p_cache,__('Page Cache', 'atec-cache-apcu').'#'.__('is active', 'atec-cache-apcu'), __('is inactive', 'atec-cache-apcu'));
+						if (defined('ATEC_ADV_PC_ACTIVE_APCU')) TOOLS::msg(true, 'Advanced');
+					echo '</div>';
 					echo
 					'<hr class="atec-mb-10">
 					<div class="atec-form atec-custom-form atec-mb-0">
@@ -135,8 +132,11 @@ return function($una)
 				echo
 				'<hr>';
 
-				$license_ok = TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('page cache', 'atec-cache-apcu'), true);
-				if (!$license_ok) echo '<br class="atec-mb-20">';
+				if (!$license_ok) 
+				{
+					TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('page cache', 'atec-cache-apcu'), true);
+					echo '<br class="atec-mb-20">';
+				}
 
 				echo 
 				'<div class="atec-row">';
@@ -165,21 +165,21 @@ return function($una)
 						TOOLS::msg('warning', __('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one', 'atec-cache-apcu'), true);
 						
 				echo
-				'</div>';
+				'</div>',
 
-			echo
-			'</div>
+			'</div>',
 			
-		</div>';
+		'</div>',
 
-		echo
-		'</form>
+		'</form>',
 		
-	</div>';
+	'</div>';
 
 	TOOLS::reg_inline_style('wpca_settings',
-	'.atec-custom-form { min-height: 185px; }
-	p.submit { margin-top: 10px !important; }');
+	'
+		.atec-custom-form { min-height: 185px; }
+		p.submit { margin-top: 10px !important; }
+	');
 
 }
 ?>

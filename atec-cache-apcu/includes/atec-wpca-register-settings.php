@@ -20,13 +20,10 @@ final class Settings
 (function() {
 	
 	$is_updated = INIT::is_settings_updated();
-	// phpcs:ignore
-	$is_flush = isset($_GET['action']) && $_GET['action']==='flushWPCA';
-	
-	if ($is_flush && !$is_updated) 
+	if (!$is_updated && (($_GET['action'] ?? '') === 'flushWPCA')) 
 	{
 		wp_cache_delete( 'alloptions', 'options' );
-		WPCA::settings('',true);
+		WPCA::settings('',true);	// Refresh the WPCA settings cache
 	}
 
 	$page_slug = 'atec_WPCA';
@@ -59,9 +56,10 @@ final class Settings
 			$settings['p_cache']=0;
 			$update_settings = true;
 		}
-
+		else $redirect=true;
+		
 		if ($update_settings) INIT::update_settings('wpca', $settings);
-		if ($redirect) TOOLS::safe_redirect('wpca', 'flushWPCA');
+		if ($redirect) { ob_clean(); TOOLS::safe_redirect('wpca', 'flushWPCA'); exit; }
 	}
 
 	register_setting($page_slug, $option_group, [CHECK::class, 'wpca_sanitize_fields']);

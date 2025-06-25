@@ -721,7 +721,9 @@ public static function submit_button($button= '', $inline=false)
 }
 
 public static function safe_redirect($una, $action=null, $nav=null, $args = []): void
-{ wp_safe_redirect(INIT::build_url($una, $action, $nav)); }
+{ 
+	wp_safe_redirect(INIT::build_url($una, $action, $nav)); 
+}
 
 public static function redirect($una, $action=null, $nav=null, $args = []): void
 {

@@ -2,7 +2,7 @@
 /**
 * PC Name:  atec Cache APCu - Page Cache
 * Plugin URI: https://atecplugins.com/
-* Description: atec Cache APCu - Page Cache MU Plugin or Advanced Cache.
+* Description: atec Cache APCu - Advanced Page Cache.
 * Version: 2.0.3
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
@@ -10,6 +10,7 @@
 */
 
 defined('ABSPATH') || exit;
+define('ATEC_ADV_PC_ACTIVE_APCU', true);
 
 (function() {
 	

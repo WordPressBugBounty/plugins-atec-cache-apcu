@@ -39,6 +39,8 @@ public static function init($p_cache)
 		if (!FS::unlink($target_path)) return 'Removing '.$error_str.' failed';
 		else $delete_pc = true;
 	}
+	
+	TOOLS::lazy_require_class(__DIR__, 'atec-set-wp-cache.php', 'set_WP_Cache', $p_cache, 'atec-cache-apcu');
 
 	if ($delete_pc)
 	{

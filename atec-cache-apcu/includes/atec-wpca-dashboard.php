@@ -22,7 +22,7 @@ use ATEC\WPCA;
 		switch ($una->nav)
 		{
 			case 'Settings': 
-				TOOLS::lazy_require(__DIR__, 'atec-wpca-settings.php', $una); 
+				TOOLS::lazy_require(__DIR__, 'atec-wpca-settings.php', $una, $license_ok); 
 				break;
 				
 			case 'Cache': 

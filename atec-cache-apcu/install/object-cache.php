@@ -306,10 +306,10 @@ register_shutdown_function(function ()
 	if (is_numeric($lock) && time() > (int)$lock)
 	{
 		delete_option('core_updater.lock');
-		// phpcs:ignore
-		@unlink(ABSPATH . '.maintenance');
-		// phpcs:ignore
-		if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) error_log('[AOC AutoHeal] Stale core_updater.lock + .maintenance file cleared');
+		@unlink(ABSPATH . '.maintenance');	// phpcs:ignore
+	
+		if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) 
+			error_log('[AOC AutoHeal] Stale core_updater.lock + .maintenance file cleared');	// phpcs:ignore
 	}
 });
 ?>
