@@ -2,6 +2,7 @@
 defined('ABSPATH') || exit;
 
 use ATEC\FS;
+use ATEC\WPC;
 
 final class ATEC_set_WP_Cache {
 
@@ -52,7 +53,7 @@ public static function init($activate, $plugin)
 		FS::put($wp_config_path, $content);
 	}
 	
-	if (function_exists('opcache_invalidate')) @opcache_invalidate($wp_config_path, true);
+	WPC::opcache_flush($wp_config_path, true);
 }
 
 }

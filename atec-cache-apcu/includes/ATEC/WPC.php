@@ -8,6 +8,11 @@ use ATEC\TOOLS;
 class WPC
 {
 
+public static function opcache_flush($file) 
+{
+	if (function_exists('opcache_invalidate')) @opcache_invalidate($file, true);
+}
+
 public static function fix_name($type)
 {
 	switch ($type)

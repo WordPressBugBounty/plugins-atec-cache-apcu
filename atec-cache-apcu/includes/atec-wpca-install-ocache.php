@@ -3,6 +3,7 @@ namespace ATEC_WPCA;
 defined('ABSPATH') || exit;
 
 use ATEC\FS;
+use ATEC\WPC;
 
 final class Install_OCache {
 	
@@ -35,7 +36,9 @@ public static function init($option): string
 			else $success = false;
 		}
 		else $success = false;
-		if (!$success) return 'Object-Cache installation failed';
+
+		if ($success) WPC::opcache_flush($target_path, true);
+		else return 'Object-Cache installation failed';
 	}
 	else
 	{
