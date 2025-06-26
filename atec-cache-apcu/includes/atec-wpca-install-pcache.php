@@ -11,8 +11,11 @@ final class Install_PCache {
 	
 public static function init($p_cache)
 {
-	$update = false;
+	
+	// Cleanup old version 2.1
+	FS::unlink(WPMU_PLUGIN_DIR.'/@atec-wpca-adv-page-cache-pro.php');
 
+	$update = false;
 	$lastOptName = 'atec_WPCA_settings_last';
 	$last_settings = get_option($lastOptName,[]);
 	

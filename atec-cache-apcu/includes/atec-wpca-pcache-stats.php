@@ -25,7 +25,7 @@ return function($una)
 		case 'delete':
 			if ($una->id !== '')
 			{
-				$ex=explode('_', $id);
+				$ex=explode('_', $una->id);
 				if (isset($ex[1])) \ATEC_WPCA\Tools::delete_page($salt, $ex[0], $ex[1]);
 			}
 			break;
@@ -36,9 +36,9 @@ return function($una)
 	{
 		TOOLS::table_header(
 			[
+			'ID',
 			__('Type', 'atec-cache-apcu'),
 			__('Key', 'atec-cache-apcu'),
-			'ID',
 			'<span title="'.__('Page', 'atec-cache-apcu').'" class="'.TOOLS::dash_class('admin-page').'"></span>',
 			'<span title="'.__('RSS', 'atec-cache-apcu').'" class="'.TOOLS::dash_class('rss').'"></span>',
 			__('Hits', 'atec-cache-apcu'),
@@ -76,9 +76,9 @@ return function($una)
 					$short_url 	= preg_replace('/(^https?:\/\/)'.$reg.'/', '', $link);
 					echo
 					'<tr>';
+						TOOLS::table_td($id);
 						TOOLS::table_td(ucfirst($type));
 						TOOLS::table_td($match[1].'_'.$match[2]);
-						TOOLS::table_td($id);
 						TOOLS::table_td($isCat ? $page : '');
 						TOOLS::table_td(($isFeed ? ' <span class="'.esc_attr(TOOLS::dash_class('yes')).'"></span>' : ''));
 						TOOLS::table_td($entry['num_hits']);

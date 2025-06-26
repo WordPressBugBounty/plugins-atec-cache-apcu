@@ -70,8 +70,8 @@ final class DB
 	//ENGINE
 	
 	/**
-	 * Returns the charset/collation string for CREATE TABLE statements, or empty if unsupported.
-	 */
+	* Returns the charset/collation string for CREATE TABLE statements, or empty if unsupported.
+	*/
 	public static function get_engine(): string
 	{
 		static $cached = null;
@@ -80,12 +80,25 @@ final class DB
 		global $wpdb;
 	
 		$charset = is_string($wpdb->charset) && $wpdb->charset !== '' ? $wpdb->charset : 'utf8mb4';
-		$collate = is_string($wpdb->collate) && $wpdb->collate !== '' ? $wpdb->collate : 'utf8mb4_general_ci';
+		$collate = is_string($wpdb->collate) && $wpdb->collate !== '' ? $wpdb->collate : '';
+	
+		if ($charset === 'utf8mb3' && str_starts_with($collate, 'utf8mb4')) $charset = 'utf8mb4';	// Fix invalid utf8mb3/utf8mb4 mix
+		
+		if ($collate === '')	// If collate is still empty, infer from charset
+		{
+			if (str_starts_with($charset, 'utf8mb4')) $collate = 'utf8mb4_general_ci';
+			elseif (str_starts_with($charset, 'utf8')) $collate = 'utf8_general_ci';
+			// else leave collate as empty (e.g. latin1, ascii, etc.)
+		}
 	
 		$engine = 'ENGINE=InnoDB';
 	
-		if (preg_match('/^[a-z0-9_]+$/i', $charset) && preg_match('/^[a-z0-9_]+$/i', $collate)) $cached = "$engine CHARSET=$charset COLLATE=$collate";
-		else $cached = $engine;
+		if (preg_match('/^[a-z0-9_]+$/i', $charset))		// Validate charset
+		{
+			$cached = "$engine CHARSET=$charset";
+			if ($collate !== '' && preg_match('/^[a-z0-9_]+$/i', $collate)) $cached .= " COLLATE=$collate";		// Validate and append collate
+			else $cached = $engine;
+		}
 	
 		return $cached;
 	}
@@ -104,10 +117,8 @@ final class DB
 		$success = false;
 
 		$wpdb->suppress_errors(true);
-			// phpcs:ignore
-			$result = $wpdb->query("CREATE TABLE `$table` (id INT) ENGINE=InnoDB ROW_FORMAT=COMPRESSED COMMENT='ATEC TMP CHECK'");
-			// phpcs:ignore
-			if ($result !== false) { $success = true; $wpdb->query("DROP TABLE IF EXISTS `$table`"); }
+			$result = $wpdb->query("CREATE TABLE `$table` (id INT) ENGINE=InnoDB ROW_FORMAT=COMPRESSED COMMENT='ATEC TMP CHECK'");	// phpcs:ignore
+			if ($result !== false) { $success = true; $wpdb->query("DROP TABLE IF EXISTS `$table`"); }		// phpcs:ignore
 		$wpdb->suppress_errors(false);
 
 		$cached = $success ? ' ROW_FORMAT=COMPRESSED' : '';
@@ -221,7 +232,7 @@ final class DB
 			else $format[] = '%s';
 		}
 	
-		return (bool) $wpdb->insert($table, $data, $format);
+		return (bool) $wpdb->insert($table, $data, $format);	// phpcs:ignore
 	}
 
 	private static array $customTables = ['wpmc' => 'mega_cache'];

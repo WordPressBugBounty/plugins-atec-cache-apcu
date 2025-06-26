@@ -162,33 +162,6 @@ final class WP_Object_Cache
 		return $values;
 	}
 
-	public function safe_unserialize($v, &$out) {
-		if (!is_string($v)) return false;
-
-		// Fast path for common valid scalar/array prefixes (skip junk)
-		if (!isset($v[2]) || !str_contains($v, ' : ')) return false;
-
-		// Fast-path for booleans
-		// Important: unserialize('b:0;') returns false,
-		// so we must handle this manually to avoid ambiguity.
-		switch ($v) {
-			case 'b:0;': $out = false; return true;
-			case 'b:1;': $out = true;  return true;
-		}
-
-		// Reject known object types (before any heavy regex)
-		if ($v[0] === 'O' || $v[0] === 'C') return false;
-
-		// Lightweight object pattern check (less overhead than full preg_match)
-		if (strpbrk($v, 'OC') !== false && preg_match('/[OC]:\d+:"[^"]+"/', $v)) return false;
-
-		// Acceptable types: a= array, s= string, i=int, d=double, b=bool, N=null
-		if (!preg_match('/^[aOsidbN]:/', $v)) return false;
-
-		$out = @unserialize($v);
-		return $out !== false;
-	}
-
 	public function set($key, $var, $group = 'default', $expire = 0, $fullKey=null, $add=null)
 	{
 		if (!is_null($fullKey)) 
@@ -198,7 +171,7 @@ final class WP_Object_Cache
 			elseif (!$exists) return; // Replace
 		}
 		elseif (!$this->build_key($key, $group, $fullKey)) return false;
-
+	
 		// Skip persistent cache if group is marked non-persistent
 		$result = $this->set_np($fullKey, $var);	// Set local cache before changes to $var
 		if (isset($this->np_groups[$group])) { return $result; }
@@ -209,16 +182,12 @@ final class WP_Object_Cache
 			{
 				unset($var['cron']); 	// Unset highly volatile keys
 			}
-			elseif ($key=== 'cron' || (is_string($key) && strpos($key, 'recovery_') === 0)) //	Only non-volatile keys are save for persistent caching
+			elseif ($key=== 'cron')
 			{
 				return $result;
 			}
-			elseif (in_array($key,['uninstall_plugins', 'recently_edited', 'recently_activated', 'auto_core_update_notified']) || strpos($key, 'atec_W')===0)
-			{
-				if ($this->safe_unserialize($var, $unser)) $var = $unser;
-			}
 		}
-
+	
 		return $this->set_p($fullKey, $var, $expire); 
 	}
 
@@ -306,7 +275,7 @@ register_shutdown_function(function ()
 	if (is_numeric($lock) && time() > (int)$lock)
 	{
 		delete_option('core_updater.lock');
-		@unlink(ABSPATH . '.maintenance');	// phpcs:ignore
+		unlink(ABSPATH . '.maintenance');	// phpcs:ignore
 	
 		if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) 
 			error_log('[AOC AutoHeal] Stale core_updater.lock + .maintenance file cleared');	// phpcs:ignore
