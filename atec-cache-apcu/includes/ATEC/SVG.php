@@ -472,7 +472,7 @@ final class SVG
 	private static function wrap(string $key, string $class= ''): string
 	{
 		$key = strtolower($key);
-		if ($key=== '') $svg = self::$svg['404'];
+		if ($key=== '' || $key === 'wp4t') $svg = self::$svg['404'];
 		elseif ($key=== 'wpcm') $svg = self::$svg['memcached'];
 		elseif ($key=== 'wpcr') $svg = self::$svg['redis'];
 		elseif ($key=== 'wpl') $svg = self::$svg['license'];

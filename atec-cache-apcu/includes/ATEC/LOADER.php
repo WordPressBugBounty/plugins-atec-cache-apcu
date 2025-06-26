@@ -110,6 +110,6 @@ if (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action']) && $_REQUE
 }
 else
 {
-	if (INIT::is_real_admin()) INIT::admin_debug_all();
+	if (\ATEC\INIT::is_real_admin()) \ATEC\INIT::admin_debug_all();
 }
 ?>

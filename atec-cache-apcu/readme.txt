@@ -6,7 +6,7 @@ Tested up to: 6.8
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.15
+Stable tag: 2.3.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,8 +24,6 @@ The optional page cache is the only APCu-powered full-page cache for WordPress, 
 
 === Specifications ===
 
-* Size: only 160 KB
-* CPU footprint (idle): <5 ms.
 * Includes object cache drop-in and optional full page cache  
 * Profiler and debug options for diagnostics
 
@@ -95,6 +93,9 @@ Advanced Page Cache is a „PRO“-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.16 [2025.06.26] =
+* Fixed set_p(..$expire)
 
 = 2.3.15 [2025.06.26] =
 * Framework change, admin_debug_all()

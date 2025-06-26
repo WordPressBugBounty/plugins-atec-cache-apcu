@@ -37,7 +37,7 @@
 		return false;
 	}
 
-	private function set_p($fullKey, $var, $expire)
+	private function set_p($fullKey, $var, $expire = 0)
 	{
 		$this->cache_sets++;
 		$result = apcu_store($fullKey, $var, max($expire, 0));
