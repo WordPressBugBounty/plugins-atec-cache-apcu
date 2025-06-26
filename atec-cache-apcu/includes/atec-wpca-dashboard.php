@@ -7,7 +7,6 @@ use ATEC\WPCA;
 
 (function() {
 
-	INIT::admin_debug('wpca');
 	$una = TOOLS::una(__DIR__, 'Settings');
 	TOOLS::add_nav($una, true, '#archive Cache');
 

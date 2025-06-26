@@ -508,6 +508,18 @@ public static function admin_debug($slug, $dir = ''): void
 	else self::admin_notice($slug, $notice['type'], $notice['message']);
 }
 
+public static function admin_debug_all(): void 
+{
+	$arr = self::get_admin_debug();
+	if (empty($arr)) return;
+	foreach($arr as $key => $notice)
+	{
+		$type = $notice['type'];
+		$msg = $notice['message'];
+		add_action('admin_notices', function () use ($key, $type, $msg) { self::admin_notice($key, $type, $msg); });
+	}
+}
+
 public static function admin_notice($slug, $type= '', $msg= ''): void 
 {
 	if ($type=== '') $type = 'warning';	// ['info', 'warning', 'error', 'success']

@@ -6,7 +6,7 @@ Tested up to: 6.8
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.14
+Stable tag: 2.3.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +95,9 @@ Advanced Page Cache is a „PRO“-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.15 [2025.06.26] =
+* Framework change, admin_debug_all()
 
 = 2.3.14 [2025.06.26] =
 * Removed safe_unserialize and improved serializer handling

@@ -30,15 +30,23 @@ public static function gmdate($ts, $format= 'm/d H:i')
 	return gmdate($format, $ts); 
 }
 
-public static function progress_percent($id)
+public static function progress_percent($id, $percent=null)
 {
-	echo
-	'<div class="atec-border atec-percent-block" style="width:260px; background:rgb(250, 250, 250);">',
-		'<div class="atec-dilb atec-fs-12">Progress</div><div class="atec-dilb atec-float-right atec-fs-12">100%</div><br>',
-		'<div class="atec-percent-div" style="width:250px; background: rgb(235, 235, 235);">',
-			'<span  id="atec_progress_percent_', esc_attr($id), '" style="background-color:lightgreen;"></span>',
-		'</div>',
-	'</div>';
+	if ($percent === null)
+	{		
+		echo
+		'<div class="atec-border atec-percent-block" style="width:260px; background:rgb(250, 250, 250);">',
+			'<div class="atec-dilb atec-fs-12">Progress</div><div class="atec-dilb atec-float-right atec-fs-12">100%</div><br>',
+			'<div class="atec-percent-div" style="width:250px; background: rgb(235, 235, 235);">',
+				'<span  id="atec_progress_percent_', esc_attr($id), '" style="background-color:lightgreen;"></span>',
+			'</div>',
+		'</div>';
+	}
+	else
+	{
+		echo '<script>jQuery("#atec_progress_percent_', esc_attr($id), '").css("width","', esc_attr($percent), '%"); jQuery(document.currentScript).remove();</script>'; 
+		self::flush();
+	}
 }
 
 public static function lazy_require_class(string $dir, string $path, string $class= '', mixed ...$args): bool

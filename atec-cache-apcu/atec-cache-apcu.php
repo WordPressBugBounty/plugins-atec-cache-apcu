@@ -3,7 +3,7 @@
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.3.14
+* Version: 2.3.15
 * Requires at least:4.9
 * Tested up to: 6.8
 * Tested up to PHP: 8.4.2
@@ -25,7 +25,7 @@ use ATEC\INIT;
 use ATEC\WPC;
 use ATEC\WPCA;
 
-INIT::set_version('wpca', '2.3.14');
+INIT::set_version('wpca', '2.3.15');
 
 if (INIT::is_real_admin())
 {
@@ -94,9 +94,9 @@ if (INIT::is_real_admin())
 		
 	})();
 	
-	if (defined('ATEC_OC_ACTIVE_APCU') && defined('ATEC_OC_VERSION') && ATEC_OC_VERSION!== '2.0.3')
+	if (defined('ATEC_OC_ACTIVE_APCU') && defined('ATEC_OC_VERSION') && ATEC_OC_VERSION!== '2.0.4')
 	{
-		require(__DIR__.'/includes/atec-wpca-install-object-cache.php');
+		require(__DIR__.'/includes/atec-wpca-install-ocache.php');
 		\ATEC_WPCA\Install_OCache::init(true);
 	}
 }
@@ -117,4 +117,5 @@ if (!INIT::is_cli() && !INIT::is_cron())
 
 if (INIT::is_interactive())
 { if (defined('ATEC_OC_ACTIVE_APCU') && WPCA::settings('o_stats')) register_shutdown_function([WPCA::class, 'o_cache_stats']); }
+
 ?>

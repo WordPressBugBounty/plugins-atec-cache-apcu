@@ -3,7 +3,7 @@
 * OC Name:  atec Object-Cache
 * Plugin URI: https://atecplugins.com/
 * Description: atec Object Cache with pluggable backend (APCu, Redis, Memcached)
-* Version: 2.0.3
+* Version: 2.0.4
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
 * OC Domain:  atec-object-cache
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 defined('ABSPATH') || exit;
-define('ATEC_OC_VERSION', '2.0.3');
+define('ATEC_OC_VERSION', '2.0.4');
 
 function wp_cache_init() { $GLOBALS['wp_object_cache'] = WP_Object_Cache::instance(); }
 function wp_cache_add($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->add($key, $data, $group, (int) $expire); }
@@ -178,14 +178,8 @@ final class WP_Object_Cache
 		
 		if ($group=== 'options')
 		{
-			if ($key === 'alloptions')	// Sanitize & optimize "options:alloptions"
-			{
-				unset($var['cron']); 	// Unset highly volatile keys
-			}
-			elseif ($key=== 'cron')
-			{
-				return $result;
-			}
+			if ($key === 'alloptions') unset($var['cron']);	// Skip persisting cron in options:alloptions
+			elseif ($key=== 'cron') return $result;				// Skip persisting in options:cron
 		}
 	
 		return $this->set_p($fullKey, $var, $expire); 
