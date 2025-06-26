@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
 final class INIT {
 
 static $require_install = [ 'wpau', 'wpc', 'wpca', 'wpcm', 'wpco', 'wpcr', 'wpd', 'wpds', 'wpf', 'wpfm', 'wpm', 'wppp', 'wps', 'wpsi', 'wpsh', 'wpwp' ];
-static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpll', 'wplu', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpu'];
+static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpll', 'wplu', 'wpmsc', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpu'];
 static $admin_styles_loaded = false;
 static $allowed_admin_tags = 
 	[	

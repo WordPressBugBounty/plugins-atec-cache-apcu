@@ -49,7 +49,7 @@ public static function progress_percent($id, $percent=null)
 	}
 }
 
-public static function lazy_require_class(string $dir, string $path, string $class= '', mixed ...$args): bool
+public static function lazy_require_class(string $dir, string $path, string $class= '', ...$args): bool
 {
 	$full_path = "$dir/$path";
 	if (is_file($full_path)) 
@@ -70,7 +70,7 @@ public static function lazy_require_class(string $dir, string $path, string $cla
 	return false;
 }
 
-public static function lazy_require(string $dir, string $path, mixed ...$args): void
+public static function lazy_require(string $dir, string $path, ...$args): void
 {
 	$full_path = "$dir/$path";
 	if (is_file($full_path)) 
@@ -494,7 +494,8 @@ private static $allowed_tr =
 		'small'	=> [],
 		'b' 		=> [],
 		'a'			=> ['href' => [], 'target'=> [] ],
-		'span'	=> ['class' => [] ],
+		'span'	=> ['class' => [], 'style' => [] ],
+		'img'		=> ['src' => [], 'style' => [] ],
 		'hr'		=> ['class' => [] ] 
 	];
 

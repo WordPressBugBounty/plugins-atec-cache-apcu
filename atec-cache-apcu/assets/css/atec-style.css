@@ -117,8 +117,8 @@
 .atec-logo-text { font-weight: 800; color: black; margin-left: -6px; }
 
 .atec-bg-w 		{ background: white !important; }
-.atec-bg-w6 	{ background:  var(--bg-w6); }
-.atec-bg-w85 	{ background:  var(--bg-w85); }
+.atec-bg-w6 	{ background:  var(--bg-w6) !important; }
+.atec-bg-w85 	{ background:  var(--bg-w85) !important; }
 
 .atec-mono { font-family: monospace; white-space: pre; }
 
