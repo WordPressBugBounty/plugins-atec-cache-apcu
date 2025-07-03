@@ -59,11 +59,11 @@
 		//if (!class_exists('APCUIterator')) return false;
 		$prefix = ($this->multisite && !isset($this->global_groups[$group]))?$this->blog_prefix.':' : '';
 		$needle = ATEC_OC_KEY_SALT.':'.$prefix.$group;
-		foreach ($cache as $fullkey => $_)
+		foreach ($this->cache as $fullkey => $_)
 		{
 			if (str_contains($fullkey, $needle)) 
 			{
-				unset($cache[$fullkey]);
+				unset($this->cache[$fullkey]);
 				break;
 			}
 		}

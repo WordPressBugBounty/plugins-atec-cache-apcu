@@ -12,8 +12,8 @@ defined('ABSPATH') || exit;
 // ===== Static Toolbox Class =====
 final class INIT {
 
-static $require_install = [ 'wpau', 'wpc', 'wpca', 'wpcm', 'wpco', 'wpcr', 'wpd', 'wpds', 'wpf', 'wpfm', 'wpm', 'wppp', 'wps', 'wpsi', 'wpsh', 'wpwp' ];
-static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpll', 'wplu', 'wpmsc', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpu'];
+static $require_install = [ 'wpc', 'wpca', 'wpcm', 'wpcr', 'wpds', 'wpf', 'wpfm', 'wppp', 'wps', 'wpmcl', 'wpsh', 'wpwp' ];
+static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpll', 'wplu', 'wpmcl', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu'];
 static $admin_styles_loaded = false;
 static $allowed_admin_tags = 
 	[	
@@ -25,7 +25,7 @@ static $allowed_admin_tags =
 		'span' => [ 'class' => true, 'style' => true ],
 	];
 
-/* ADMIN */	
+// ADMIN
 
 public static function admin_bar($wp_admin_bar, $slug= '', $action = null, $nav=null, $id= '', $title= '', $icon=false): void
 {
@@ -86,6 +86,20 @@ public static function build_url($una_or_slug, $action = null, $nav = null, $arg
 	return $una->url . $sep . $query_str;
 }
 
+public static function home_url(): string
+{
+	static $cached = null;
+	if ($cached === null) $cached = home_url();
+	return $cached;
+}
+
+public static function home_host(): string
+{
+	static $cached = null;
+	if ($cached === null) $cached = wp_parse_url(self::home_url(),PHP_URL_HOST);
+	return $cached;
+}
+
 public static function site_url(): string
 {
 	static $cached = null;
@@ -98,6 +112,24 @@ public static function site_host(): string
 	static $cached = null;
 	if ($cached === null) $cached = wp_parse_url(self::site_url(),PHP_URL_HOST);
 	return $cached;
+}
+
+public static function site_url_path(): string
+{
+	static $cached = null;
+	if ($cached === null) $cached = rtrim(wp_parse_url(self::site_url(),PHP_URL_PATH), '/');
+	return $cached;
+}
+
+public static function normalized_uri(): string
+{
+	$uri = $_SERVER['REQUEST_URI'] ?? ''; // phpcs:ignore
+	$uri = strtok($uri, '?');	// strip query
+	$uri = rtrim($uri, '/');	// normalize trailing slash
+
+	$site_url_path = self::site_url_path();	// subdir support
+	if ($site_url_path && $site_url_path !== '/' && str_starts_with($uri, $site_url_path)) $uri = substr($uri, strlen($site_url_path)); 
+	return $uri;
 }
 
 public static function admin_url($slug=''): string
@@ -114,17 +146,19 @@ public static function admin_bar_option($slug): int
 	return $options[$slug] ?? 0;
 }
 
-public static function set_admin_bar_option($slug): void
+public static function set_admin_bar_option($slug, $delete = false): void
 {
 	$option_key = 'atec_admin_bar';
 	$options = (array) get_option($option_key,[]);
 	
-	$set = \ATEC\TOOLS::clean_request('set');
-	if ($set === '') unset($options[$slug]);
-	else $options[$slug] = self::bool($set);
+	if ($delete) unset($options[$slug]);
+	else $options[$slug] = \ATEC\TOOLS::clean_request_bool('set');
 	update_option($option_key, $options);
-	wp_safe_redirect(self::admin_url($slug));
-	exit;
+	if (!$delete)
+	{ 
+		wp_safe_redirect(self::admin_url($slug));
+		exit;
+	}
 }
 
 public static function add_plugin_settings($plugin_file)
@@ -134,7 +168,9 @@ public static function add_plugin_settings($plugin_file)
 
 public static function plugin_settings(array $links, $plugin_file): array
 {
-	$slug = \ATEC\GROUP::slug_by_dir($plugin_file);
+	$dir = WP_PLUGIN_DIR . '/' . dirname($plugin_file);
+	$slug = \ATEC\GROUP::slug_by_dir($dir);
+
 	$url = self::admin_url($slug);
 	$icon = \ATEC\SVG::styled('wrench', 14);
 	array_unshift($links, '<a href="' . esc_url($url) . '" style="vertical-align:sub">' . $icon . '</a>');
@@ -146,7 +182,17 @@ public static function is_settings_updated(): bool
 	return isset($_GET['settings-updated']) && $_GET['settings-updated']==true;	// phpcs:ignore
 }
 
-/* TOOLS */
+// TOOLS
+
+public static function extension_enabled($type)
+{
+	switch ($type)
+	{
+		case 'apcu':
+			return extension_loaded('apcu') && apcu_enabled();
+	}
+	return false;
+}
 
 public static function error_log($args)
 {
@@ -192,9 +238,19 @@ public static function query(): string
 }
 
 public static function trailingdotit($str): string
-{ return rtrim($str,'.') . '.'; }
+{
+	$plain = trim(strip_tags($str));	// phpcs:ignore
+	$has_punct = preg_match('/[.!]$/', $plain);
+	return rtrim($str) . ($has_punct ? '' : '.');
+}
 
-/* IS_? */
+public static function ajax_nonce_check($slug)
+{
+	if (! wp_verify_nonce(self::POST('nonce'), 'atec_' . $slug . '_ajax_nonce')) 
+	{ wp_send_json_error('Nonce failed.'); }
+}
+
+// IS_?...
 
 public static function is_real_admin(): bool
 {
@@ -230,17 +286,24 @@ public static function is_cli(): bool
 public static function is_rest_or_cli(): bool
 { return (defined('REST_REQUEST') && REST_REQUEST) || (self::is_cli()); }
 
+// Detect if the current request is an interactive browser page load.
+// Excludes AJAX, REST, CRON, and CLI.
 public static function is_interactive(): bool
 {
 	static $cached = null;
-	if ($cached !== null) return $cached;
-
-	if ((self::is_ajax()) || (self::is_cron()) || (self::is_rest_or_cli())) return $cached = false;
-
-	return $cached = true;
+	if ($cached === null) $cached = !(self::is_ajax() || self::is_cron() || self::is_rest_or_cli());
+	return $cached;
 }
 
-/* INIT TOOLS */
+public static function is_editor_mode(): bool
+{
+	if (is_feed() || is_preview()) return true;
+	$editorParams = ['brizy-edit', 'elementor-preview', 'fl_builder', 'is-editor-iframe', 'editor', 'frontend', 'iframe'];
+	foreach ($editorParams as $key) { if (isset($_GET[$key])) return true; } // phpcs:ignore
+	return false;
+}
+
+// INIT
 
 public static function register_activation_deactivation_hook($plugin_file, $activate = -1, $deactivate = 0, $slug = '')
 {
@@ -289,7 +352,14 @@ public static function integrity_check($plugin): void // only on activation or w
 	}
 }
 
-/* SETTINGS */
+// SETTINGS
+
+public static function license_ok()
+{
+	static $cached = null;
+	if ($cached === null) $cached = get_transient('atec_license_code');
+	return $cached;
+}
 
 public static function get_settings($slug, $option=null)
 {
@@ -314,14 +384,14 @@ public static function delete_settings($slug): void
 public static function set_version($slug, $version)
 { wp_cache_set("atec_{$slug}_version", $version, 'atec_np'); }
 
-/* PLUGINS */
+// PLUGINS
 
 public static function plugin_fixed_name($p) 
 {
 	$p = ucwords(str_replace('-', ' ', $p));
 	return trim(str_ireplace(
-		['atec', 'apcu', 'webp', 'svg', 'htaccess', 'oc benchmark'],
-		['atec', 'APCu', 'WebP', 'SVG', 'HTaccess', 'OC Benchmark'],
+		['atec', 'apcu', 'webp', 'svg', 'ssl', 'oc benchmark'],
+		['atec', 'APCu', 'WebP', 'SVG', 'SSL', 'OC Benchmark'],
 		$p));
 }
 
@@ -354,7 +424,7 @@ public static function plugin_url($plugin) : string
 public static function plugin_url_by_dir($dir) : string		// required by self::menu, reg_script, reg_style
 { return self::plugin_url(self::plugin_by_dir($dir)); }
 
-/* MENU */
+// MENU
 
 public static function group_page($plugin): void
 { \ATEC\DASHBOARD::init($plugin); }
@@ -451,7 +521,7 @@ public static function menu($dir, $slug, $title, $css=[], $js=[]): bool
 	return true;
 }
 
-/* NOTICE */
+// NOTICE
 
 public static function build_notice(array &$notice, string $type= '', string $str= ''): void
 {
@@ -549,15 +619,8 @@ public static function admin_notice($slug, $type= '', $msg= ''): void
 				jQuery.ajax({
 					url: ajaxurl,
 					type: 'POST',
-					data: {
-						action: 'atec_admin_notice_dismiss',
-						slug: jQuery(this).data('slug'),
-						id: id
-					},
-					success: function(response) 
-					{
-						if (response.success) jQuery('#'+id).slideUp();
-					}
+					data: {action: 'atec_admin_notice_dismiss', slug: jQuery(this).data('slug'), 	id: id	},
+					success: function(response) { if (response.success) jQuery('#'+id).slideUp(); }
 				});
 			});
 		</script>

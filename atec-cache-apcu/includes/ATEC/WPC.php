@@ -1,12 +1,63 @@
 <?php
-namespace ATEC;
+namespace atec;
 defined('ABSPATH') || exit;
 
-use ATEC\INIT;
-use ATEC\TOOLS;
+use atec\INIT;
+use atec\TOOLS;
 
 class WPC
 {
+	
+private static $pcache_warning_messages = [
+	'bluehost'					=> 'Server-side cache detected (Bluehost). Plugin page caching will not work.',
+	'litespeed'					=> 'LiteSpeed page cache appears active. Do not use APCu page cache and LiteSpeed together.',
+	'cloudflare'				=> 'Cloudflare may be caching HTML pages. Ensure plugin cache isn’t bypassed.',
+	'siteground'				=> 'SiteGround dynamic cache may be active. Plugin page cache may be bypassed.',
+	'kinsta'						=> 'Kinsta server cache is active. Plugin cache may be unreliable.',
+	'godaddy'					=> 'GoDaddy Managed Cache is active. Plugin page caching may not work.',
+	'varnish'					=> 'A proxy server (e.g. Varnish) is caching pages. Plugin page caching may be overridden.',
+	'wp_rocket'				=> 'WP Rocket is active and handles page caching. Do not use „atec Page Cache“ alongside WP Rocket.',
+	'wp_fastest_cache'		=> 'WP Fastest Cache is active and handles page caching. Do not enable „atec Page Cache“ alongside it.',
+	'sg_optimizer'			=> 'SG Optimizer is active and handles page caching. „atec Page Cache“ should remain disabled.',
+	'hummingbird'			=> 'Hummingbird’s Page Caching is active. Avoid running multiple page cache systems.',
+	'comet_cache'			=> 'Comet Cache or ZenCache is active and handles page caching. Disable it to use „atec Page Cache“.',
+	'nitropack'					=> 'NitroPack is active and optimizes pages externally. „atec Page Cache“ is not needed.',
+];
+
+public static function pcache_detected()
+{
+	$map = [
+		'HTTP_X_NEWFOLD_CACHE_LEVEL'	=> 'bluehost',
+		'HTTP_X_NEWFOLD_CAC'					=> 'bluehost',
+		'HTTP_X_ENDURANCE_CACHE_LEVEL' => 'bluehost',
+		'HTTP_X_LITESPEED_CACHE'				=> 'litespeed',
+		'HTTP_X_LSCACHE'							=> 'litespeed',
+		'HTTP_CF_CACHE_STATUS'				=> 'cloudflare',
+		'HTTP_SG_CACHE_CONTROL'				=> 'siteground',
+		'HTTP_X_KINSTA_CACHE'					=> 'kinsta',
+		'HTTP_X_GD_CACHE_CONTROL'		=> 'godaddy',
+		'HTTP_X_CACHE'								=> 'varnish',
+	];
+
+	foreach ( $map as $header => $service )
+	{
+		if ( isset($_SERVER[$header]) )
+		{
+			$warnings = self::$pcache_warning_messages;
+			return $warnings[$service] ?? ucfirst($service) . ' server-side cache may interfere with plugin page caching.';
+		}
+	}
+
+	// Plugin-based page cache detection
+	if ( defined('WP_ROCKET_VERSION') ) return self::$pcache_warning_messages['wp_rocket'];
+	if ( class_exists('WpFastestCache') ) return self::$pcache_warning_messages['wp_fastest_cache'];
+	if ( class_exists('SiteGround_Optimizer\Main') ) return self::$pcache_warning_messages['sg_optimizer'];
+	if ( class_exists('Hummingbird\Core\Module_Page_Cache') ) return self::$pcache_warning_messages['hummingbird'];
+	if ( defined('COMET_CACHE_VERSION') || defined('ZENCACHE_VERSION') ) return self::$pcache_warning_messages['comet_cache'];
+	if ( class_exists('NitroPack\Integration') ) return self::$pcache_warning_messages['nitropack'];
+
+	return false;
+}
 
 public static function opcache_flush($file) 
 {

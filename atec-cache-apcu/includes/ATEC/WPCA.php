@@ -18,7 +18,6 @@ public static function apcu_enabled()
 {
 	static $cached = null;
 	if ($cached===null) $cached = extension_loaded('apcu') && apcu_enabled() && class_exists('APCUIterator');
-;
 	return $cached;
 }
 

@@ -119,7 +119,7 @@ private static function plugin_div($p)
 		case 'cache-apcu':
 			$settings = INIT::get_settings('wpca');
 			$o_cache = INIT::bool($settings['o_cache'] ?? 0);
-			$p_cache = INIT::bool($settings['o_cache'] ?? 0);		
+			$p_cache = INIT::bool($settings['p_cache'] ?? 0);		
 			self::group_badge('Object Cache', $o_cache, $p->slug);
 			self::group_badge('Page Cache', $p_cache, $p->slug);
 			if ($p_cache) self::wpca_count_pages();
@@ -286,7 +286,7 @@ private static function load_style()
 		.dashicons { width:20px; height:20px; }
 		.atec-page A.button { border-color: #e0e0e0 !important; background: #f6f6f6; padding: 0 !important; }
 		.atec-page .button { min-width: 24px !important; min-height: 24px !important; }
-		.atec-pro { align-self: start; margin-left: -5px; font-size: 10px; }
+		.atec-pro, .atec-free { align-self: start; margin-left: -5px; font-size: 10px; }
 		');
 }
 
@@ -304,6 +304,12 @@ private static function row_start($padding='0 5px')
 
 private static function row_end()
 { echo '</div>'; }
+
+private static function pro_or_free($a)
+{
+	if ($a->pro === 'PRO') echo '<div class="atec-pro">PRO</div>';
+	else if ($a->pro === 'FREE') echo '<div class="atec-free">FREE</div>';
+}
 
 public static function init($plugin)
 {
@@ -406,7 +412,7 @@ public static function init($plugin)
 									{
 										$href = INIT::build_url($a->slug);
 										echo '<a class="atec-nodeco" href="', esc_url($href) ,'">', esc_attr($fixed_name), '</a>';
-										if ($a->pro === 'PRO') echo '<div class="atec-pro">„PRO“</div>';
+										self::pro_or_free($a);
 										$href = INIT::build_url('group','pause', '', ['plugin'=>$installed[$a->name]]);
 										echo
 										'<div class="atec-row-right">',
@@ -449,7 +455,7 @@ public static function init($plugin)
 									$href = INIT::build_url('group','play', '', ['plugin'=>$installed[$a->name]]);
 									echo 
 									esc_attr($fixed_name);
-									if ($a->pro === 'PRO') echo '<div class="atec-pro">„PRO“</div>';
+									self::pro_or_free($a);
 									echo
 									'<div class="atec-row-right">',
 										'<a class="atec-nodeco button button-secondary" title="Activate" ',
@@ -487,7 +493,7 @@ public static function init($plugin)
 									\ATEC\SVG::echo($a->slug);
 									echo
 									'<a class="atec-nodeco" href="', esc_url($href) ,'" target="_blank">', esc_attr(INIT::plugin_fixed_name($a->name)), '</a>';
-									if ($a->pro === 'PRO') echo '<div class="atec-pro">„PRO“</div>';
+									self::pro_or_free($a);
 									echo
 									'<div class="atec-row-right">
 										<a title="Download from atecplugins.com" class="atec-nodeco button button-secondary atec-btn-small" ',

@@ -8,12 +8,19 @@ use ATEC\PRO;
 final class TOOLS
 {
 
-// TOOLS AREA START
+// STRINGS
 
 public static function str_istarts_with(string $haystack, string $needle): bool 
 {
 	return strncasecmp($haystack, $needle, strlen($needle)) === 0;
 }
+
+public static function stri_contains(string $haystack, string $needle): bool 
+{
+	return stripos($haystack, $needle) !== false;
+}
+
+// TOOLS
 
 public static function on_off($bool, $reverse = false): string 
 {
@@ -222,19 +229,18 @@ public static function loader_div($id='', $str=''): void
 
 public static function loader_dots(int $count = 9): void
 {
-	echo '<div class="atec-loader-dots atec-dilb">';
-	for ($i = 1; $i <= $count; $i++) echo "<span style='--i:$i'></span>";	// phpcs:ignore
-	echo '</div>';
-	self::flush();
+	if ($count<1) TOOLS::reg_inline_script('wpx_processing', 'jQuery(".atec-loader-dots").remove();');
+	else
+	{
+		echo '<div class="atec-loader-dots atec-dilb">';
+		for ($i = 1; $i <= $count; $i++) echo "<span style='--i:$i'></span>";	// phpcs:ignore
+		echo '</div>';
+		self::flush();
+	}
 }
 
-private static function progress_div(): void
-{
-	echo '<div id="atec_loading" class="atec-progress"><div class="atec-progressBar"></div></div>';
-	self::reg_inline_script('progress', 'setTimeout(()=>{ jQuery("#atec_loading").css("opacity",0); },4500);', true);
-}
-
-public static function progress(): void { ob_start(); self::flush(); }
+private static function progress_div(): void {}		// UNSED since 250628
+public static function progress(): void { }			// UNSED since 250628
 
 public static function flush(): void
 {
@@ -250,18 +256,30 @@ public static function flush(): void
 	@flush();
 }
 
+public static function ob_end_clean(): void
+{
+	if (ob_get_level() > 0) @ob_end_clean();
+}
 
 // PROGRESS AREA START
 
 // DASH AREA START
 
-private static $dashArr = ['admin-comments', 'admin-generic', 'admin-home', 'admin-plugins', 'admin-settings', 'admin-site', 'admin-tools', 'analytics', 'archive', 'awards', 'backup', 'businessman', 'clipboard', 'code-standards', 'controls-play', 'cover-image', 'database', 'database-add', 'edit', 'editor-code', 'editor-removeformatting', 'editor-table', 'feedback', 'forms', 'groups', 'hourglass', 'info', 'insert', 'list-view', 'performance', 'trash', 'translation', 'update'];
+private static $dashArr = ['admin-comments', 'admin-generic', 'admin-home', 'admin-plugins', 'admin-settings', 'admin-site', 'admin-tools', 'analytics', 'archive', 'awards', 'backup', 'businessman', 'clipboard', 'code-standards', 'controls-play', 'cover-image', 'database', 'database-add', 'edit', 'editor-code', 'editor-removeformatting', 'editor-table', 'feedback', 'format-gallery', 'forms', 'groups', 'hourglass', 'info', 'insert', 'list-view', 'performance', 'trash', 'translation', 'update'];
 
 public static function dash_class($icon, $class = ''): string
 { return 'dashicons dashicons-' . $icon . ($class !== '' ? ' '.$class : ''); }
 
-public static function dash_span($dash, $class = '', $style = ''): void
-{ echo '<span' . ($style ? ' style="' . esc_attr($style) . '"' : '') . ' class="' . esc_attr(self::dash_class($dash, $class)) . '"></span>'; }
+public static function dash_span(string $dash, string $class = '', string $style = ''): void
+{
+	$classes = trim("dashicons dashicons-{$dash} {$class}");
+	echo '<span class="', esc_attr($classes), '"';
+		if ($style !== '') echo ' style="', esc_attr($style), '"';
+	echo '></span>';
+}
+
+// public static function dash_span($dash, $class = '', $style = ''): void
+// { echo '<span class="', (self::dash_class($dash, $class)), '"', ($style ? ' style="' . esc_attr($style) . '"' : ''), '></span>'; }
 
 private static function dash_and_button(string $dnb): object
 {
@@ -347,7 +365,7 @@ public static function pro_feature($una, $desc= '', $small=false, $license_ok=nu
 				echo
 				'<div class="atec-badge atec-blue atec-fs-12" style="background: #f9f9ff; border: solid 1px #dde; margin: 0; padding: 4px 5px;">',
 					'<div class="atec-col atec-vat" style="max-width: 20px;">'; self::dash_span('awards', 'atec-blue atec-fs-14', 'padding-top: 2px;'); echo '</div>',
-					'<div class="atec-col">Upgrade to „PRO“', 
+					'<div class="atec-col atec-vat">Upgrade to „PRO“', 
 						str_starts_with($desc,'<br>') ? '.' :' '; 
 						self::br(INIT::trailingdotit($desc)); 
 					echo 
@@ -360,9 +378,9 @@ public static function pro_feature($una, $desc= '', $small=false, $license_ok=nu
 			'</a>
 		</div>';
 		if ($desc!== '') { echo '<div class="atec-pro-box"><h4 class="atec-mt-0">'; self::br(INIT::trailingdotit($desc)); echo '</h4></div>'; 	}
-		if ($break) echo '<br>';
+		if ($break) self::clear();
 	}
-	return $license_ok; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	return $license_ok; // phpcs:ignore
 }
 
 public static function pro_block($una, $str = ''): void
@@ -443,7 +461,6 @@ private static function single_nav_tab($una, $act_nav, $icon, $button, $license_
 
 public static function nav_tab($una, $break=999, $license_ok=null, $about=false, $update=false, $debug=false): void
 {
-	self::progress();
 	$margin_top = $license_ok ? '-15' : '-5';
 	echo
 	'<h2 class="nav-tab-wrapper" style="padding: 0; margin: '.esc_attr($margin_top).'px 0 5px 0;">';
@@ -472,6 +489,64 @@ public static function nav_tab($una, $break=999, $license_ok=null, $about=false,
 // NAV AREA END
 
 // TABLE AREA START
+
+public static function ul($title = '', $lis = [], $class = ''): void
+{
+	if ($title !== '') echo '<u><b>', esc_html($title), '</b>:</u>';
+	echo '<ul class="atec-ul', esc_html($class !== '' ? ' '.$class : ''), '">';
+
+	foreach ($lis as $li)
+	{
+		echo 
+		'<li>',
+			wp_kses($li, self::$allowed_tr),
+		'</li>';
+	}
+
+	echo '</ul>';
+}
+
+public static function div($arg, $str='', $border=false): void
+{
+	if (is_numeric($arg))
+	{
+		if ($arg === 0) echo '</div><div>';
+		elseif ($arg<0)
+		{
+			for($i=0; $i<absint($arg); $i++) echo '</div>';
+		}
+	}
+	else
+	{
+		if (str_starts_with($arg,'g'))	// Grid
+		{
+			echo '<div class="atec-g atec-', esc_attr($arg), '">';
+				echo '<div>';
+		}
+	
+		if (str_contains($arg, 'border'))
+		{
+			if (!empty($str)) TOOLS::little_block($str);
+			echo '<div class="atec-border-white">';
+		}
+		
+		if ($arg === 'box')
+		{
+				echo '<div class="atec-box-white">';
+				if (!empty($str)) echo '<p>', wp_kses_post(INIT::trailingdotit($str)), '</p>';
+		}
+		elseif ($arg === 'btn')
+		{
+			echo
+			'<div class="atec-btn-div">';
+		}
+		elseif ($arg === 'row')
+		{
+			echo
+			'<div class="atec-row">';
+		}
+	}
+}
 
 public static function table_header($tds = [], $id = '', $class = ''): void
 {
@@ -647,18 +722,23 @@ public static function badge($ok, $str_success, $str_failed = '', $margin = fals
 	'</div>';
 }
 
-public static function p_info($str, $bold=false, $class= ''): void
+public static function p_info($str, $class = '', $warning = false): void
 {
 	$str = INIT::trailingdotit($str); 
-	echo '<div class="atec-badge atec-box-info', ($class !== '' ? ' '.esc_attr($class) : ''), '">';
-		echo '<div>🔹</div>';
-		echo '<div ', ($bold ? ' atec-bold' : ''), '">', wp_kses_post($str), '</div>';
+	echo '<div class="atec-badge atec-box-info">';
+		echo '<div>', $warning ? '🔸':'🔹', '</div>';
+		echo '<div ', ($class !== '' ? ' class="'.esc_attr($class).'"' : ''), '>', wp_kses_post(INIT::trailingdotit($str)), '</div>';
 	echo '</div>';
 }
 
 public static function p_bold($title, $str, $class= ''): void
 {
-	echo '<p', ($class !== '' ? ' class="'.esc_attr($class).'"' : ''), '"><b>', esc_html($title), '</b>: ', wp_kses_post($str) ,'</p>';
+	echo '<p', ($class !== '' ? ' class="'.esc_attr($class).'"' : ''), '><b>', esc_html($title), '</b>: ', wp_kses_post($str) ,'</p>';
+}
+
+public static function h($c, $str, $class= ''): void
+{
+	echo '<h', esc_attr($c), ($class !== '' ? ' class="'.esc_attr($class).'"' : ''), '>', wp_kses_post($str) ,'</h', esc_attr($c),'>';
 }
 
 public static function msg($ok, $str, $before=false, $after=false): void
@@ -668,23 +748,69 @@ public static function msg($ok, $str, $before=false, $after=false): void
 	if ($after) echo '<br>';
 }
 
-public static function help($title, $str, $warning=false, $hide=false): void
+public static function help($title, $str, $warning = false): void
 {
-	$id = uniqid();
+	$id = uniqid('atec_help_');
+
 	echo 
-	'<div id="', esc_attr($id), '_help_button" class="atec-help-button" ',
-		'style="border: ', $warning ? 'var(--border-warning)' :'var(--border-button)', '"',
-		'onclick="return showHelp(\'', esc_attr($id), '\');">';
-			self::dash_span($warning ? 'editor-help' : 'info', 'atec-'.($warning ? 'orange' : 'lightgrey'));
-			echo esc_html($title);
-	echo
-	'</div>',
-	'<div id="', esc_attr($id), '_help" class="atec-help atec-dn">', 
-		'<p class="atec-bold atec-mb-5 atec-mt-5 atec-', ($warning ? 'orange' : 'black'), '"><u>', esc_html($title), '</u>:</p>',
-		wp_kses_post($str), 
+	'<div class="atec-help-popover-wrap">',
+		'<button type="button" class="atec-help-toggle ' , ($warning ? 'atec-warning' : '') , '" data-popover="' , esc_attr($id) , '">',
+			esc_attr(self::dash_span($warning ? 'editor-help' : 'info', $warning ? 'atec-warning' : '')),
+			esc_html($title),
+		'</button>',
+
+		'<div id="' , esc_attr($id) , '" class="atec-help-popover-content" hidden>',
+			'<div>', wp_kses_post($str), '</div>',
+		'</div>',
 	'</div>';
-	
-	self::reg_inline_script('help', 'function showHelp(id) { jQuery("#"+id+"_help").removeClass("atec-dn").addClass("atec-db"); jQuery("#"+id+"_help_button").remove(); return false; }');
+
+	self::inject_popover_script();
+}
+
+protected static function inject_popover_script(): void
+{
+	static $done = false;
+	if ($done) return;
+	$done = true;
+
+	self::reg_inline_script('help-popover',
+		'document.addEventListener("click", function(e) 
+		{
+			const toggle = e.target.closest(".atec-help-toggle");
+			const isPopover = e.target.closest(".atec-help-popover-content");
+			const popovers = document.querySelectorAll(".atec-help-popover-content");
+
+			if (!toggle && !isPopover) 
+			{
+				popovers.forEach(function(el) { el.hidden = true; });
+				return;
+			}
+
+			if (toggle) 
+			{
+				const id = toggle.getAttribute("data-popover");
+				const target = document.getElementById(id);
+				if (!target) return;
+
+				const isVisible = !target.hidden;
+				popovers.forEach(function(el) { el.hidden = true; });
+				if (isVisible) return;
+
+				target.hidden = false;
+				target.style.left = "0";
+				target.style.right = "auto";
+
+				const rect = target.getBoundingClientRect();
+				if (rect.right > window.innerWidth - 20) 
+				{
+					target.style.left = "auto";
+					target.style.right = "0";
+				}
+
+				e.stopPropagation();
+			}
+		});'
+	);
 }
 
 // MSG AREA END
@@ -809,7 +935,7 @@ public static function reg_inline_script($id, $js_safe, $jquery=false):void
 
 public static function load_atec_style($dir, $styles=[])
 {
-	static $versions = ['style' => '1.0.1', 'check' => '1.0.1'];
+	static $versions = ['style' => '1.0.3', 'check' => '1.0.3'];
 	foreach($styles as $style) 	
 	{
 		$version = $versions[$style] ?? '1.0.1';
@@ -819,7 +945,7 @@ public static function load_atec_style($dir, $styles=[])
 
 public static function load_atec_script($dir, $scripts=[])
 {
-	static $versions = [ 'check' => '1.0.1' ];
+	static $versions = [ 'check' => '1.0.3' ];
 	foreach($scripts as $script)
 	{
 		$version = $versions[$script] ?? '1.0.1';
@@ -850,24 +976,31 @@ public static function header($una): bool
 
 	echo
 	'<div class="atec-header">',
-		'<h3 class="atec-m-auto atec-mb-5 atec-row" style="align-items: center;">';
+		'<div class="atec-m-auto atec-mb-5 atec-row" style="align-items: center; gap: 5px;">';
 
 			if ($una->slug=== 'wpmc') 
 			{
 				\ATEC\SVG::echo('wpmc');
-				echo '<span style="color:#2340b1;">Mega</span><span style="color:#fe5300; margin-left: -5px;">Cache</span>';
+				echo 
+				'<h1 class="atec-dilb">
+					<span style="color:#2340b1;">Mega</span>
+					<span style="color:#fe5300; margin-left: -5px;">Cache</span>
+				</h1>';
 			}
 			else
 			{
 				\ATEC\SVG::echo('wpa');
 				echo 
-				'<div><span class="atec-logo-text">tec</span>', esc_html(str_replace('atec','',INIT::plugin_fixed_name($plugin))), '</div>';
+				'<span class="atec-logo-text">atec</span>', 
+				'<h1 class="atec-dilb">',
+					esc_html(str_replace('atec','',INIT::plugin_fixed_name($plugin))),
+				'</h1>';
 				\ATEC\SVG::echo($una->slug);
 			}
-			echo '<div class="atec-fs-10" style="margin-left: -5px;">v', esc_attr($version), '</div>';
+			echo '<div class="atec-fs-10 atec-vab">v', esc_attr($version), '</div>';
 
 		echo
-		'</h3>';
+		'</div>';
 
 		echo
 		'<div class="atec-row atec-header-box">',

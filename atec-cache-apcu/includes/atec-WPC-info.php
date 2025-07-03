@@ -1,6 +1,7 @@
 <?php
 defined('ABSPATH') || exit;
 
+use ATEC\ALIAS;
 use ATEC\TOOLS;
 use ATEC\WPC;
 
@@ -35,10 +36,10 @@ public static function init()
 	{
 		$hitrate = self::calc_hitrate($wp_object_cache->cache_hits, $wp_object_cache->cache_misses);
 		TOOLS::table_header([], '', 'summary');
-			TOOLS::table_tr([__('Hits', 'atec-cache-apcu').':', number_format($wp_object_cache->cache_hits), TOOLS::percent_format($hitrate['hitsPerc'])]);
-			TOOLS::table_tr([__('Misses', 'atec-cache-apcu').':', number_format($wp_object_cache->cache_misses), TOOLS::percent_format($hitrate['missesPerc'])]);
+			ALIAS::tr([__('Hits', 'atec-cache-apcu').':', number_format($wp_object_cache->cache_hits), TOOLS::percent_format($hitrate['hitsPerc'])]);
+			ALIAS::tr([__('Misses', 'atec-cache-apcu').':', number_format($wp_object_cache->cache_misses), TOOLS::percent_format($hitrate['missesPerc'])]);
 			if (isset($wp_object_cache->cache_sets))
-			{ TOOLS::table_tr([__('Sets', 'atec-cache-apcu').':', number_format($wp_object_cache->cache_sets), '']); }
+			{ ALIAS::tr([__('Sets', 'atec-cache-apcu').':', number_format($wp_object_cache->cache_sets), '']); }
 		TOOLS::table_footer();
 
 		WPC::hitrate($hitrate['hitsPerc'], $hitrate['missesPerc']);
@@ -54,9 +55,9 @@ public static function init()
 		$hitrate = self::calc_hitrate($ls_hit, $ls_miss);
 
 		TOOLS::table_header([], '', 'summary');
-			TOOLS::table_tr([__('Items', 'atec-cache-apcu').':', number_format($ls_total), '']);
-			TOOLS::table_tr([__('Hits', 'atec-cache-apcu').':', number_format($ls_hit), TOOLS::percent_format($hitrate['hitsPerc'])]);
-			TOOLS::table_tr([__('Misses', 'atec-cache-apcu').':', number_format($ls_miss), TOOLS::percent_format($hitrate['missesPerc'])]);
+			ALIAS::tr([__('Items', 'atec-cache-apcu').':', number_format($ls_total), '']);
+			ALIAS::tr([__('Hits', 'atec-cache-apcu').':', number_format($ls_hit), TOOLS::percent_format($hitrate['hitsPerc'])]);
+			ALIAS::tr([__('Misses', 'atec-cache-apcu').':', number_format($ls_miss), TOOLS::percent_format($hitrate['missesPerc'])]);
 		TOOLS::table_footer();
 
 		WPC::hitrate($hitrate['hitsPerc'], $hitrate['missesPerc']);

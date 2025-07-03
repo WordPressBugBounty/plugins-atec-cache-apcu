@@ -59,7 +59,7 @@ final class Settings
 		else $redirect=true;
 		
 		if ($update_settings) INIT::update_settings('wpca', $settings);
-		if ($redirect) { ob_clean(); TOOLS::safe_redirect('wpca', 'flushWPCA'); exit; }
+		if ($redirect) TOOLS::safe_redirect('wpca', 'flushWPCA');
 	}
 
 	register_setting($page_slug, $option_group, [CHECK::class, 'wpca_sanitize_fields']);

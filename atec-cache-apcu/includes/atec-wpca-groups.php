@@ -1,6 +1,7 @@
 <?php
 defined('ABSPATH') || exit;
 
+use ATEC\ALIAS;
 use ATEC\TOOLS;
 use ATEC\WPC;
 
@@ -46,20 +47,20 @@ return function($una)
 					[$salt, $group, $key] = explode(':', $entry['key'], 3);
 					echo
 					'<tr>';
-						TOOLS::table_td($c);
-						TOOLS::table_td($group);
-						TOOLS::table_td($key, 'atec-anywrap');
-						TOOLS::table_td($entry['num_hits'], 'atec-right');
-						TOOLS::table_td(gettype($entry['value']), 'atec-right');
-						TOOLS::table_td(size_format($entry['mem_size']), 'atec-nowrap atec-right');
-						TOOLS::table_td(htmlentities(substr(serialize($entry['value']),0,64)), 'atec-anywrap');
+						ALIAS::td($c);
+						ALIAS::td($group);
+						ALIAS::td($key, 'atec-anywrap');
+						ALIAS::td($entry['num_hits'], 'atec-right');
+						ALIAS::td(gettype($entry['value']), 'atec-right');
+						ALIAS::td(size_format($entry['mem_size']), 'atec-nowrap atec-right');
+						ALIAS::td(htmlentities(substr(serialize($entry['value']),0,64)), 'atec-anywrap');
 						TOOLS::dash_button_td($una, 'delete', 'APCu', 'trash', true, $entry['key']);
 					echo '
 					</tr>';
 				}
 			}
-			TOOLS::table_tr();
-			TOOLS::table_tr([$c, '2@', TOOLS::size_format($total), '2@'], 'td', 'bold');
+			ALIAS::tr();
+			ALIAS::tr([$c, '2@', TOOLS::size_format($total), '2@'], 'td', 'bold');
 			
 		TOOLS::table_footer();
 	}
@@ -93,9 +94,9 @@ return function($una)
 			</tr>';
 		}
 
-		TOOLS::table_tr();
-		if ($c===0) TOOLS::table_tr(['99@-/-']);
-		else TOOLS::table_tr([$c, '2@', TOOLS::size_format($total), ''], 'td', 'bold');
+		ALIAS::tr();
+		if ($c===0) ALIAS::tr(['99@-/-']);
+		else ALIAS::tr([$c, '2@', TOOLS::size_format($total), ''], 'td', 'bold');
 
 	TOOLS::table_footer();
 		
@@ -124,8 +125,8 @@ return function($una)
 			'</tr>';
 			$total+= $entry['mem_size'];
 		}
-		TOOLS::table_tr();
-		TOOLS::table_tr([$c, '2@', TOOLS::size_format($total)], 'td', 'bold');
+		ALIAS::tr();
+		ALIAS::tr([$c, '2@', TOOLS::size_format($total)], 'td', 'bold');
 		
 	TOOLS::table_footer();
 

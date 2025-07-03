@@ -1,6 +1,7 @@
 <?php
 defined('ABSPATH') || exit;
 
+use ATEC\ALIAS;
 use ATEC\INIT;
 use ATEC\TOOLS;
 use ATEC\WPC;
@@ -49,7 +50,8 @@ return function($una)
 			]);
 			
 			$c=0; $size=0;
-			$reg=preg_replace('/\//', '\/',preg_replace('/https?:\/\//', '',get_home_url()));
+			$home_url = INIT::home_url();
+			$reg=preg_replace('/\//', '\/',preg_replace('/https?:\/\//', '',$home_url));
 			$reg_apcu = '/atec_WPCA_'.$salt.'_([fpcta]+)_([\d|]+)/';
 			$site_url= INIT::site_url();
 			foreach ($apcu_it as $entry)
@@ -69,21 +71,21 @@ return function($una)
 					
 					$type		= $isCat?'category':($isTag?'tag':($isArchive?'archive':get_post_type($id)));
 					$title			= $id===0?'Homepage':($isCat?get_cat_name($id):($isTag?get_tag($id)->name:($isArchive?substr($id,0,4).'/'.substr($id,4,2):get_the_title($id))));
-					$link			= $id===0?get_home_url().'/':($isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$site_url.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2, '0',STR_PAD_LEFT):get_permalink($id))));
+					$link			= $id===0?$home_url.'/':($isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$site_url.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2, '0',STR_PAD_LEFT):get_permalink($id))));
 					if ($isFeed) $link.= 'feed/';
 					if ($page!=0) { $link=((str_contains($link, '?cat=') || str_contains($link, '?tag='))?$link.'&paged= ':rtrim($link, '/').'/page/').$page; }
 					
 					$short_url 	= preg_replace('/(^https?:\/\/)'.$reg.'/', '', $link);
 					echo
 					'<tr>';
-						TOOLS::table_td($id);
-						TOOLS::table_td(ucfirst($type));
-						TOOLS::table_td($match[1].'_'.$match[2]);
-						TOOLS::table_td($isCat ? $page : '');
-						TOOLS::table_td(($isFeed ? ' <span class="'.esc_attr(TOOLS::dash_class('yes')).'"></span>' : ''));
-						TOOLS::table_td($entry['num_hits']);
-						TOOLS::table_td(size_format($entry['mem_size']), 'atec-nowrap');
-						TOOLS::table_td($title);
+						ALIAS::td($id);
+						ALIAS::td(ucfirst($type));
+						ALIAS::td($match[1].'_'.$match[2]);
+						ALIAS::td($isCat ? $page : '');
+						ALIAS::td(($isFeed ? ' <span class="'.esc_attr(TOOLS::dash_class('yes')).'"></span>' : ''));
+						ALIAS::td($entry['num_hits']);
+						ALIAS::td(size_format($entry['mem_size']), 'atec-nowrap');
+						ALIAS::td($title);
 						echo
 						'<td><a href="', esc_url($link), '" target="_blank">', esc_url($short_url), '</a></td>';
 						TOOLS::dash_button_td($una, 'delete', 'Page_Cache', 'trash', true, $match[1].'_'.$match[2]);
@@ -91,8 +93,8 @@ return function($una)
 					</tr>';
 				}
 			}
-			if ($c>0) TOOLS::table_tr(['2@', number_format($c), '3@', TOOLS::size_format($size), '3@'], 'td', 'bold');
-			else TOOLS::table_tr(['99@-/-']);
+			if ($c>0) ALIAS::tr(['2@', number_format($c), '3@', TOOLS::size_format($size), '3@'], 'td', 'bold');
+			else ALIAS::tr(['99@-/-']);
 		
 		TOOLS::table_footer();
 		

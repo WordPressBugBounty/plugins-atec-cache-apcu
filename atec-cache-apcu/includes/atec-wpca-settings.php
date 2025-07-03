@@ -4,6 +4,7 @@ defined('ABSPATH') || exit;
 use ATEC\CHECK;
 use ATEC\INIT;
 use ATEC\TOOLS;
+use ATEC\WPC;
 use ATEC\WPCA;
 
 return function($una, $license_ok) 
@@ -137,7 +138,7 @@ return function($una, $license_ok)
 					TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('page cache', 'atec-cache-apcu'), true);
 					echo '<br class="atec-mb-20">';
 				}
-
+				
 				echo 
 				'<div class="atec-row">';
 				
@@ -160,13 +161,14 @@ return function($una, $license_ok)
 						__('Do not use multiple page cache plugins simultaneously', 'atec-cache-apcu').'.', true);
 	
 					if (is_multisite()) TOOLS::msg('warning', __('The page cache is not designed to support multisites', 'atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites', 'atec-cache-apcu'), true);
-	
-					if (defined('LITESPEED_ALLOWED') && LITESPEED_ALLOWED)
-						TOOLS::msg('warning', __('Please do not use LiteSpeed page-cache together with APCu page-cache – choose either one', 'atec-cache-apcu'), true);
+
 						
 				echo
-				'</div>',
+				'</div>';
+				
+				if ($msg = WPC::pcache_detected()) TOOLS::msg('warning', $msg);
 
+			echo
 			'</div>',
 			
 		'</div>',

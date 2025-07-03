@@ -20,7 +20,6 @@ final class CHECK
 				}
 				settings_fields($slug);
 				do_settings_sections($slug);
-				echo '<br class="atec-break">';
 				TOOLS::submit_button();
 			echo '
 			</form>

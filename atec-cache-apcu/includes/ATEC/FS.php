@@ -10,13 +10,30 @@ final class FS {
 	
 	public static function debug_path(): string
 	{
-		return 
-			self::trailingslashit(
+		static $cached = null;
+		if ($cached === null) 
+		{
+			$cached = self::trailingslashit(
 				defined(WP_DEBUG_LOG) && !is_bool(WP_DEBUG_LOG)
 				? WP_DEBUG_LOG
-				: WP_CONTENT_DIR).'debug.log';
+				: WP_CONTENT_DIR
+				).'debug.log';
+		}
+		return $cached;
 	}
-
+	
+	public static function htaccess_path(): string
+	{
+		return self::home_path() . '.htaccess';
+	}
+	
+	public static function home_path(): string
+	{
+		static $cached = null;
+		if ($cached === null) $cached = get_home_path();
+		return $cached;
+	}
+	
 	public static function flock_put($path, $content): bool
 	{
 		@unlink($path);
@@ -69,11 +86,19 @@ final class FS {
 		if ($cached === null) $cached = wp_get_upload_dir();
 		return $cached;
 	}
+
+	public static function upload_basedir(): string
+	{ return self::wp_upload_dir()['basedir']; }
+		
+	public static function upload_baseurl(): string
+	{ return self::wp_upload_dir()['baseurl']; }
 	
-	public static function upload_dir($p): string
+	public static function upload_dir($p= ''): string
 	{
-		$base_dir = self::wp_upload_dir()['basedir'];
-		$path = self::trailingslashit($base_dir) . INIT::plugin_prefix($p) . $p;
+		$path = 
+			$p !== '' 
+			? self::trailingslashit(self::upload_basedir()) . INIT::plugin_prefix($p) . $p
+			: self::upload_basedir();
 		return self::fix_separator($path);
 	}
 
@@ -153,7 +178,7 @@ final class FS {
 	{
 		if (!self::exists($source)) return false;
 		if (!$overwrite && self::exists($target)) return false;
-		$result = @copy($source, $target);
+		$result = copy($source, $target);
 		if ($result && $mode !== false) { self::chmod($target, $mode); }
 		return $result;
 	}
@@ -162,7 +187,7 @@ final class FS {
 	{
 		if (!file_exists($path)) return true;
 		if (is_dir($path)) return self::rmdir($path, $recursive);
-		return @unlink($path);
+		return unlink($path);
 	}
 
 	public static function dirlist($path, $include_hidden = true, $recursive = false) : array
@@ -187,32 +212,32 @@ final class FS {
 		return $result;
 	}
 
-	public static function exists($path): bool { return @file_exists($path); }
-	public static function get($path, $default = false) { return self::exists($path) ? @file_get_contents($path) : $default; }
+	public static function exists($path): bool { return file_exists($path); }
+	public static function get($path, $default = false) { return self::exists($path) ? file_get_contents($path) : $default; }
 	public static function get_array($path, $default = false) { return self::exists($path) ? @file($path) : $default; }
 	public static function getchmod($path): string { return self::exists($path) ? substr(sprintf('%o', fileperms($path)), -4) : '0000'; }
-	public static function is_dir($dir): bool { return @is_dir($dir); }
+	public static function is_dir($dir): bool { return self::exists($path) && is_dir($dir); }
 
 	public static function mkdir($dir, $chmod = 0755): bool
 	{
 		if (self::exists($dir)) return true;
-		return @mkdir($dir, $chmod, true);
+		return mkdir($dir, $chmod, true);
 	}
 
 	public static function move($source, $target, $overwrite = true): bool
 	{
 		if (!self::exists($source)) return false;
 		if (!$overwrite && self::exists($target)) return false;
-		return @rename($source, $target);
+		return rename($source, $target);
 	}
 
 	public static function mtime($path) { return self::exists($path) ? @filemtime($path) : false; }
-	public static function put($path, $content, $flags = 0) { return @file_put_contents($path, $content, $flags); }
+	public static function put($path, $content, $flags = 0) { return file_put_contents($path, $content, $flags); }
 
 	public static function rmdir($dir, $recursive = false): bool
 	{
 		if (!is_dir($dir)) return true;
-		if (!$recursive) return @rmdir($dir);
+		if (!$recursive) return rmdir($dir);
 		foreach (scandir($dir) as $item)
 		{
 			if ($item === '.' || $item === '..') continue;
@@ -221,7 +246,7 @@ final class FS {
 			elseif (is_dir($path)) { self::rmdir($path, true); }
 			else { unlink($path); }
 		}
-		return @rmdir($dir);
+		return rmdir($dir);
 	}
 
 	public static function size($path) { return self::exists($path) ? filesize($path) : false; }
