@@ -6,7 +6,7 @@ Tested up to: 6.8
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.23
+Stable tag: 2.3.24
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,6 +93,9 @@ Advanced Page Cache is a „PRO“-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.24 [2025.07.08] =
+* OC 2.0.6
 
 = 2.3.21 [2025.07.08] =
 * Fixed add/replace issue, updated flush() and flush_group(), Fixed admin_notice on enabling/disabling OC

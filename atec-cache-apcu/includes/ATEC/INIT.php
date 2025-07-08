@@ -684,7 +684,7 @@ public static function admin_notice($slug, $type= '', $msg= ''): void
 	add_action('admin_footer', function() 
 	{
 		$id = 'atec-admin-footer';
-		wp_register_script($id, false, $jquery ? ['jquery'] : [], '1.0.0', true);
+		wp_register_script($id, false, ['jquery'], '1.0.0', true);
 		wp_enqueue_script($id);
 		wp_add_inline_script($id, '
 			jQuery(document).on("click", ".notice-dismiss", function() 

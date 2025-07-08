@@ -523,6 +523,7 @@ private static $allowed_svg = [
 		elseif ($key=== 'wpcr') $svg = self::$svg['redis'];
 		elseif ($key=== 'wpl') $svg = self::$svg['license'];
 		elseif ($key=== 'wpo') $svg = self::$svg['rocket'];
+		elseif ($key=== 'wpm') $svg = self::$svg['wpmt'];	// meta was renamed to meta-tags | wpm -> wpmt		| 250708
 		elseif ($key=== 'memory_white')
 		{
 			$svg = self::$svg['memory'];

@@ -63,7 +63,7 @@
 .atec-page small { font-size: 0.8em; }
 .atec-page input::placeholder, .atec-page textarea::placeholder { color: var(--c-b); }
 .atec-page input { padding: 0 8px; }
-
+.atec-page input[type="checkbox"], input[type="radio"] { margin: 8px 8px 0 0 !important; }
 .atec-page .button, .atec-page button
 { 
 	gap: 5px; display: flex; align-items: center; justify-content: center;
