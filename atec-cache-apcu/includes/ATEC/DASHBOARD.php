@@ -126,11 +126,11 @@ private static function plugin_div($p)
 			break;
 
 		case 'cache-memcached':
-			self::group_badge('Object Cache', INIT::get_settings('wpcm', 'cache'), $p->slug);
+			self::group_badge('Object Cache', defined('ATEC_OC_ACTIVE_MEMCACHED'), $p->slug);
 			break;
 
 		case 'cache-redis':
-			self::group_badge('Object Cache', INIT::get_settings('wpcr', 'cache'), $p->slug);
+			self::group_badge('Object Cache', defined('ATEC_OC_ACTIVE_REDIS'), $p->slug);
 			break;
 
 		case 'config':

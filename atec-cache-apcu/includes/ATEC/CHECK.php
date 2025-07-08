@@ -143,7 +143,7 @@ final class CHECK
 	public static function input_textarea($args): void
 	{
 		$option = get_option($args['opt-name'],[]); $field= $args['name'];
-		echo '<textarea id="textarea_', esc_attr($field), '" style="resize:both;" rows="', (($args['size']??'')=== ''?'2':esc_attr($args['size'])), '" cols="30" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']">', esc_textarea($option[$field]??''), '</textarea>';
+		echo '<textarea id="textarea_', esc_attr($field), '" style="resize:both;" rows="', (($args['size']??'')=== ''?'3':esc_attr($args['size'])), '" cols="40" name="', esc_attr($args['opt-name']), '[', esc_attr($field), ']">', esc_textarea($option[$field]??''), '</textarea>';
 	}
 
 	// INPUT AREA END

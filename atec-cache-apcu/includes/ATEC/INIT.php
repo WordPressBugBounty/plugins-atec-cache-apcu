@@ -12,8 +12,8 @@ defined('ABSPATH') || exit;
 // ===== Static Toolbox Class =====
 final class INIT {
 
-static $require_install = [ 'wpc', 'wpca', 'wpcm', 'wpcr', 'wpds', 'wpf', 'wpfm', 'wppp', 'wps', 'wpmcl', 'wpsh', 'wpwp' ];
-static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpll', 'wplu', 'wpmcl', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu'];
+static $require_install = [ 'wpc', 'wpca', 'wpcm', 'wpcr', 'wpds', 'wpf', 'wpfm', 'wpht', 'wppp', 'wps', 'wpmcl', 'wpsh', 'wpwp' ];
+static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpl', 'wpll', 'wplu', 'wpmcl', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu'];
 static $admin_styles_loaded = false;
 static $allowed_admin_tags = 
 	[	
@@ -59,6 +59,28 @@ public static function admin_bar($wp_admin_bar, $slug= '', $action = null, $nav=
 	$wp_admin_bar->add_node($args);
 }
 
+public static function admin_bar_button($wp_admin_bar, string $slug, string $label, string $cmd, string $tooltip = '', string $id = '', string $parent = ''): void
+{
+	$base_id = 'atec-' . $slug;
+	if ($id !== '') { $base_id .= '-' . sanitize_key($id); 	}
+
+	$func = 'atec_' . $slug . '_ajax_cb';
+	
+	$args = [
+		'id'		=> $base_id,
+		'title'		=> esc_html($label),
+		'href'		=> '#',
+		'meta'	=> [
+			'title'			=> esc_attr($tooltip),
+			'onclick'	=> "{$func}(" . json_encode($cmd) . "); return false;",
+		],
+	];
+	
+	if ($parent !== '') $args['parent'] = $parent;
+	$wp_admin_bar->add_node($args);
+
+}
+
 public static function build_url($una_or_slug, $action = null, $nav = null, $args = []): string
 {
 	if (is_string($una_or_slug))	// is_string is a slug
@@ -74,9 +96,13 @@ public static function build_url($una_or_slug, $action = null, $nav = null, $arg
 	else $una = $una_or_slug;
 
 	$nav = $nav ?? ($una->nav ?? '');
-
-	if ($action!==null && str_contains($action, '&')) 	// If $actions is a combined string
-	{ parse_str($action, $temp); $action = array_key_first($temp); $args = array_merge($temp, $args); }
+	
+	if ($action === null) $action = '';
+	elseif ($action!==null && str_contains($action, '&'))	// If $action is a combined string of actions
+	{ 
+		parse_str($action, $temp); 
+		$action = array_key_first($temp); $args = array_merge($temp, $args); 
+	}
 
 	$arr = array_merge([ 'action' => $action, 'nav' => $nav, '_wpnonce' => $una->nonce ], $args);
 	$arr = array_filter($arr, fn($v) => $v !== null && $v !== '');
@@ -123,7 +149,7 @@ public static function site_url_path(): string
 
 public static function normalized_uri(): string
 {
-	$uri = $_SERVER['REQUEST_URI'] ?? ''; // phpcs:ignore
+	$uri = self::_SERVER('REQUEST_URI');
 	$uri = strtok($uri, '?');	// strip query
 	$uri = rtrim($uri, '/');	// normalize trailing slash
 
@@ -132,11 +158,21 @@ public static function normalized_uri(): string
 	return $uri;
 }
 
-public static function admin_url($slug=''): string
+public static function admin_url_OLD($slug=''): string
 {
 	static $cached = null;
 	if ($cached === null) $cached = self::site_url().'/wp-admin';
 	return $cached . ($slug!=='' ? '/admin.php?page=atec_'.$slug : '');
+}
+
+public static function admin_url( $slug = '' ): string
+{
+	static $cached_base = null;
+	if ( $cached_base === null ) $cached_base = admin_url(); // WP-safe and filter-aware
+
+	return $slug !== '' 
+		? $cached_base . 'admin.php?page=atec_' . urlencode( $slug )
+		: $cached_base;
 }
 
 public static function admin_bar_option($slug): int
@@ -190,24 +226,59 @@ public static function extension_enabled($type)
 	{
 		case 'apcu':
 			return extension_loaded('apcu') && apcu_enabled();
+			break;
+			
+		case 'openssl':
+			return extension_loaded('openssl');
+			break;
 	}
 	return false;
 }
 
-public static function error_log($args)
+public static function error_log(...$args)
 {
-	is_scalar($args) ? error_log($args) : error_log(print_r($args,true));		// phpcs:ignore
+	foreach ($args as $arg)
+	{
+		// Skip empty strings, null, false
+		if ($arg === null || $arg === '' || $arg === false) continue;
+		error_log(is_scalar($arg) ? (string) $arg : print_r($arg, true));	// phpcs:ignore
+	}
 }
 
-public static function POST($key, $default = '')
+public static function _GET($key, $default = '')
 {
-	if (!isset($_POST[$key])) return $default;									// phpcs:ignore
-	return sanitize_text_field(wp_unslash($_POST[$key]));	// phpcs:ignore
+	if (isset($_GET[$key])) return sanitize_text_field(wp_unslash($_GET[$key]));	// phpcs:ignore
+	return $default;
+}
+
+public static function _SERVER($key, $default = '')
+{
+	if (isset($_SERVER[$key])) return sanitize_text_field(wp_unslash($_SERVER[$key]));
+	return $default;
+}
+
+public static function _POST($key, $default = '')
+{
+	if (isset($_POST[$key])) return sanitize_text_field(wp_unslash($_POST[$key]));	// phpcs:ignore
+	return $default;
+}
+
+// OUTDATED: 250704 | CLEANUP: Delete
+public static function POST($key, $default = '', $raw = false)
+{
+	return self::_POST($key, $default);
+	if (!isset($_POST[$key])) return $default; 	// phpcs:ignore
+	$value = wp_unslash($_POST[$key]);		// phpcs:ignore
+	return $raw ? $value : sanitize_text_field($value);
 }
 
 public static function bool($value): bool { return filter_var($value, FILTER_VALIDATE_BOOLEAN); }
 
-public static function nonce(): string { return self::slug() . '_nonce'; } // build nonce name from current slug
+public static function nonce(): string  // Nonce key from current slug, misleading old function name
+{ return self::slug() . '_nonce'; }
+
+public static function nonce_key(string $slug, bool $ajax = false): string	// Full nonce key: 'atec_{slug}[_ajax]_nonce'
+{ return 'atec_' . $slug . ($ajax ? '_ajax' : '') . '_nonce'; }
 
 public static function slug(): string
 {
@@ -233,7 +304,7 @@ public static function slug(): string
 public static function query(): string
 {
 	static $cached = null;
-	if ($cached === null) $cached = $_SERVER['REQUEST_URI'] ?? '';	// phpcs:ignore
+	if ($cached === null) $cached = self::_SERVER('REQUEST_URI');
 	return $cached;
 }
 
@@ -244,21 +315,12 @@ public static function trailingdotit($str): string
 	return rtrim($str) . ($has_punct ? '' : '.');
 }
 
-public static function ajax_nonce_check($slug)
-{
-	if (! wp_verify_nonce(self::POST('nonce'), 'atec_' . $slug . '_ajax_nonce')) 
-	{ wp_send_json_error('Nonce failed.'); }
-}
-
 // IS_?...
 
 public static function is_real_admin(): bool
 {
 	static $cached = null;
-	if ($cached === null)
-	{	
-		$cached = self::is_interactive() && is_admin();
-	}
+	if ($cached === null) $cached = self::is_interactive() && is_admin();
 	return $cached;
 }
 
@@ -303,6 +365,13 @@ public static function is_editor_mode(): bool
 	return false;
 }
 
+public static function is_atec_dev_mode(): bool
+{
+	static $cached = null;
+	if ($cached === null) $cached = get_option('atec_dev_mode');
+	return $cached;
+}
+
 // INIT
 
 public static function register_activation_deactivation_hook($plugin_file, $activate = -1, $deactivate = 0, $slug = '')
@@ -340,7 +409,7 @@ public static function maybe_register_settings($dir, $slug, $noNav = false, $cus
 		}
 	}
 	
-	if ($require) require "$dir/includes/atec-$slug-register-settings.php";
+	if ($require) require(esc_url("$dir/includes/atec-$slug-register-settings.php"));
 }
 
 public static function integrity_check($plugin): void // only on activation or when agreed
@@ -357,7 +426,12 @@ public static function integrity_check($plugin): void // only on activation or w
 public static function license_ok()
 {
 	static $cached = null;
-	if ($cached === null) $cached = get_transient('atec_license_code');
+	if ($cached === null) 
+	{
+		$cached = get_transient('atec_license_code');
+		if (!$cached) $cached = \ATEC\TOOLS::pro_license();
+
+	}
 	return $cached;
 }
 
@@ -390,8 +464,8 @@ public static function plugin_fixed_name($p)
 {
 	$p = ucwords(str_replace('-', ' ', $p));
 	return trim(str_ireplace(
-		['atec', 'apcu', 'webp', 'svg', 'ssl', 'oc benchmark'],
-		['atec', 'APCu', 'WebP', 'SVG', 'SSL', 'OC Benchmark'],
+		['atec', 'apcu', 'webp', 'svg', 'ssl', 'smtp', 'oc benchmark'],
+		['atec', 'APCu', 'WebP', 'SVG', 'SSL', 'SMTP', 'OC Benchmark'],
 		$p));
 }
 
@@ -455,20 +529,16 @@ public static function current_user_can($role): bool
 public static function admin_head_styles()
 {
 	self::$admin_styles_loaded = true;
-	add_action('admin_head', function () 
-	{
-	?>
-	<style>
-		.toplevel_page_atec_group .wp-menu-image img { max-width: 20px !important; max-height: 20px !important; }
-		#toplevel_page_atec_group .wp-submenu .atec-svg-icon 
-		{ display: inline-flex; max-width: 20px !important; text-align: center; vertical-align: middle; margin: 0 6px 0 -3px; }
 
+	$id = 'atec-admin-head';
+	wp_register_style($id, false, [], '1.0.0');
+	wp_enqueue_style($id);
+	wp_add_inline_style($id, '
+		.toplevel_page_atec_group .wp-menu-image img { max-width: 20px !important; max-height: 20px !important; }
+		#toplevel_page_atec_group .wp-submenu .atec-svg-icon { display: inline-flex; max-width: 20px !important; text-align: center; vertical-align: middle; margin: 0 6px 0 -3px; }
 		#wpadminbar .atec-admin-bar-row { display: flex; gap: 5px; align-items: center; }
-		#wpadminbar .atec-admin-bar-row svg 
-		{ display: block; flex: none; object-fit: contain; width: 18px; height: 18px; max-height: 18px; 	}
-	</style>
-	<?php
-	});
+		#wpadminbar .atec-admin-bar-row svg { display: block; flex: none; object-fit: contain; width: 18px; height: 18px; max-height: 18px; }
+	');
 }
 
 public static function menu($dir, $slug, $title, $css=[], $js=[]): bool
@@ -521,19 +591,7 @@ public static function menu($dir, $slug, $title, $css=[], $js=[]): bool
 	return true;
 }
 
-// NOTICE
-
-public static function build_notice(array &$notice, string $type= '', string $str= ''): void
-{
-	if (!isset($notice)) $notice = [];
-	if ($type=== '') $type = 'warning';
-	$str = self::trailingdotit($str);
-	$message = $notice['message'] ?? '';
-	$message .= ($message === '' ? '' : ' ') . $str;
-	if (!empty($notice['type']) && $notice['type'] !== 'info') { $type = $notice['type']; } // if $type is more important than "info", like "warning"
-	$notice['type'] = $type;
-	$notice['message'] = $message;
-}
+// DEBUG
 
 private static $admin_debug_cache = null;
 
@@ -590,12 +648,26 @@ public static function admin_debug_all(): void
 	}
 }
 
+// NOTICE
+
+public static function build_notice(array &$notice, string $type= '', string $str= ''): void
+{
+	if (!isset($notice)) $notice = [];
+	if ($type=== '') $type = 'warning';
+	$str = self::trailingdotit($str);
+	$message = $notice['message'] ?? '';
+	$message .= ($message === '' ? '' : ' ') . $str;
+	if (!empty($notice['type']) && $notice['type'] !== 'info') { $type = $notice['type']; } // if $type is more important than "info", like "warning"
+	$notice['type'] = $type;
+	$notice['message'] = $message;
+}
+
 public static function admin_notice($slug, $type= '', $msg= ''): void 
 {
-	if ($type=== '') $type = 'warning';	// ['info', 'warning', 'error', 'success']
+	if ($type === '') $type = 'warning';	// ['info', 'warning', 'error', 'success']
 
 	$plugin = \ATEC\GROUP::plugin_by_slug($slug);
-	if ($slug=== 'wpu') $plugin_name = 'Updates';
+	if ($slug === 'wpu') $plugin_name = 'Updates';
 	else
 	{
 		$prefix = self::plugin_prefix($plugin);
@@ -611,21 +683,30 @@ public static function admin_notice($slug, $type= '', $msg= ''): void
 
 	add_action('admin_footer', function() 
 	{
-		?>
-		<script type="text/javascript">
-			jQuery(document).on('click', '.notice-dismiss', function() 
+		$id = 'atec-admin-footer';
+		wp_register_script($id, false, $jquery ? ['jquery'] : [], '1.0.0', true);
+		wp_enqueue_script($id);
+		wp_add_inline_script($id, '
+			jQuery(document).on("click", ".notice-dismiss", function() 
 			{
-				const id = jQuery(this).parent().attr('id');
-				jQuery.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: {action: 'atec_admin_notice_dismiss', slug: jQuery(this).data('slug'), 	id: id	},
-					success: function(response) { if (response.success) jQuery('#'+id).slideUp(); }
+				const id = jQuery(this).parent().attr("id");
+				jQuery.ajax({ 
+					url: ajaxurl, type: "POST", data: {action: "atec_admin_notice_dismiss", slug: jQuery(this).data("slug"), id: id },
+					success: function(response) { if (response.success) jQuery("#"+id).slideUp(); }
 				});
 			});
-		</script>
-		<?php
+		');
 	}, 10 ,0);
+}
+
+public static function dismiss_notice()
+{
+	if (!isset($_POST['slug'], $_POST['id'])) { wp_send_json_error('Missing parameters'); }		// phpcs:ignore
+	$id = sanitize_text_field($_POST['id']);																			// phpcs:ignore
+	if (strpos($id, 'atec_notice_') !== 0) { wp_send_json_error('Invalid notice ID'); }
+	$slug = sanitize_text_field($_POST['slug']);																	// phpcs:ignore
+	\ATEC\INIT::delete_admin_debug($slug);
+	wp_send_json_success('Notice dismissed');
 }
 
 public static function add_admin_notice_action($dir, $type= '', $msg= ''): void 

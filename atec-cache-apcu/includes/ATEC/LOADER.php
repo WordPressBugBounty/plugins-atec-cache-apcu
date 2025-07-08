@@ -86,27 +86,13 @@ public static function autoload($class)
 
 }
 
-final class AJAX {
-
-public static function dismiss_notice()
-{
-	if (!isset($_POST['slug'], $_POST['id'])) { wp_send_json_error('Missing parameters'); }		// phpcs:ignore
-	$id = sanitize_text_field($_POST['id']);																			// phpcs:ignore
-	if (strpos($id, 'atec_notice_') !== 0) { wp_send_json_error('Invalid notice ID'); }
-	$slug = sanitize_text_field($_POST['slug']);																	// phpcs:ignore
-	\ATEC\INIT::delete_admin_debug($slug);
-	wp_send_json_success('Notice dismissed');
-}
-
-}
-
 \spl_autoload_register(['ATEC\\LOADER', 'autoload']);
-if (\PHP_VERSION_ID < 80000) require __DIR__.'/POLYFILL.php';
+if (\PHP_VERSION_ID < 80000) @require __DIR__.'/POLYFILL.php';
 
 // Register global AJAX handler for notice dismiss
 if (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action']) && $_REQUEST['action'] === 'atec_admin_notice_dismiss') 	// phpcs:ignore
 {
-	add_action('wp_ajax_atec_admin_notice_dismiss', ['ATEC\\AJAX', 'dismiss_notice']); 
+	add_action('wp_ajax_atec_admin_notice_dismiss', ['ATEC\\INIT', 'dismiss_notice']); 
 }
 else
 {

@@ -52,40 +52,41 @@ private static function init()
 		//20
 		self::create_plugin('wpdpp', 'duplicate-page-post', 'Duplicate posts/pages easily', 'FREE', false, true),				// new TOOLS
 		self::create_plugin('wphi', 'hook-inspector', 'Logs hook timings for profiling', 'PRO', false, true),			// new TOOLS
+		self::create_plugin('wpht', 'htaccess', '.htaccess file editor', '', false, true),			// new TOOLS
 		self::create_plugin('wplalo', 'lazy-load', 'Lightweight lazy loader for images, iframes, and videos', 'PRO', false, true),				// new TOOLS
 		self::create_plugin('wplu', 'login-url', 'Custom login URL', 'Brute-force protection', false, true),				// new TOOLS
+		
 		self::create_plugin('wpll', 'limit-login', 'Limit login attempts', 'Attack stats', false, true),				// new TOOLS
-
 		self::create_plugin('wpmcl', 'media-cleaner', 'Clean up unused media files', 'Full media scanning', false, true),				// new TOOLS
 		self::create_plugin('wpmi', 'migrate', 'Full site migration', 'FTP Upload & Migration', false, true),
 		self::create_plugin('wpmin', 'minify', 'Smart minifier for CSS and JS files', 'PRO', false, true),
 		self::create_plugin('wpmt', 'meta-tags', 'Custom meta tags per page', 'Auto description tags', false, true),			// new TOOLS
-		self::create_plugin('wpmtm', 'maintenance-mode', '1-click visitor lockout', 'FREE', false, true),			// new TOOLS
 
 		// 30
+		self::create_plugin('wpmtm', 'maintenance-mode', '1-click visitor lockout', 'FREE', false, true),			// new TOOLS
 		self::create_plugin('wpocb', 'oc-benchmark', 'Object Cache Benchmark', 'PRO', false, true),			// new TOOLS
 		self::create_plugin('wppp', 'page-performance', 'Measure PageScore & SpeedIndex', 'PRO', false, true),			// new TOOLS
 		self::create_plugin('wppo', 'poly-addon', 'Polylang string overrides', 'PRO', false, false),				// new TOOLS|SKIPPED
 		self::create_plugin('wppr', 'profiler', 'Plugin/theme performance', 'Page timing & queries', true, true),
-		self::create_plugin('wprd', 'redirect', 'Create and manage redirects with ease', 'Support for wildcard and regex-based rules', false, true),
 
+		self::create_plugin('wprd', 'redirect', 'Create and manage redirects with ease', 'Support for wildcard and regex-based rules', false, true),
 		self::create_plugin('wprt', 'runtime', 'Runtime stats in admin bar', 'PRO', false, true),				// new TOOLS
 		self::create_plugin('wpsr', 'search-replace', 'Search & replace in DB', 'PRO', false, true),				// new TOOLS|SKIPPED
 		self::create_plugin('wpsmc', 'server-monitor', 'Site availability check', 'PRO', false, true),				// new TOOLS|SKIPPED
 		self::create_plugin('wpsm', 'smtp-mail', 'Custom SMTP for wp_mail', 'DKIM & spam test', false, true),
-		self::create_plugin('wps', 'stats', 'Lightweight, GDPR-safe stats', 'World map view', true, true),
 
 		// 40
+		self::create_plugin('wps', 'stats', 'Lightweight, GDPR-safe stats', 'World map view', true, true),
 		self::create_plugin('wpsi', 'system-info', 'Full server/system info', 'PHP, OS, config files', true, true),
 		self::create_plugin('wpssl', 'ssl', 'Enforce HTTPS, fix SSL issues and detect mixed content', 'Fix mixed content', false, true),				// new TOOLS
 		self::create_plugin('wpsv', 'svg', 'Enable SVG uploads', '', false, true),				// new TOOLS
 		self::create_plugin('wpta', 'temp-admin', 'Temporary admin accounts', 'PRO', false, true),
-		self::create_plugin('wpur', 'user-roles', 'Manage user roles/caps', 'View and edit users', false, true),
 
+		self::create_plugin('wpur', 'user-roles', 'Manage user roles/caps', 'View and edit users', false, true),
 		self::create_plugin('wpwms', 'web-map-service', 'Privacy-safe web maps', 'atecmap.com API discount', true, true),				// new TOOLS|SKIPPED
 		self::create_plugin('wpwp', 'webp', 'Auto-convert images to WebP', 'PNG, GIF, BMP support', true, true),				// new TOOLS|SKIPPED
 
-		self::create_plugin('wpct', 'cache-tune', 'Smart WooCommerce caching', 'Redis, Memcached, tuning', false, true),
+		// self::create_plugin('wpct', 'cache-tune', 'Smart WooCommerce caching', 'Redis, Memcached, tuning', false, true),
 		self::create_plugin('wpmc', 'mega-cache', 'Ultra-fast page cache', '8 storage types + Woo support', true, true),
 	];
 }

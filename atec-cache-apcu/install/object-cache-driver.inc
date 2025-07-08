@@ -41,35 +41,39 @@
 	{
 		$this->cache_sets++;
 		$result = apcu_store($fullKey, $var, max($expire, 0));
+		if (!$result) 
+		{
+			error_log("⚠️ APCu failed to store: $fullKey (" . gettype($var) . ")");
+		}
 		return $result;
 	}
 
 	public function flush()
 	{
 		$this->flush_runtime();
-		//if (!class_exists('APCUIterator')) return false;
 		$apcu_it=new APCUIterator('/'.ATEC_OC_KEY_SALT.'/');
-		if (iterator_count($apcu_it)!==0) 
-			{ foreach ($apcu_it as $entry) apcu_delete($entry['key']); }
+		foreach ($apcu_it as $entry) apcu_delete($entry['key']);
 		return true;
 	}
 
 	public function flush_group($group)
 	{
-		//if (!class_exists('APCUIterator')) return false;
-		$prefix = ($this->multisite && !isset($this->global_groups[$group]))?$this->blog_prefix.':' : '';
-		$needle = ATEC_OC_KEY_SALT.':'.$prefix.$group;
+		$prefix = ($this->multisite && !isset($this->global_groups[$group])) ? $this->blog_prefix . ':' : '';
+		$needle = ATEC_OC_KEY_SALT . ':' . $prefix . $group;
+
+		// Remove matching local cache entries
 		foreach ($this->cache as $fullkey => $_)
 		{
-			if (str_contains($fullkey, $needle)) 
-			{
-				unset($this->cache[$fullkey]);
-				break;
-			}
+			if (str_starts_with($fullkey, $needle)) unset($this->cache[$fullkey]);
 		}
-		$apcu_it=new APCUIterator('/'.$needle.'/');
-		if (iterator_count($apcu_it)!==0)
-		{ foreach ($apcu_it as $entry) { unset($this->cache[$entry['key']]); apcu_delete($entry['key']); } }
+
+		// Remove matching APCu entries
+		$apcu_it = new APCUIterator('/' . preg_quote($needle, '/') . '/');
+		foreach ($apcu_it as $entry)
+		{
+			unset($this->cache[$entry['key']]);
+			apcu_delete($entry['key']);
+		}
+
 		return true;
 	}
-	

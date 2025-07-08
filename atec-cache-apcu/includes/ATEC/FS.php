@@ -102,60 +102,6 @@ final class FS {
 		return self::fix_separator($path);
 	}
 
-	public static function download_and_unzip(string $url,string $destDir,int $minSize = 1,bool $clean = true,bool $subfolder = false): string
-	{
-		$error = '';
-		$tmp = tempnam(sys_get_temp_dir(), 'atec_dl_');
-		if (!$tmp) return 'Could not create temporary file.';
-
-		$zip_path = $tmp . '.zip';
-		rename($tmp, $zip_path);
-
-		// Download
-		$ch = curl_init($url);
-		$fp = fopen($zip_path, 'w');
-			curl_setopt($ch, CURLOPT_FILE, $fp);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-			curl_exec($ch);
-			$curlError = curl_error($ch);
-			curl_close($ch);
-		fclose($fp);
-
-		// Validate
-		if (!empty($curlError)) { $error = 'Download error: ' . $curlError; }
-		elseif (!file_exists($zip_path) || filesize($zip_path) < $minSize) { $error = 'Downloaded file is corrupt or too small.'; }
-		else
-		{
-			$zip = new \ZipArchive;
-			if ($zip->open($zip_path) === true)
-			{
-				// Optional: get real target dir if expecting a plugin ZIP with a subfolder
-				$targetDir = $destDir;
-				if ($subfolder)
-				{
-					$firstEntry = $zip->getNameIndex(0);
-					if ($firstEntry)
-					{
-						$subDir = explode('/', $firstEntry)[0];
-						$targetDir = self::trailingslashit($destDir) . $subDir;
-					}
-				}
-
-				if ($clean && is_dir($targetDir)) { self::rmdir($targetDir, true); }
-				if (!$zip->extractTo($destDir)) { $error = 'Extraction failed.'; }
-
-				$zip->close();
-			}
-			else { $error = 'Unzip failed.'; }
-		}
-
-		if (file_exists($zip_path)) @unlink($zip_path);
-
-		return $error;
-	}
-
 	// = = = = = WP_Filesystem replacement = = = = = //
 
 	/**
@@ -216,7 +162,7 @@ final class FS {
 	public static function get($path, $default = false) { return self::exists($path) ? file_get_contents($path) : $default; }
 	public static function get_array($path, $default = false) { return self::exists($path) ? @file($path) : $default; }
 	public static function getchmod($path): string { return self::exists($path) ? substr(sprintf('%o', fileperms($path)), -4) : '0000'; }
-	public static function is_dir($dir): bool { return self::exists($path) && is_dir($dir); }
+	public static function is_dir($dir): bool { return self::exists($dir) && is_dir($dir); }
 
 	public static function mkdir($dir, $chmod = 0755): bool
 	{

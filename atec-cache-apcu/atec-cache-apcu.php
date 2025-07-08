@@ -3,7 +3,7 @@
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.3.20
+* Version: 2.3.23
 * Requires at least:4.9
 * Tested up to: 6.8
 * Tested up to PHP: 8.4.2
@@ -25,7 +25,7 @@ use ATEC\INIT;
 use ATEC\WPC;
 use ATEC\WPCA;
 
-INIT::set_version('wpca', '2.3.20');
+INIT::set_version('wpca', '2.3.23');
 
 if (INIT::is_real_admin())
 {
@@ -35,7 +35,7 @@ if (INIT::is_real_admin())
 	add_action('admin_init', function ()
 	{
 		if (!INIT::current_user_can('admin')) return;
-		
+			
 		if (INIT::is_plugins_page()) INIT::add_plugin_settings(__FILE__);
 		INIT::maybe_register_settings(__DIR__, 'wpca', true, '&flushWPCA');
 
@@ -46,16 +46,29 @@ if (INIT::is_real_admin())
 
 			if ($o_admin || $p_admin)
 			{
+				add_action('admin_enqueue_scripts', function () { \ATEC\AJAX::generic_inline('wpca'); });
 				add_action('admin_bar_menu', function($wp_admin_bar) use($o_admin, $p_admin)
-				{ 
-					if ($o_admin) INIT::admin_bar($wp_admin_bar, 'wpca', 'flush&type=WP', 'Cache', 'oc', 'OC#Flush object cache.', true);
-					if ($p_admin) INIT::admin_bar($wp_admin_bar, 'wpca', 'flush', 'Page_Cache', 'pc', 'PC#Flush page cache.', true);
+				{
+					if ($o_admin)
+					{
+						if (method_exists(\ATEC\INIT::class, 'admin_bar_button')) INIT::admin_bar_button($wp_admin_bar, 'wpca', '🗑️ OC', 'o_cache', 'Flush Oject Cache', 'oc');
+						// OUTDATED: 250706 | CLEANUP: remove
+						else $wp_admin_bar->add_node( [ 'id' => 'atec-wpca-oc', 'title' => '🗑️ OC', 'href' => '#', 'meta' => [ 'onclick' => 'atec_wpca_ajax_cb("o_cache")', 'title' => 'Flush OC'],]);
+					}
+					
+					if ($p_admin) 
+					{
+						if (method_exists(\ATEC\INIT::class, 'admin_bar_button')) INIT::admin_bar_button($wp_admin_bar, 'wpca', '🗑️ PC', 'p_cache', 'Flush Page Cache', 'pc');
+						// OUTDATED: 250706 | CLEANUP: remove
+						else $wp_admin_bar->add_node( [ 'id' => 'atec-wpca-pc', 'title' => '🗑️ PC', 'href' => '#', 'meta' => [ 'onclick' => 'atec_wpca_ajax_cb("p_cache")', 'title' => 'Flush PC'],]);
+					}
 				}, 999);
 			}
 		}
 	});
 
-	(function() {
+	(function() 
+	{
 		
 		if (WPCA::apcu_enabled())
 		{
@@ -89,7 +102,6 @@ if (INIT::is_real_admin())
 					}); 
 				}
 			}
-	
 		}
 		
 	})();
@@ -100,16 +112,36 @@ if (INIT::is_real_admin())
 		\ATEC_WPCA\Install_OCache::init(true);
 	}
 }
-else // not is_real_admin
+elseif (INIT::is_interactive())
 {
-	if (INIT::is_interactive())
-	{
-		if (!defined('ATEC_PC_ACTIVE_APCU') && WPCA::settings('p_cache')) 
-		{ 
-			require(__DIR__.'/includes/atec-wpca-pcache.php');
-			add_action('init', ['\ATEC_WPCA\\PCache', 'init'], -1); 
-		}
+	if (!defined('ATEC_PC_ACTIVE_APCU') && WPCA::settings('p_cache')) 
+	{ 
+		require(__DIR__.'/includes/atec-wpca-pcache.php');
+		add_action('init', ['\ATEC_WPCA\\PCache', 'init'], -1); 
 	}
+}
+elseif (INIT::is_ajax()) 
+{
+	add_action( 'wp_ajax_atec_wpca_ajax', function () 
+	{
+		if ( ! INIT::current_user_can('admin')) wp_die();
+		\ATEC\AJAX::nonce_check('wpca');
+		
+		// OUTDATED: 250704 | CLEANUP: Use _POST
+		switch (INIT::POST('cmd'))
+		{
+			case 'o_cache':
+				wp_cache_flush();
+				beak;
+				
+			case 'p_cache':
+				if (!class_exists('ATEC_WPCA\\Tools')) require(__DIR__.'/includes/atec-wpca-pcache-tools.php');
+				\ATEC_WPCA\Tools::delete_page_cache_all();
+				break;
+		}
+			
+		wp_send_json_success();
+	});
 }
 
 if (!INIT::is_cli() && !INIT::is_cron())

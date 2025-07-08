@@ -37,21 +37,26 @@ public static function gmdate($ts, $format= 'm/d H:i')
 	return gmdate($format, $ts); 
 }
 
-public static function progress_percent($id, $percent=null)
+public static function progress_percent($id, $percent = null)
 {
 	if ($percent === null)
-	{		
+	{
 		echo
 		'<div class="atec-border atec-percent-block" style="width:260px; background:rgb(250, 250, 250);">',
 			'<div class="atec-dilb atec-fs-12">Progress</div><div class="atec-dilb atec-float-right atec-fs-12">100%</div><br>',
 			'<div class="atec-percent-div" style="width:250px; background: rgb(235, 235, 235);">',
-				'<span  id="atec_progress_percent_', esc_attr($id), '" style="background-color:lightgreen;"></span>',
+				'<span id="atec_progress_percent_', esc_attr($id), '" style="display:inline-block;height:12px;width:0;background-color:lightgreen;"></span>',
 			'</div>',
 		'</div>';
+		self::flush();
 	}
 	else
 	{
-		echo '<script>jQuery("#atec_progress_percent_', esc_attr($id), '").css("width","', esc_attr($percent), '%"); jQuery(document.currentScript).remove();</script>'; 
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Inline script required for real-time progress
+		printf(
+			'<script>%s</script>',
+			"jQuery('#atec_progress_percent_" . esc_js($id) . "').css('width','" . esc_js($percent) . "%');jQuery(document.currentScript).remove();"
+		);
 		self::flush();
 	}
 }
@@ -140,6 +145,9 @@ public static function abspath()
 public static function clear()
 { echo '<br class="atec-clear">'; }
 
+public static function hr()
+{ self::clear(); echo '<hr>'; self::clear(); }
+
 public static function una($dir, $nav_default = '')
 {
 	$nonce = INIT::nonce();
@@ -163,9 +171,6 @@ public static function una($dir, $nav_default = '')
 
 	return (object) $arr;
 }
-
-public static function p($str = '', $class = ''): void
-{ echo '<p class="atec-mb-'.($str!== '' ? '0' : '5'), ($class !== '' ? ' '.esc_attr($class) : ''), '">', esc_html($str!== '' ? INIT::trailingdotit($str) : '&nbsp;'), '</p>'; }
 
 public static function enabled($enabled, $active=false): void
 {
@@ -207,17 +212,24 @@ public static function format_duration($seconds)
 	return $time;
 }
 
-
-public static function url(): string
+public static function url_OLD(): string
 {
 	static $cached = null;
 	if ($cached === null) $cached = strtok(rtrim(add_query_arg($_GET, admin_url('admin.php')), '/'), '&');	// phpcs:ignore
 	return $cached;
 }
 
-// TOOLS AREA START
+private static $url_whitelist = ['page', 'action', 'id', 'tab', 'section', 'nav', 'updated', 'settings-updated', '_wpnonce'];
 
-// PROGRESS AREA START
+public static function url( $page = null ): string
+{
+	static $cached = [];
+	if ( $page === null ) $page = INIT::_GET('page');
+	if ( isset( $cached[ $page ] ) ) return $cached[ $page ];
+	return $cached[ $page ] = INIT::admin_url() . 'admin.php?page=' . urlencode( $page );
+}
+
+// PROGRESS
 
 public static function loader_div($id='', $str=''): void
 {
@@ -233,14 +245,14 @@ public static function loader_dots(int $count = 9): void
 	else
 	{
 		echo '<div class="atec-loader-dots atec-dilb">';
-		for ($i = 1; $i <= $count; $i++) echo "<span style='--i:$i'></span>";	// phpcs:ignore
+		for ($i = 1; $i <= $count; $i++) echo '<span style="--i:', esc_attr($i), '"></span>';
 		echo '</div>';
 		self::flush();
 	}
 }
 
-private static function progress_div(): void {}		// UNSED since 250628
-public static function progress(): void { }			// UNSED since 250628
+private static function progress_div(): void {}		// OUTDATED: 250628 | CLEANUP: Delete
+public static function progress(): void { }			// OUTDATED: 250628 | CLEANUP: Delete
 
 public static function flush(): void
 {
@@ -579,8 +591,8 @@ public static function table_tr($tds = [], $tag = 'td', $class = ''): void
 	if (empty($tds)) 
 	{
 		echo 
-		'<tr class="empty_TR"><td colspan="99"></td></tr>
-		<tr class="empty_TR"><td colspan="99"></td></tr>';
+		'<tr class="empty_tr"><td colspan="99"></td></tr>
+		<tr class="empty_tr"><td colspan="99"></td></tr>';
 		return;
 	}
 	
@@ -731,9 +743,29 @@ public static function p_info($str, $class = '', $warning = false): void
 	echo '</div>';
 }
 
-public static function p_bold($title, $str, $class= ''): void
+// NEW: 250705
+// CLEANUP: replace ($class !== '' ? ' class="'.esc_attr($class).'"' : '') with this method
+private static function add_class(string $class, $attr=false): string
+{ 
+	$tmp = $class !== '' ? ' ' . $class : '';
+	if ($tmp === '') return '';
+	if ($attr) $tmp = ' class="'.$tmp.'"';
+	return $tmp;
+}
+
+public static function p($str = '', $class = ''): void
+{ echo '<p class="atec-mb-10', ($class !== '' ? ' '.esc_attr($class) : ''), '">', esc_html($str!== '' ? INIT::trailingdotit($str) : '&nbsp;'), '</p>'; }
+
+public static function p_bold($title, $str = '', $class = ''): void
 {
-	echo '<p', ($class !== '' ? ' class="'.esc_attr($class).'"' : ''), '><b>', esc_html($title), '</b>: ', wp_kses_post($str) ,'</p>';
+	echo '<p', esc_html(self::add_class($class, true)), '><b>', esc_html($title), '</b>';
+		if ($str !== '') echo ': ', wp_kses_post($str);
+	echo '</p>';
+}
+
+public static function p_title($text, $class = ''): void
+{
+	self::p_bold($text, '', 'atec-p-title'.self::add_class($class));
 }
 
 public static function h($c, $str, $class= ''): void
@@ -817,12 +849,22 @@ protected static function inject_popover_script(): void
 
 // FORM AREA START
 
-public static function form_header($una, $action= '', $nav= '', $id= '', $class= '')
+// CHANGED: Form_header($una = []) for options introduced on 250706
+// CLEANUP: Replace <form class="atec-form" method="post" action="options.php">
+public static function form_header($una = [], $action= '', $nav= '', $id= '', $class= '')
 {
-	$href = INIT::build_url($una, $action, $nav);
-	echo
-	'<form class="atec-form', ($class !== '' ? ' '.esc_attr($class) : ''), '" method="post" action="'.esc_url($href).'">';
-		self::form_add_fields($una, $action, $nav, $id);
+	if ($una === [])
+	{
+		// Form is a settings form -> options.php
+		echo '<form class="atec-form" method="post" action="options.php">';
+	}
+	else
+	{
+		$href = INIT::build_url($una, $action, $nav, ['id' => $id]);
+		echo
+		'<form class="atec-form', ($class !== '' ? ' '.esc_attr($class) : ''), '" method="post" action="'.esc_url($href).'">';
+			self::form_add_fields($una, $action, $nav, $id);
+	}
 }
 
 public static function form_footer()
@@ -877,83 +919,138 @@ public static function redirect($una, $action=null, $nav=null, $args = []): void
 public static function clean_request_bool($key) : bool
 { return INIT::bool(self::clean_request($key)); }
 
-public static function clean_request($key, $nonce = '', $type= 'text')
-{	
-	$source = $_POST['submit'] ?? false ? $_POST : $_REQUEST;		// phpcs:ignore
-	if (!isset($source[$key])) return '';
+public static function clean_request( $key, $nonce = '', $type = 'text' )
+{
+	$nonce_to_check = ( $nonce !== '' ) ? $nonce : INIT::nonce();
+	if ( isset( $_POST[ $key ] ) ) 
+	{
+		if ( ! check_admin_referer( $nonce_to_check ) ) return '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$value = wp_unslash( $_POST[ $key ] );	// Sanitizing before return 
+	}
+	elseif ( isset( $_GET[ $key ] ) ) 
+	{
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) ), $nonce_to_check ) ) return '';		
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$value = wp_unslash( $_GET[ $key ] );		// Sanitizing before return 
+	}
+	else 
+	{
+		return '';
+	}
 
-	$nonce_to_check = $nonce !== '' ? $nonce : INIT::nonce(); 		// Validate nonce
-
-	$nonce_valid =
-		(isset($_POST['submit']) && check_admin_referer($nonce_to_check)) ||
-		(isset($source['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($source['_wpnonce'])), $nonce_to_check));
-		
-	if (!$nonce_valid) return '';
-	$value = wp_unslash($source[$key]);
-	return $type=== 'textarea' ? sanitize_textarea_field($value) : sanitize_text_field($value);
+	return $type === 'textarea' ? sanitize_textarea_field( $value ) : sanitize_text_field( $value );
 }
+
 
 // FORM AREA END
 
-// ENQUEUE AREA START
+// ENQUEUE style and script
 
-public static function reg_style($id, $dir, $css, $ver): void
-{
-	static $cached = null;	// Dev mode ?
-	if ($cached === null) { $cached = get_option('atec_dev_mode') ? '.min' : ''; }
-	if ($cached!== '') $css = str_replace($cached, '', $css);
-
-	$id = 'atec_'.$id;
-	$pluginURL = INIT::plugin_url_by_dir($dir);
-	wp_enqueue_style($id, $pluginURL.'/assets/css/'.$css, [], $ver);
-}
-
-public static function reg_script($id, $dir, $js, $ver): void
-{
-	static $cached = null;	// Dev mode ?
-	if ($cached === null) { $cached = get_option('atec_dev_mode') ? '.min' : ''; }
-	if ($cached!== '') $js = str_replace($cached, '', $js);
-
-	$id = 'atec_'.$id;
-	$pluginURL = INIT::plugin_url_by_dir($dir);
-	wp_enqueue_script($id, $pluginURL.'/assets/js/'.$js, [], $ver, true);
-}
-
-public static function reg_inline_style($id, $css_safe):void
-{
-	$id = ($id=== '')?'atec-css':'atec_'.$id; 
-	wp_register_style($id, false, [], '1.0.0'); wp_enqueue_style($id); wp_add_inline_style($id, $css_safe);
-	self::flush();
-}
-
-public static function reg_inline_script($id, $js_safe, $jquery=false):void
-{
-	$id = 'atec-'.$id;
-	wp_register_script($id, false, $jquery?array('jquery'):array(), '1.0.0', false); wp_enqueue_script($id); wp_add_inline_script($id, $js_safe);
-	self::flush();
-}
-
-public static function load_atec_style($dir, $styles=[])
+public static function load_atec_style($dir, $styles = [])
 {
 	static $versions = ['style' => '1.0.3', 'check' => '1.0.3'];
 	foreach($styles as $style) 	
 	{
 		$version = $versions[$style] ?? '1.0.1';
-		self::reg_style('atec-'.$style, $dir, 'atec-'.$style.'.min.css', $version);
+		self::load_style($style, $dir, 'atec-'.$style.'.min.css', $version);
 	}
 }
 
-public static function load_atec_script($dir, $scripts=[])
+public static function load_atec_script($dir, $scripts = [])
 {
 	static $versions = [ 'check' => '1.0.3' ];
 	foreach($scripts as $script)
 	{
 		$version = $versions[$script] ?? '1.0.1';
-		self::reg_script('atec_'.$script, $dir, 'atec-'.$script.'.min.js', $version);
+		self::load_script($script, $dir, 'atec-'.$script.'.min.js', $version);
 	}
 }
 
-// ENQUEUE AREA END
+// ENQUEUE NEW VERSION 250704
+
+public static function prefix_id(&$id): void 
+{ $id = 'atec-' . $id; }
+
+public static function load_style($id, $dir, $css, $ver, $deps = []): void
+{
+	static $cached = null;
+	if ($cached === null) $cached = INIT::is_atec_dev_mode() ? '.min' : '';
+	if ($cached !== '') $css = str_replace($cached, '', $css);
+
+	self::prefix_id($id);
+	$url = INIT::plugin_url_by_dir($dir).'/assets/css/'.$css;
+
+	wp_enqueue_style($id, $url, $deps, $ver);
+}
+
+public static function load_script($id, $dir, $js, $ver, $deps = []): void
+{
+	static $cached = null;
+	if ($cached === null) $cached = INIT::is_atec_dev_mode() ? '.min' : '';
+	if ($cached !== '') $js = str_replace($cached, '', $js);
+
+	self::prefix_id($id);
+	$url = INIT::plugin_url_by_dir($dir).'/assets/js/'.$js;
+
+	wp_enqueue_script($id, $url, $deps, $ver, true);
+}
+
+public static function load_script_localized($id, $dir, $js, $ver, $var_name, array $data, $deps = [], $lazy = false): void
+{
+	static $cached = null;
+	if ($cached === null) $cached = INIT::is_atec_dev_mode() ? '.min' : '';
+	if ($cached !== '') $js = str_replace($cached, '', $js);
+
+	self::prefix_id($id);
+	$url = INIT::plugin_url_by_dir($dir).'/assets/js/'.$js;
+
+	wp_register_script($id, $url, $deps, $ver, true);
+	wp_localize_script($id, $var_name, $data);
+
+	if (!$lazy) wp_enqueue_script($id);
+}
+
+// Avoid using self::nonce() here – we use explicit $slug to stay context-safe.
+public static function load_ajax_script(string $slug, string $dir, string $ver='1.0.1', array $deps = [], bool $lazy = false, array $extraData = []): void
+{
+	$id				= 'atec-' . $slug . '-ajax-script';
+	$var_name	= 'atec_' . $slug . '_ajax';
+	$nonce			= INIT::nonce_key($slug);
+	$filename		= 'atec-' . $slug . '-ajax.js';
+
+	if (INIT::is_atec_dev_mode()) $filename = str_replace('.js', '.min.js', $filename);
+
+	$data = array_merge([
+		'ajaxurl' => admin_url('admin-ajax.php'),
+		'nonce'   => wp_create_nonce($nonce),
+	], $extraData);
+
+	self::load_script_localized($id, $dir, $filename, $ver, $var_name, $data, $deps, $lazy);
+}
+
+public static function load_inline_style($id, $css_safe): void
+{
+	self::prefix_id($id);
+	wp_register_style($id, false, [], '1.0.0');
+	wp_enqueue_style($id);
+	wp_add_inline_style($id, $css_safe);
+	self::flush();
+}
+
+public static function load_inline_script($id, $js_safe, $jquery = false): void
+{
+	self::prefix_id($id);
+	wp_register_script($id, false, $jquery ? ['jquery'] : [], '1.0.0', true);
+	wp_enqueue_script($id);
+	wp_add_inline_script($id, $js_safe);
+	self::flush();
+}
+
+public static function reg_style(...$args)				{ self::load_style(...$args); }
+public static function reg_script(...$args)				{ self::load_script(...$args); }
+public static function reg_inline_style(...$args)		{ self::load_inline_style(...$args); }
+public static function reg_inline_script(...$args)	{ self::load_inline_script(...$args); }
 
 // HEADER AREA START
 
@@ -1167,7 +1264,7 @@ public static function page_footer($slug= ''): void
 
 public static function footer($slug= '')
 {
-	$loadTime	= round((microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])*1000);	// phpcs:ignore
+	$loadTime	= round((microtime(true) - INIT::_SERVER('REQUEST_TIME_FLOAT'))*1000);	// phpcs:ignore
 	$domain		= $slug=== 'wpmc' ? 'wpmegacache' : 'atecplugins';
 	$href			= INIT::admin_url('group');
 	echo

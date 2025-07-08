@@ -3,7 +3,7 @@
 * OC Name:  atec Object-Cache
 * Plugin URI: https://atecplugins.com/
 * Description: atec Object Cache with pluggable backend (APCu, Redis, Memcached)
-* Version: 2.0.5
+* Version: 2.0.6
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
 * OC Domain:  atec-object-cache
@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 defined('ABSPATH') || exit;
-define('ATEC_OC_VERSION', '2.0.5');
+define('ATEC_OC_VERSION', '2.0.6');
 
 function wp_cache_init() { $GLOBALS['wp_object_cache'] = WP_Object_Cache::instance(); }
 function wp_cache_add($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->add($key, $data, $group, (int) $expire); }
@@ -162,27 +162,38 @@ final class WP_Object_Cache
 		return $values;
 	}
 
-	public function set($key, $var, $group = 'default', $expire = 0, $fullKey=null, $add=null)
+	public function set($key, $var, $group = 'default', $expire = 0, $fullKey = null, $add = null)
 	{
 		if (!is_null($fullKey)) 
 		{
 			$exists = $this->exists($fullKey);
-			if ($add) { if ($exists) return; } // Add
-			elseif (!$exists) return; // Replace
+			if ($add) 
+			{
+				if ($exists) return false; // Add: fail if exists
+			}
+			elseif (!$exists) return false; // Replace: fail if doesn't exist
 		}
 		elseif (!$this->build_key($key, $group, $fullKey)) return false;
-	
-		// Skip persistent cache if group is marked non-persistent
-		$result = $this->set_np($fullKey, $var);	// Set local cache before changes to $var
-		if (isset($this->np_groups[$group])) { return $result; }
-		
-		if ($group=== 'options')
+
+		// Always store in local memory
+		$result = $this->set_np($fullKey, $var);
+
+		// Skip persistent store for non-persistent groups
+		if (isset($this->np_groups[$group])) return $result;
+
+		// Special handling for options group
+		if ($group === 'options')
 		{
-			if ($key === 'alloptions') unset($var['cron']);	// Skip persisting cron in options:alloptions
-			elseif ($key=== 'cron') return $result;				// Skip persisting in options:cron
+			if ($key === 'alloptions')
+			{
+				if (!is_array($var)) return false;		// 🛑 Abort if corrupt
+				unset($var['cron']);					// Avoid persisting cron
+				//error_log('✅ SET alloptions to cache: ' . count($var) . ' keys');
+			}
+			elseif ($key === 'cron') return $result;       // Skip persisting cron
 		}
-	
-		return $this->set_p($fullKey, $var, $expire); 
+
+		return $this->set_p($fullKey, $var, $expire);
 	}
 
 	public function set_multiple(array $data, $group = '', $expire = 0)

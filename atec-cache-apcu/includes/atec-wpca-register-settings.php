@@ -6,17 +6,6 @@ use ATEC\INIT;
 use ATEC\TOOLS;
 use ATEC\WPCA;
 
-final class Settings
-{
-	public static function sanitize($input)
-	{
-		if (!is_array($input)) return [];
-		$booleanArr = ['o_cache', 'o_admin', 'o_stats', 'p_cache', 'p_admin', 'p_debug'];
-		foreach($booleanArr as $b) { $input[$b] = INIT::bool($input[$b]??0); }
-		return $input;
-	}
-}
-
 (function() {
 	
 	$is_updated = INIT::is_settings_updated();
@@ -41,7 +30,7 @@ final class Settings
 		$result = \ATEC_WPCA\Install_OCache::init($o_cache);
 		if (!empty($result)) 
 		{
-			INIT::add_admin_notice_action(__DIR__, '', $result);
+			INIT::set_admin_debug('wpca', ['type' => '', 'message' => $result]);
 			$settings['o_cache']=0;
 			$update_settings = true;
 		}
@@ -52,7 +41,7 @@ final class Settings
 		$result = \ATEC_WPCA\Install_PCache::init($p_cache);
 		if (!empty($result))
 		{
-			INIT::add_admin_notice_action(__DIR__, '', $result);
+			INIT::set_admin_debug('wpca', ['type' => '', 'message' => $result]);
 			$settings['p_cache']=0;
 			$update_settings = true;
 		}
@@ -62,7 +51,13 @@ final class Settings
 		if ($redirect) TOOLS::safe_redirect('wpca', 'flushWPCA');
 	}
 
-	register_setting($page_slug, $option_group, [CHECK::class, 'wpca_sanitize_fields']);
+	register_setting($page_slug, $option_group, function($input) 
+	{
+		if (!is_array($input)) return [];
+		CHECK::sanitize_boolean($input, ['o_cache', 'o_admin', 'o_stats', 'p_cache', 'p_admin', 'p_debug']);
+		return $input;
+	});
+
 	add_settings_section($section, '', '', $page_slug);
 
 	add_settings_field('o_cache', __('Object Cache', 'atec-cache-apcu'), [CHECK::class, 'checkbox'], $page_slug, $section, CHECK::opt_arr('o_cache', 'WPCA'));
