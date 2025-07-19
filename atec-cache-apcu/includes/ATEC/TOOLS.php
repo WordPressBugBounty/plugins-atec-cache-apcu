@@ -100,7 +100,7 @@ private static function br($str): void
 
 	foreach ($ex as $index => $t)
 	{
-		echo esc_html($t);
+		echo wp_kses_post($t);
 		if ($index < $last) echo '<br>';
 	}
 }
@@ -142,8 +142,10 @@ public static function abspath()
 	return $cached;
 }
 
-public static function clear()
-{ echo '<br class="atec-clear">'; }
+public static function clear($count=1)
+{ 
+	for ($i=0; $i<$count; $i++) echo '<br class="atec-clear">'; 
+}
 
 public static function hr()
 { self::clear(); echo '<hr>'; self::clear(); }
@@ -152,24 +154,34 @@ public static function una($dir, $nav_default = '')
 {
 	$nonce = INIT::nonce();
 	$nav = self::clean_request('nav', $nonce);
-	
-	if ($nav_default=== '') $nav_default = 'Dashboard';
-	if ($nav=== '') $nav= $nav_default;
-	$navs = $nav_default === 'Dashboard' ? ['#admin-home Dashboard'] : ($nav_default === 'Settings'?['#admin-generic Settings']:[]);
 
-	$arr =	
-	[
+	if ($nav_default === '') $nav_default = 'Dashboard';
+	if ($nav === '') $nav = $nav_default;
+	$navs = ($nav_default === 'Dashboard') ? ['#admin-home Dashboard'] : (($nav_default === 'Settings') ? ['#admin-generic Settings'] : []);
+
+	$action_raw = self::clean_request('action', $nonce);
+	$id = self::clean_request('id', $nonce);
+
+	// Extract id from action param if present
+	if (preg_match('/(?:^|&)id=([^&]*)/', $action_raw, $m))
+	{
+		$id = isset($m[1]) ? $m[1] : '';
+	}
+
+	// Remove id=... from action string
+	$action = preg_replace('/(&)?id=[^&]*/', '', $action_raw);
+	$action = trim($action, '&');
+
+	return (object) [
 		'dir'		=> dirname($dir),
-		'url' 		=> self::url(),
-		'nonce' 	=> wp_create_nonce($nonce),
-		'action' 	=> self::clean_request('action',$nonce),
-		'nav' 		=> $nav,
-		'navs' 	=> $navs,
-		'id'		=> self::clean_request('id',$nonce),
-		'slug' 	=> str_replace('atec_', '',  INIT::slug())
+		'url'		=> self::url(),
+		'nonce'	=> wp_create_nonce($nonce),
+		'action'	=> $action,
+		'nav'		=> $nav,
+		'navs'	=> $navs,
+		'id'		=> $id,
+		'slug'		=> str_replace('atec_', '', INIT::slug())
 	];
-
-	return (object) $arr;
 }
 
 public static function enabled($enabled, $active=false): void
@@ -233,10 +245,17 @@ public static function url( $page = null ): string
 
 public static function loader_div($id='', $str=''): void
 {
-	echo '<div id="', esc_attr($id), '" class="atec-badge atec-bg-w atec-bold atec-mt-10 atec-mb-5">', esc_html($str), ' '; 
-		self::loader_dots(); 
-	echo '<br></div>';
-	self::flush();
+	if ($str === '')
+	{
+		self::reg_inline_script('wpx_loader', 'jQuery("#'.esc_attr($id).'").fadeOut();', true);
+	}
+	else
+	{
+		echo '<div id="', esc_attr($id), '" class="atec-badge atec-bg-w atec-bold atec-mt-10 atec-mb-5">', esc_html($str), ' '; 
+			self::loader_dots(); 
+		echo '<br></div>';
+		self::flush();
+	}
 }
 
 public static function loader_dots(int $count = 9): void
@@ -253,6 +272,13 @@ public static function loader_dots(int $count = 9): void
 
 private static function progress_div(): void {}		// OUTDATED: 250628 | CLEANUP: Delete
 public static function progress(): void { }			// OUTDATED: 250628 | CLEANUP: Delete
+
+// Helper for long scripts like backup/restore
+function set_limit(int $seconds = 0): void 
+{
+	@set_time_limit($seconds);											// phpcs:ignore
+	@ini_set('max_execution_time', (string)$seconds);		// phpcs:ignore
+}
 
 public static function flush(): void
 {
@@ -290,9 +316,6 @@ public static function dash_span(string $dash, string $class = '', string $style
 	echo '></span>';
 }
 
-// public static function dash_span($dash, $class = '', $style = ''): void
-// { echo '<span class="', (self::dash_class($dash, $class)), '"', ($style ? ' style="' . esc_attr($style) . '"' : ''), '></span>'; }
-
 private static function dash_and_button(string $dnb): object
 {
 	preg_match('/#([\w\-]+)\s?(.*)/i', $dnb, $matches);
@@ -316,13 +339,16 @@ private static function dash_and_button_div($dnb, string $class = ''): void
 	}
 }
 
+
+private static function dash_yes_no($yes) 
+{ return '<span class="'.TOOLS::dash_class($yes?'yes-alt' : 'dismiss', 'atec-'.($yes?'green' : 'red')).'"></span>'; }
+
 // DASH AREA START
 
 // PRO AREA START
 
 public static function integrity_banner($dir) : void
 {
-	//$una->nonce = wp_create_nonce('atec_group_nonce');
 	$plugin = INIT::plugin_by_dir($dir);
 	$link_yes = INIT::build_url('group', '', '', ['integrity' => true, 'plugin' => $plugin]);
 	$link_no= str_replace('true', 'false', $link_yes);
@@ -355,7 +381,7 @@ private static function pro_banner($slug): bool
 			echo
 			'<span>',
 				$slug=== 'wpmc' ? 'MC ' : ($slug=== 'wpct' ? 'CT4W ' : ''),
-				($license_ok ? '„PRO“ version' : 'Upgrade to „PRO“'),
+				($license_ok ? '‘PRO’ version' : 'Upgrade to ‘PRO’'),
 			'.</span>',
 		'</a>
 	</div>';
@@ -377,7 +403,7 @@ public static function pro_feature($una, $desc= '', $small=false, $license_ok=nu
 				echo
 				'<div class="atec-badge atec-blue atec-fs-12" style="background: #f9f9ff; border: solid 1px #dde; margin: 0; padding: 4px 5px;">',
 					'<div class="atec-col atec-vat" style="max-width: 20px;">'; self::dash_span('awards', 'atec-blue atec-fs-14', 'padding-top: 2px;'); echo '</div>',
-					'<div class="atec-col atec-vat">Upgrade to „PRO“', 
+					'<div class="atec-col atec-vat">Upgrade to ‘PRO’', 
 						str_starts_with($desc,'<br>') ? '.' :' '; 
 						self::br(INIT::trailingdotit($desc)); 
 					echo 
@@ -385,7 +411,7 @@ public static function pro_feature($una, $desc= '', $small=false, $license_ok=nu
 				'</div>';
 				$desc= '';
 			}
-			else self::msg('blue','„PRO“ feature - please upgrade');
+			else self::msg('blue','‘PRO’ feature - please upgrade');
 			echo 
 			'</a>
 		</div>';
@@ -400,8 +426,8 @@ public static function pro_block($una, $str = ''): void
 	$href = INIT::build_url($una, '', 'License');
 	$str =
 		$str === '' ?
-		'This is a „PRO“ ONLY plugin.<br>A license is required to use the basic functions.' :
-		'Please upgrade to „PRO“ version '.INIT::trailingdotit($str);
+		'This is a ‘PRO’ ONLY plugin.<br>A license is required to use the basic functions.' :
+		'Please upgrade to ‘PRO’ version '.INIT::trailingdotit($str);
 
 	echo
 	'<div class="atec-df atec-pro-box">',
@@ -433,7 +459,7 @@ public static function pro_missing($class= ''): void
 		<div class="atec-dilb atec-vam">A required class-file is missing – please ';
 		if (is_plugin_active('atec-deploy/atec-deploy.php')) echo 'use <a href="', esc_url(admin_url().'admin.php?page= atec_wpdp'), '">';
 		else echo 'download/activate <a href="https://atecplugins.com/WP-Plugins/atec-deploy.zip">';
-		echo 'atec-deploy</a> to install the „PRO“ version of this plugin.
+		echo 'atec-deploy</a> to install the ‘PRO’ version of this plugin.
 		</div>
 	</div>';
 }
@@ -586,6 +612,10 @@ private static $allowed_tr =
 		'hr'		=> ['class' => [] ] 
 	];
 
+// NEW: introduced 250710 | CLEANUP: remove table_tr
+public static function tr($tds = [], $tag = 'td', $class = ''): void
+{ self::table_tr($tds, $tag, $class); }
+
 public static function table_tr($tds = [], $tag = 'td', $class = ''): void
 {
 	if (empty($tds)) 
@@ -639,6 +669,10 @@ public static function table_tr($tds = [], $tag = 'td', $class = ''): void
 	echo '</tr>';
 }
 
+// NEW: introduced 250710 | CLEANUP: remove table_td
+public static function td($td = '', $class= '')
+{ self::table_td($td, $class); }
+
 public static function table_td($td = '', $class= '')
 {
 	if (preg_match('/^(\d+)@(.*)$/', $td, $colMatches)) { $colspan = (int) $colMatches[1]; $td = $colMatches[2]; }
@@ -650,31 +684,69 @@ public static function table_td($td = '', $class= '')
 
 private static function action_params($input) 
 {
-    $parts = explode('&', $input);
-    $action = array_shift($parts);
-    parse_str(implode('&', $parts), $params);
-    return [$action, $params];
-}
+	if (empty($input)) return ['', []];
 
-public static function button($una, $action, $nav = '', $button = '', $primary = false, $confirm = false, $disabled = false): void
-{
-	$dnb = self::dash_and_button($button);
-	if ($action !== '') { [$action, $args] = self::action_params($action); }
-	else $args = [];
-	$href = INIT::build_url($una, $action, $nav, $args);
-	echo 
-	'<div', ($confirm ? ' class="atec-btn-confirm"' : ''), '>';
-		if ($confirm) { echo '<input class="atec-mr-10" title="Confirm action" type="checkbox" onchange="jQuery(this).siblings(\'a\').toggleClass(\'atec-disabled-link\');">'; }
-		echo 
-		'<a', $disabled ? ' disabled' : '', ' href="', esc_url($href), '" class="button button-', ($primary ? 'primary' : 'secondary'), ($confirm ? ' atec-disabled-link' : ''), '">';
-			self::dash_and_button_div($dnb);
-		echo 
-		'</a>
-	</div>';
+	$parts = explode('&', $input);
+	$action = array_shift($parts);
+	parse_str(implode('&', $parts), $params);
+	return [$action, $params];
 }
 
 public static function button_confirm($una, $action, $nav, $button): void
-{ self::button($una, $action, $nav, $button, false, true); }
+{
+	static $injected = false;
+	[$action, $args] = self::action_params($action);
+	$href = INIT::build_url($una, $action, $nav, $args);
+
+	echo 
+	'<div class="atec-btn-confirm">';
+
+		if (!$injected)
+		{
+			$injected = true;
+			self::load_inline_script('btn-confirm', '
+				function atec_confirm_click(el)
+				{
+					let $el = jQuery(el);
+					if ($el.hasClass("atec-confirm-ready")) return true;
+					jQuery(".atec-confirm-btn").removeClass("atec-confirm-ready");
+					$el.addClass("atec-confirm-ready");
+					return false;
+				}
+			', true);
+		}
+	
+		echo 
+		'<a href="', esc_url($href), '" data-href="', esc_url($href), '" ',
+			'class="button button-secondary atec-confirm-btn"',
+			'onclick="return atec_confirm_click(this)">',
+				'<div class="atec-confirm-inner">';
+					self::dash_and_button_div(self::dash_and_button($button));
+				echo 
+				'<div class="atec-confirm-label"></div>',
+			'</div>',
+		'</a>';
+
+	echo 
+	'</div>';
+}
+
+//	self::button($una, $action, $nav, $button, false, true); 
+public static function button($una, $action, $nav = '', $button = '', $primary = false, $confirm = false, $disabled = false): void
+{
+	if ($confirm) 
+	{
+		self::button_confirm($una, $action, $nav, $button);
+		return;
+	}
+	
+	[$action, $args] = self::action_params($action);
+	$href = INIT::build_url($una, $action, $nav, $args);
+
+	echo '<a', $disabled ? ' disabled' : '', ' href="', esc_url($href), '" class="button button-', ($primary ? 'primary' : 'secondary'), '">';
+		self::dash_and_button_div(self::dash_and_button($button));
+	echo '</a>';
+}
 
 public static function button_confirm_td($una, $action, $nav, $button): void
 {
@@ -749,7 +821,7 @@ private static function add_class(string $class, $attr=false): string
 { 
 	$tmp = $class !== '' ? ' ' . $class : '';
 	if ($tmp === '') return '';
-	if ($attr) $tmp = ' class="'.$tmp.'"';
+	if ($attr) $tmp = ' class="'.trim($tmp).'"';
 	return $tmp;
 }
 
@@ -758,7 +830,7 @@ public static function p($str = '', $class = ''): void
 
 public static function p_bold($title, $str = '', $class = ''): void
 {
-	echo '<p', esc_html(self::add_class($class, true)), '><b>', esc_html($title), '</b>';
+	echo '<p', wp_kses_post(self::add_class($class, true)), '><b>', wp_kses_post($title), '</b>';
 		if ($str !== '') echo ': ', wp_kses_post($str);
 	echo '</p>';
 }
@@ -780,6 +852,14 @@ public static function msg($ok, $str, $before=false, $after=false): void
 	if ($after) echo '<br>';
 }
 
+// NEW: 250710
+public static function capture(callable $fn): string
+{
+	ob_start();
+	$fn();
+	return ob_get_clean();
+}
+
 public static function help($title, $str, $warning = false): void
 {
 	$id = uniqid('atec_help_');
@@ -797,6 +877,21 @@ public static function help($title, $str, $warning = false): void
 	'</div>';
 
 	self::inject_popover_script();
+}
+
+// NEW: 250710
+public static function maybe_help($license_ok, $title, callable $callback): void
+{
+	if (!$license_ok)
+	{
+		self::div('box');
+			$callback();
+		self::div(-1);
+	}
+	else
+	{
+		self::help($title, self::capture($callback));
+	}
 }
 
 protected static function inject_popover_script(): void
@@ -914,6 +1009,11 @@ public static function safe_redirect($una, $action=null, $nav=null, $args = []):
 public static function redirect($una, $action=null, $nav=null, $args = []): void
 {
 	self::reg_inline_script('redirect', 'window.location.assign("'.INIT::build_url($una, $action, $nav, $args).'");');
+}
+
+public static function history($slug): void
+{
+	self::reg_inline_script($slug.'_history','window.history.replaceState({}, "", window.location.pathname + "?page=atec_'.$slug.'");');		// prevent re-saving
 }
 
 public static function clean_request_bool($key) : bool

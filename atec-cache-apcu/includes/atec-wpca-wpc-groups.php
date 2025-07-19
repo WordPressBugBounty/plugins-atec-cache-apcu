@@ -45,7 +45,9 @@ private static function debug_alloptions_integrity_check()
 				$log[] = "Mismatch after flush: got $retrieved_after_flush";
 
 			if (defined('WP_DEBUG') && WP_DEBUG)
-			{ error_log('[OC DEBUG] alloptions test failed: ' . json_encode($log)); }
+			{ 
+				error_log('[OC DEBUG] alloptions test failed: ' . json_encode($log)); 		// phpcs:ignore
+			}
 		}
 
 		echo '<pre class="atec-m-0">' . esc_html(trim(implode("\n", $log))) . '</pre>';
@@ -75,7 +77,7 @@ private static function parse_alloptions($v1, $v2): bool
 public static function init($una)
 {
 
-	TOOLS::msg('warning', 'This page is for „PRO“ users debugging only');
+	TOOLS::msg('warning', 'This page is for ‘PRO’ users debugging only');
 
 	if ($una->action=== 'delete')
 	{ 
@@ -141,7 +143,7 @@ public static function init($una)
 		if (!empty($alloptArr))
 		{
 			echo
-			'<h4>„alloptions“ mismatch</h4>
+			'<h4>‘alloptions’ mismatch</h4>
 			<div class="atec-box-white atec-fit atec-small atec-anywrap">';
 				TOOLS::table_header([__('Key', 'atec-cache-apcu'),__('Value', 'atec-cache-apcu')]);
 					$errors = self::parse_alloptions($alloptArr, $alloptAPCuArr);

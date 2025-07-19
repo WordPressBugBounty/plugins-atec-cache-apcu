@@ -14,7 +14,7 @@ public static function init($option): string
 
 
 	if ($content && !(str_contains($content, 'ATEC_OC_ACTIVE_APCU') || str_contains($content, 'atec-apcu-object-cache')))
-	{ return 'Another „object-cache.php“ file exists. Please deactivate it first'; }
+	{ return 'Another ‘object-cache.php’ file exists. Please deactivate it first'; }
 
 	if ($option)
 	{
@@ -43,7 +43,7 @@ public static function init($option): string
 	else
 	{
 		wp_cache_flush();
-		if (!FS::unlink($target_path)) return 'Removing „object-cache.php“ failed';
+		if (!FS::unlink($target_path)) return 'Removing ‘object-cache.php’ failed';
 	}
 	
 	return '';

@@ -24,7 +24,7 @@
 --bg-button: #fff;
 --bg-success: #f0fff0;
 --bg-error: #fff0f0;
---bg-warning: #fff7f0;
+--bg-warning: #fff7e0;
 --bg-hover: rgba(34, 113, 177, 0.05);
 --bg-button-hover: rgba(250, 250, 255, 0.9);
 
@@ -42,7 +42,7 @@
 --c-progress: rgba(0, 20, 129, 0.8);
 --c-link:#2271b1;
 --c-link-light: rgba(34, 113, 177, 0.33);
---c-orange: rgb(240, 155, 0);
+--c-orange: rgb(221, 133, 0);
 /* PIXEL */
 
 --px-3: 3px;
@@ -57,8 +57,9 @@
 .atec-page h1 { color: #000; margin: .05em 0; font-size: 1.35em; font-weight: 500; }
 .atec-page h2 { color: #111; margin: 0.5em 0; font-weight: 500; font-size: 1.3em; }
 .atec-page h3 { color: #222; margin: 0.5em 0; font-weight: 500; font-size: 1.25em; }
-.atec-page h4 { color: #333; margin: 0.5em 0; font-weight: 500; font-size: 1.2em; }
+.atec-page h4 { color: #333; margin: 0.5em 0; font-weight: 500; font-size: 1.225em; }
 .atec-page hr { box-sizing: content-box; height: 0; margin-top:0; overflow: visible; width: 100%; }
+.atec-page a { cursor: pointer; }
 .atec-page pre { font-family: monospace, monospace; font-size: 1em }
 .atec-page small { font-size: 0.8em; }
 .atec-page input::placeholder, .atec-page textarea::placeholder { color: var(--c-b); }
@@ -85,7 +86,7 @@
 .atec-page .dashicons-controls-play { color: green; }
 .atec-page .dashicons-controls-pause { color: var(--c-orange); }
 .atec-page p.submit	{ padding-bottom: 0.5em; }
-.atec-page p, .atec-page tr, .atec-page td, .atec-box-white, .atec-code { font-size: 13px; line-height: 1.5 }
+.atec-page p, .atec-page tr, .atec-page td, .atec-box-white, .atec-code { font-size: 14px; line-height: 1.55 }
 
 .atec-page .nav-icon	{ height: 18px; vertical-align: sub; filter: brightness(0) saturate(100%) invert(39%) sepia(67%) saturate(653%) hue-rotate(166deg) brightness(86%) contrast(90%); }
 
@@ -129,12 +130,12 @@
 
 .atec-disabled-link { pointer-events: none; opacity: 0.55; cursor: not-allowed !important; }
 
-.atec-p-title { background:#f8f9fa; padding:4px 8px; margin:10px 0; font-size: 1.1em; font-weight:600; display:table; }
+.atec-p-title { padding: 2px 4px 2px 4px; margin:10px 0; font-size: 1.075em !important; font-weight:600; display:table; background: var(--bg-w85); border-bottom: var(--border-darkgrey); }
 .atec-headline	{ display: block; font-weight: 600; margin-bottom: 5px; }
 .atec-code, .atec-box-white { border: var(--border-grey); padding: 10px; max-width:fit-content; margin: 5px 0; border-radius: var(--px-5); }
 .atec-code { white-space: break-spaces; font-size: 1em; line-height: 1.6em; }
 
-.atec-box-white, .atec-code { background: white; }
+.atec-box-white, .atec-code { background: white; color: #555; }
 .atec-border-white > .atec-box-white { margin-top: 0; }
 .atec-box-white p:last-child { margin-bottom: 0; }
 .atec-box-white p:first-child { margin-top: 0; }
@@ -361,10 +362,16 @@
 }
 
 /* BTN */
-
-.atec-btn-confirm { display: inline-flex; border-radius: var(--px-3); background: var(--bg-e7); border: var(--border-grey); padding-left: 6px; height: 32px; }
-.atec-btn-confirm a.button { border-top: none; border-bottom: none; border-right: none; border-radius: 0; }
-.atec-btn-confirm input { width: 1em; height: 1em; margin-top: 7px; }
+.atec-confirm-btn { position: relative; display:flex; align-items:center; padding: 0 !important; }
+.atec-confirm-btn.button:focus:not(:focus-visible), .atec-confirm-btn.button:active { outline:none; }
+.atec-confirm-btn .atec-confirm-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; transition:all .15s ease; }
+.atec-confirm-label 
+{ 
+	display: none; position: absolute; top: 50%; left: 50%; font-size: 8px; color: #e50002; background: rgba(255, 255, 255, 0.9); line-height: 1; text-align: center; 
+	transform: translate(-50%, -50%) rotate(-45deg); transform-origin: center; pointer-events: none; border-radius: var(--px-3); white-space: nowrap; 
+}
+.atec-confirm-label::before { content: "Confirm?"; display: block; 	width: 100%; text-align: center; }
+.atec-confirm-btn.atec-confirm-ready .atec-confirm-label { display:block; }
 
 /* HELP */
 
@@ -405,7 +412,7 @@
 .atec-help-popover-content 
 {
 	position: absolute; top: 32px; left: 0; background: #fff; border: var(--border-grey); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-	padding: 10px; min-width: 260px; max-width: 400px; z-index: 9999;
+	padding: 10px; min-width: 360px; max-width: 640px; z-index: 9999;
 }
 
 /* BADGE */

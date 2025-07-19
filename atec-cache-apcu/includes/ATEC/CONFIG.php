@@ -203,7 +203,7 @@ public static function render($littleBlock = false)
 
 	if ($littleBlock) 
 	{
-		TOOLS::little_block('Config file „wp_config.php“');
+		TOOLS::little_block('Config file ‘wp_config.php’');
 		echo '<p class="atec-fs-14"><strong>Path:</strong> ', esc_url($wp_config_path), '</p>';
 	}
 
@@ -220,7 +220,7 @@ public static function render($littleBlock = false)
 	} 
 	else 
 	{
-		TOOLS::msg(false, 'Can not read „wp_config.php“.');
+		TOOLS::msg(false, 'Can not read ‘wp_config.php’.');
 	}
 }
 

@@ -60,7 +60,7 @@ final class FS {
 		$upload_dir = self::install_files($dir, '', [], $s);
 		if (!$s)
 		{
-			INIT::build_notice($notice, '', 'Failed to create „uploads“ folder and files');
+			INIT::build_notice($notice, '', 'Failed to create ‘uploads’ folder and files');
 			INIT::set_admin_debug($slug, $notice);
 		}
 		return ['notice' => $notice, 'upload_dir' => $upload_dir];

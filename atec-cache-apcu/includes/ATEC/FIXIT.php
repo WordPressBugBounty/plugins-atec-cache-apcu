@@ -19,7 +19,7 @@ final class FIXIT
 			if (defined('WP_DEBUG') && WP_DEBUG) 
 			{
 				$plugin = \ATEC\INIT::plugin_fixed_name(\ATEC\INIT::plugin_by_dir($dir));
-				error_log('atec-fixit: Auto repair of plugin „' . $plugin . '“.');	// phpcs:ignore
+				error_log('atec-fixit: Auto repair of plugin ‘' . $plugin . '’.');	// phpcs:ignore
 			}
 			$option[$slug] = $ver;
 			update_option($option_key, $option);

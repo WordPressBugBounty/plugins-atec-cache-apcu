@@ -20,7 +20,7 @@ return function($una, $license_ok)
 	$arr['Zlib'] = INIT::bool(ini_get('zlib.output_compression'));
 	TOOLS::little_block_multi($una, 'APCu - '.__('Settings', 'atec-cache-apcu'), [], '', $arr);
 
-	if (!defined('AUTH_KEY')) TOOLS::msg(false, 'AUTH_KEY is not defined but required. Please fix the „keys and salts“ section in your „wp-config.php“');
+	if (!defined('AUTH_KEY')) TOOLS::msg(false, 'AUTH_KEY is not defined but required. Please fix the ‘keys and salts’ section in your ‘wp-config.php’');
 
 	$o_cache = WPCA::settings('o_cache');
 	$p_cache = WPCA::settings('p_cache');
@@ -74,7 +74,7 @@ return function($una, $license_ok)
 						__('The object cache is the main feature of the plugin and will speed up your site', 'atec-cache-apcu').'.');
 	
 					// NEEDS translation
-					TOOLS::help(__('„PRO“ AOC Mode (Advanced Object Cache)', 'atec-cache-apcu'),
+					TOOLS::help(__('‘PRO’ AOC Mode (Advanced Object Cache)', 'atec-cache-apcu'),
 						__('Improves performance by optimizing autoloaded options and internal caching behavior. Recommended for high-traffic sites.', 'atec-cache-apcu').'.');
 						
 				echo
@@ -114,7 +114,7 @@ return function($una, $license_ok)
 							<table class="form-table" role="presentation">
 								<tbody>
 									<tr>
-										<th scope="row">', esc_html__('Admin bar „PC Flush“ icon', 'atec-cache-apcu'), '</th>
+										<th scope="row">', esc_html__('Admin bar ‘PC Flush’ icon', 'atec-cache-apcu'), '</th>
 										<td>'; CHECK::checkbox(['opt-name' => $option_key, 'name' => 'p_admin', 'value' => WPCA::settings('p_admin')]); echo '</td>
 									</tr>';
 									echo
@@ -148,19 +148,19 @@ return function($una, $license_ok)
 						__('The page cache saves pages, posts and categories – no product/shop pages (WooCommerce)', 'atec-cache-apcu').'.');
 
 					// NEEDS translation
-					TOOLS::help(__('„PRO“ APC Mode (Advanced Page Cache)', 'atec-cache-apcu'),
+					TOOLS::help(__('‘PRO’ APC Mode (Advanced Page Cache)', 'atec-cache-apcu'),
 						__('Serves full page HTML earlier than standard caching for maximum performance', 'atec-cache-apcu').'.');
 
 					if ($p_cache)
 					{
-						TOOLS::help(__('„Show debug“', 'atec-cache-apcu'),
-							__('The „Show debug“ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing', 'atec-cache-apcu').'.');
+						TOOLS::help(__('‘Show debug’', 'atec-cache-apcu'),
+							__('The ‘Show debug’ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing', 'atec-cache-apcu').'.');
 					}
 
 					TOOLS::help(__('Multiple PC plugins', 'atec-cache-apcu'),
 						__('Do not use multiple page cache plugins simultaneously', 'atec-cache-apcu').'.', true);
 	
-					if (is_multisite()) TOOLS::msg('warning', __('The page cache is not designed to support multisites', 'atec-cache-apcu').'.<br>'.__('Please try the „Mega-Cache“-Plugin for multisites', 'atec-cache-apcu'), true);
+					if (is_multisite()) TOOLS::msg('warning', __('The page cache is not designed to support multisites', 'atec-cache-apcu').'.<br>'.__('Please try the ‘Mega-Cache’-Plugin for multisites', 'atec-cache-apcu'), true);
 
 						
 				echo

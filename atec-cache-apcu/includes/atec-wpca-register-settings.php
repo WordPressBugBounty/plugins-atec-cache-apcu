@@ -9,7 +9,8 @@ use ATEC\WPCA;
 (function() {
 	
 	$is_updated = INIT::is_settings_updated();
-	if (!$is_updated && (($_GET['action'] ?? '') === 'flushWPCA')) 
+	// OUTDATED: 250717 | CLEANUP: User INIT::_GET
+	if (!$is_updated && (($_GET['action'] ?? '') === 'flushWPCA')) 		// phpcs:ignore
 	{
 		wp_cache_delete( 'alloptions', 'options' );
 		WPCA::settings('',true);	// Refresh the WPCA settings cache
@@ -66,7 +67,7 @@ use ATEC\WPCA;
 	{
 		$section.= '_OC';
 		add_settings_section($section, '<small>'.__('Options', 'atec-cache-apcu').'</small>', '', $page_slug);
-		add_settings_field('o_admin', __('Admin bar „OC Flush“ icon', 'atec-cache-apcu'), [CHECK::class, 'checkbox'], $page_slug, $section, CHECK::opt_arr('o_admin', 'WPCA'));
+		add_settings_field('o_admin', __('Admin bar ‘OC Flush’ icon', 'atec-cache-apcu'), [CHECK::class, 'checkbox'], $page_slug, $section, CHECK::opt_arr('o_admin', 'WPCA'));
 		add_settings_field('o_stats', __('Simple OC statistics', 'atec-cache-apcu'), [CHECK::class, 'checkbox'], $page_slug, $section, CHECK::opt_arr('o_stats', 'WPCA'));
 
 	}

@@ -235,14 +235,10 @@ public static function extension_enabled($type)
 	return false;
 }
 
-public static function error_log(...$args)
+public static function error_log($args)
 {
-	foreach ($args as $arg)
-	{
-		// Skip empty strings, null, false
-		if ($arg === null || $arg === '' || $arg === false) continue;
-		error_log(is_scalar($arg) ? (string) $arg : print_r($arg, true));	// phpcs:ignore
-	}
+	if ($args === null || $args === '' || $args === false) return;
+	\ATEC\FS::put(WP_CONTENT_DIR.'/atec-debug.log', (is_scalar($args) ? (string) $args : print_r($args, true))."\n", FILE_APPEND);	// phpcs:ignore
 }
 
 public static function _GET($key, $default = '')
@@ -372,6 +368,22 @@ public static function is_atec_dev_mode(): bool
 	return $cached;
 }
 
+public static function client_ip(): string
+{
+	return self::_SERVER('REMOTE_ADDR');
+}
+
+public static function host_ip(): string
+{
+	return self::_SERVER('SERVER_ADDR');
+}
+
+public static function is_localhost(): bool
+{
+	$ip = self::client_ip();
+	return in_array($ip, ['127.0.0.1', '::1'], true) || self::_SERVER('SERVER_NAME') === 'localhost';
+}
+
 // INIT
 
 public static function register_activation_deactivation_hook($plugin_file, $activate = -1, $deactivate = 0, $slug = '')
@@ -464,8 +476,8 @@ public static function plugin_fixed_name($p)
 {
 	$p = ucwords(str_replace('-', ' ', $p));
 	return trim(str_ireplace(
-		['atec', 'apcu', 'webp', 'svg', 'ssl', 'smtp', 'oc benchmark'],
-		['atec', 'APCu', 'WebP', 'SVG', 'SSL', 'SMTP', 'OC Benchmark'],
+		['atec', 'apcu', 'foxyfy', 'webp', 'svg', 'ssl', 'smtp', 'oc benchmark'],
+		['atec', 'APCu', 'FoxyFy', 'WebP', 'SVG', 'SSL', 'SMTP', 'OC Benchmark'],
 		$p));
 }
 
@@ -510,6 +522,7 @@ public static function dashboard_callback($plugin, $slug): callable
 { return function () use ($plugin, $slug) { require WP_PLUGIN_DIR . '/' . $plugin . "/includes/atec-{$slug}-dashboard.php"; }; }
 
 // restrict certain plugins to post/page editors
+// Maps capability keys (WP) and semantic role shortcuts (admin/editor)
 public static function current_user_can($role): bool
 {
 	static $cached = null;
@@ -519,7 +532,8 @@ public static function current_user_can($role): bool
 		$cached = 
 			[	
 				'admin'  => current_user_can('manage_options'),
-				'editor' => current_user_can('edit_posts') || current_user_can('edit_pages')
+				'editor' => current_user_can('edit_posts') || current_user_can('edit_pages'),
+				'user'  => current_user_can('edit_user'),
 			];
 	}
 

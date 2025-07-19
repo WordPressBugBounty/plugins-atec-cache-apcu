@@ -6,7 +6,7 @@ Tested up to: 6.8
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.24
+Stable tag: 2.3.25
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,13 +75,13 @@ No. This plugin is APCu-only and does not require other memory caches.
 = What makes this faster than other solutions? =
 It uses pure APCu without network latency, with optimized logic for set/get/flush and auto-purging support.
 
-== „PRO“ Features ==
+== ‘PRO’ Features ==
 
 - AOC Mode (Advanced Object Cache)
 Advanced Object Cache Mode – takes full advantage of APCu’s in-memory array support, eliminating unnecessary serialize()/unserialize() cycles and boosting PHP performance on every request.
 
 - APC Mode (Advanced Page Cache)
-Advanced Page Cache is a „PRO“-level optimization that activates earlier than regular page cache — before most WordPress logic even runs.
+Advanced Page Cache is a ‘PRO’-level optimization that activates earlier than regular page cache — before most WordPress logic even runs.
 
 == Screenshots ==
 
@@ -93,6 +93,9 @@ Advanced Page Cache is a „PRO“-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.25 [2025.07.19] =
+* Framework changes, new ALIAS class
 
 = 2.3.24 [2025.07.08] =
 * OC 2.0.6

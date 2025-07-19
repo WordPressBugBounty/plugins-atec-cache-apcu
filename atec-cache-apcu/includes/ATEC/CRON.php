@@ -28,7 +28,19 @@ public static function set($name, $desired, $offset = 0)
 {
 	self::clear($name);
 	wp_schedule_event(time() + $offset, $desired, $name);
-	if (!wp_next_scheduled($name)) error_log('atec-cron: Failed to schedule „'.esc_attr($name).'“.');	// phpcs:ignore
+	//self::error_log($name);
+}
+
+public static function set_single($name, $delay = 5, $args = [])
+{
+	//self::clear($name); // Optional: avoid duplicates
+	wp_schedule_single_event(time() + $delay, $name, $args);
+	//self::error_log($name);
+}
+
+public static function error_log($name)
+{
+	if (!wp_next_scheduled($name)) error_log('atec-cron: Failed to schedule ‘'.esc_attr($name).'’.');	// phpcs:ignore
 }
 
 public static function schedule($name)

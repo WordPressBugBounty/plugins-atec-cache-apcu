@@ -43,14 +43,13 @@ private static function group_badge($str='', $ok=true, $slug = '', $nav= '', $wa
 	}
 
 	$url = INIT::build_url($slug, '', $nav);
+	$on_demand = $str==='' || $str==='NC';
 
-	$bg		= $str==='' ? '#fafafa' : ($ok ? '#e9f9ec' : ( $warn ? '#fffafa' : '#fbe9e9' ));			// soft background
-	$border	= $str==='' ? '#ddd' : ($ok ? '#b4e2c1' : ( $warn ? '#edd' : '#e2b4b4' ));		// gentle border
-	$color	 = $str==='' ? '#bbb' : ($ok ? '#2ebb71' : ( $warn ? '#a99' : '#bb2e2e' ));			// readable text
-	$btnColor  = $str==='' ? '#bbb' : ($ok ? '#00cc00' : ( $warn ? '#bbb' : '#cc0000' ));		// bold icon
+	$bg				= $on_demand ? '#fafafa' : ($ok ? '#e9f9ec' : ( $warn ? '#fffafa' : '#fbe9e9' ));			// soft background
+	$border		= $on_demand ? '#ddd' : ($ok ? '#b4e2c1' : ( $warn ? '#edd' : '#e2b4b4' ));				// gentle border
+	$color	 		= $on_demand ? '#bbb' : ($ok ? '#2ebb71' : ( $warn ? '#a99' : '#bb2e2e' ));				// readable text
+	$btnColor  	= $on_demand ? '#bbb' : ($ok ? '#00cc00' : ( $warn ? '#bbb' : '#cc0000' ));				// bold icon
 	
-	$on_demand = $str==='';
-
 	echo '
 	<div class="atec-dilb atec-vat">
 		<a href="' . esc_url($url) . '" class="atec-nodeco">
@@ -60,7 +59,7 @@ private static function group_badge($str='', $ok=true, $slug = '', $nav= '', $wa
 				else self::render_on_off_button($btnColor, $ok, $warn);
 				echo '</div>';
 
-				if ($on_demand) $str = 'On demand';
+				if ($on_demand) $str = $str==='' ? 'On demand' : 'Always on';
 				echo '<div style="color:', esc_attr($color), '">', esc_html($str), '</div>';
 				
 				if ($warn)
@@ -109,8 +108,12 @@ private static function plugin_div($p)
 			break;
 
 		case 'banner':
-			self::group_badge('Banner', INIT::get_settings('wpbn', 'enabled'), $p->slug);
+			self::group_badge('Banner', INIT::get_settings('wpbn', 'active'), $p->slug);
 			break;
+			
+		case 'bot-shield':
+			self::group_badge('Bot Shield', INIT::get_settings('wpbs', 'active'), $p->slug);
+			break;			
 
 		case 'bunny':
 			self::group_badge('CDN Zone', INIT::get_settings('wpbu', 'zone') !== '', $p->slug);
@@ -158,13 +161,12 @@ private static function plugin_div($p)
 			self::group_badge('Console', INIT::get_settings('wpdv', 'console'), $p->slug, '', true);
 			break;
 
-		case 'svg':
 		case 'duplicate-page-post':
 			self::group_badge('Active', true, $p->slug);
 			break;
 
 		case 'hook-inspector':
-			self::group_badge('Logging', INIT::get_settings('wphi', 'enabled'), $p->slug,'',true);
+			self::group_badge('Logging', INIT::get_settings('wphi', 'active'), $p->slug,'',true);
 			break;
 
 		case 'limit-login':
@@ -177,7 +179,7 @@ private static function plugin_div($p)
 			break;
 
 		case 'maintenance-mode':
-			self::group_badge('Maintenance', INIT::get_settings('wpmtm', 'enabled'), $p->slug);
+			self::group_badge('Maintenance', INIT::get_settings('wpmtm', 'active'), $p->slug);
 			break;
 
 		case 'mega-cache':
@@ -205,9 +207,17 @@ private static function plugin_div($p)
 			break;
 
 		case 'webp':
-			self::group_badge('Conversion', INIT::get_settings('wpwp','enabled'), $p->slug);
+			self::group_badge('Conversion', INIT::get_settings('wpwp','active'), $p->slug);
 			break;
 
+		case 'flush-debug':
+		case 'lazy-load':
+		case 'minify':
+		case 'svg':
+		case 'runtime':
+			self::group_badge('NC', true, $p->slug);
+			break;
+			
 		default:
 			self::group_badge('', true, $p->slug);
 			break;
@@ -343,7 +353,7 @@ public static function init($plugin)
 	if ($integrity!== '')
 	{
 		$integrity = INIT::bool($integrity);
-		$integrityString= 'Thank you. Connection to atecplugins.com is '.($integrity== 'true'?'enabled':'disabled');
+		$integrityString= 'Thank you. Connection to atecplugins.com is '.($integrity== 'true'?'active':'disabled');
 		if ($integrity) INIT::integrity_check($plugin);
 		update_option('atec_allow_integrity_check', $integrity);
 	}

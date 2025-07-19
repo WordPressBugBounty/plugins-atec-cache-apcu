@@ -16,12 +16,12 @@ private static $pcache_warning_messages = [
 	'kinsta'						=> 'Kinsta server cache is active. Plugin cache may be unreliable.',
 	'godaddy'					=> 'GoDaddy Managed Cache is active. Plugin page caching may not work.',
 	'varnish'					=> 'A proxy server (e.g. Varnish) is caching pages. Plugin page caching may be overridden.',
-	'wp_rocket'				=> 'WP Rocket is active and handles page caching. Do not use „atec Page Cache“ alongside WP Rocket.',
-	'wp_fastest_cache'		=> 'WP Fastest Cache is active and handles page caching. Do not enable „atec Page Cache“ alongside it.',
-	'sg_optimizer'			=> 'SG Optimizer is active and handles page caching. „atec Page Cache“ should remain disabled.',
+	'wp_rocket'				=> 'WP Rocket is active and handles page caching. Do not use ‘atec Page Cache’ alongside WP Rocket.',
+	'wp_fastest_cache'		=> 'WP Fastest Cache is active and handles page caching. Do not enable ‘atec Page Cache’ alongside it.',
+	'sg_optimizer'			=> 'SG Optimizer is active and handles page caching. ‘atec Page Cache’ should remain disabled.',
 	'hummingbird'			=> 'Hummingbird’s Page Caching is active. Avoid running multiple page cache systems.',
-	'comet_cache'			=> 'Comet Cache or ZenCache is active and handles page caching. Disable it to use „atec Page Cache“.',
-	'nitropack'					=> 'NitroPack is active and optimizes pages externally. „atec Page Cache“ is not needed.',
+	'comet_cache'			=> 'Comet Cache or ZenCache is active and handles page caching. Disable it to use ‘atec Page Cache’.',
+	'nitropack'					=> 'NitroPack is active and optimizes pages externally. ‘atec Page Cache’ is not needed.',
 ];
 
 public static function pcache_detected()

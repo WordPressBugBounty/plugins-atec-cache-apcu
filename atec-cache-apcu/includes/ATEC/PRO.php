@@ -18,19 +18,19 @@ riq3aeQVZ8yllQ3bbwIDAQAB
 
 public static function noop(): void {}
 
-public static function license_expired($ts): bool
+public static function license_expired($ts, $duration = YEAR_IN_SECONDS): bool
 {
 	$ts = (int) $ts;
 	$now = time();
-	return $ts === 0 || $ts < ($now - YEAR_IN_SECONDS);
+	return $ts === 0 || $ts < ($now - $duration);
 }
 
-public static function license_status($ts): string
+public static function license_status($ts, $duration = YEAR_IN_SECONDS): string
 {
 	$ts = (int) $ts;
 	if ($ts === 0) return 'Not valid.';
 	
-	$expires = $ts + YEAR_IN_SECONDS;
+	$expires = $ts + $duration;
 	$now = time();
 
 	if ($expires < $now) return 'Expired.';
@@ -188,7 +188,7 @@ public static function pro_form($una)
 	echo
 	'<div class="atec-db atec-center atec-m-20">';
 
-		if ($license_ok) echo '<h4 class="atec-green atec-mt-10">Thank you for activating your „Lifetime-Site-License“.</h4>';
+		if ($license_ok) echo '<h4 class="atec-green atec-mt-10">Thank you for activating your ‘Lifetime-Site-License’.</h4>';
 		else TOOLS::reg_inline_script('group_pro_package', 'jQuery("#pro_package").show();');
 		
 		TOOLS::p('');

@@ -26,7 +26,7 @@ final class LICENSE
 				<ul class="atec-border-white atec-bg-w">
 					<li>⭐ Priority support</li>
 					<li>⭐ Upgrades & updates</li>';
-					if (!$is_atec) echo '<li>⭐ „Lifetime-site-License“</li>';
+					if (!$is_atec) echo '<li>⭐ ‘Lifetime-site-License’</li>';
 				echo
 				'</ul>
 			</div>
@@ -60,8 +60,8 @@ final class LICENSE
 					else
 					{
 						echo
-						'<li>⭐ „Lifetime-site-License“</li>
-						<li>⭐ Access to all the „PRO“ features</li>';
+						'<li>⭐ ‘Lifetime-site-License’</li>
+						<li>⭐ Access to all the ‘PRO’ features</li>';
 					}
 
 				echo
@@ -83,7 +83,7 @@ final class LICENSE
 				\ATEC\SVG::echo($una->slug=== 'wpmc' ? 'wpmc' : 'wpa', 'atec-vat');
 				if ($una->slug=== 'wpmc') echo 'Mega Cache';
 				else echo '<div><span class="atec-logo-text">tec</span>-Plugins</div>';
-				echo ' „PRO“ package',
+				echo ' ‘PRO’ package',
 			'</h3>
 			
 			<div id="pro_package" style="display: none; style="padding: 5px 15px 10px 15px;">';
@@ -99,10 +99,11 @@ final class LICENSE
 						else
 						{
 							$atec_group = GROUP::all_plugins();
+							$halfway = round(count($atec_group)/2);
 							foreach ($atec_group as $index => $p)
 							{
 								if (in_array($p->slug,['wpmc', 'wpct'])) continue;
-								if ($index % 20===0) echo '<br>';
+								if ($index % $halfway===0) echo '<br>';
 								\ATEC\SVG::echo($p->slug, 'atec-m-3'); 
 							}
 						}
@@ -111,7 +112,7 @@ final class LICENSE
 
 					echo
 					'<p style="font-size: 1.2em; line-height: 1.3em;">',
-						'Buy the „PRO“ package through one time payment.<br>',
+						'Buy the ‘PRO’ package through one time payment.<br>',
 						'The license is valid for the lifetime of your site (domain).<br><b>',
 						'No subscription. No registration required.</b>',
 					'</p>';
@@ -122,7 +123,7 @@ final class LICENSE
 					echo
 					'<div class=" atec-m-auto">
 						<a class="atec-nodeco atec-fit" href="', esc_url($licenseUrl), '" target="_blank">
-							<button class="button button-primary">GET YOUR „PRO“ PACKAGE NOW</button>
+							<button class="button button-primary">GET YOUR ‘PRO’ PACKAGE NOW</button>
 							<div class="atec-mt-5 atec-small">', esc_textarea($licenseUrl), '</div>
 						</a>
 					</div>';

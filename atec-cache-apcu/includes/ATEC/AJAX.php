@@ -16,7 +16,8 @@ public static function generic_inline(string $slug, bool $remove = true): void
 	$action			= "atec_{$slug}_ajax";
 	$nonce_key	= self::nonce_key($slug);				// 'atec_wpfd_ajax_nonce'
 
-	wp_register_script($handle, false, ['jquery'], null, true);
+	//wp_register_script($handle, false, ['jquery'], false, true);
+	wp_register_script( $handle, false, [ 'jquery' ], '1.0.1', true );
 
 	wp_localize_script($handle, $var, [
 		'ajaxurl' => admin_url('admin-ajax.php'),

@@ -22,7 +22,7 @@ public static function init($p_cache)
 	$delete_pc = WPCA::settings('p_debug') !== INIT::bool($last_settings['p_debug'] ?? 0);
 	$install_path = dirname(__DIR__).'/install/page-cache.php';
 	
-	$error_str = '„advanced-cache.php“';
+	$error_str = '‘advanced-cache.php’';
 	$target_path = WP_CONTENT_DIR.'/advanced-cache.php';
 	$content = FS::get($target_path);
 

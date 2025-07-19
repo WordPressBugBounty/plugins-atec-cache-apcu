@@ -54,7 +54,7 @@ public static function init()
 		if ($percent>-1) WPC::usage($percent);
 		if ($apcu_cache['mem_size']!=0) WPC::hitrate($relHits, $relMisses);
 
-		if ($percent>90) TOOLS::msg(false, __('APCu usage is beyond 90%. Please consider increasing „apc.shm_size“ option', 'atec-cache-apcu'));
+		if ($percent>90) TOOLS::msg(false, __('APCu usage is beyond 90%. Please consider increasing ‘apc.shm_size’ option', 'atec-cache-apcu'));
 		elseif ($percent===-1) { TOOLS::p(__('Shared memory info is not available', 'atec-cache-apcu')); echo '<br>'; }
 		elseif ($percent===0)
 		{

@@ -34,7 +34,7 @@ public static function autoload($class)
 		'ATEC\\WPMC'				=> WP_PLUGIN_DIR . '/mega-cache/includes/ATEC/WPMC.php',
 	];
 
-	if (strpos($class, 'ATEC\\') !== 0) return;		// Skip if not an „atec“ class	
+	if (strpos($class, 'ATEC\\') !== 0) return;		// Skip if not an ‘atec’ class	
 	if (isset($loaded[$class])) return;					// Skip if class already loaded
 
 	if (isset($class_map[$class])) 						// Load from known map

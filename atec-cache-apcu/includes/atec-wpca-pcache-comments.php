@@ -27,7 +27,7 @@ final class Comments
 	public static function delete_comment($comment)
 	{
 		$salt = WPCA::settings('salt');
-		if (!class_exists('ATEC_WPCA\\Tools')) require_once __DIR__ . '/atec-wpca-pcache-tools.php';
+		if (!class_exists('ATEC_WPCA\\Tools')) require __DIR__ . '/atec-wpca-pcache-tools.php';
 		\ATEC_WPCA\Tools::delete_page($salt, 'p', $comment->comment_post_ID);
 	}
 }
