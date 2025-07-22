@@ -70,14 +70,14 @@ public static function headers()
 				@header('Vary: Accept-Encoding');
 				@header("Content-Encoding: gzip");
 				@header('X-Cache: HIT/GZIP');
-				@header('Content-Length: '.$arr[3]);
+				//@header('Content-Length: '.$arr[3]);
 				echo $arr[2];									// phpcs:ignore
 			}
 			else
 			{
 				@header('X-Cache: HIT');
 				if ($arr[1] && function_exists('gzdecode')) $arr[2] = gzdecode($arr[2]);
-				@header('Content-Length: '.strlen($arr[2]));
+				//@header('Content-Length: '.strlen($arr[2]));
 				echo $arr[2];									// phpcs:ignore
 			}
 			exit;
@@ -87,7 +87,8 @@ public static function headers()
 
 public static function callback($buffer)
 {
-	if (($bufferLen = strlen($buffer))<1024) return $buffer;
+	//(($bufferLen = 
+	if (strlen($buffer)<1024) return $buffer;
 	if (defined('DONOTCACHEPAGE') && DONOTCACHEPAGE) return $buffer; // Skip cache output
 
 	if (self::$pcache_hit) return $buffer;
@@ -104,7 +105,7 @@ public static function callback($buffer)
 	$gzip				= false; 
 	$compressed	= ''; 
 	$debug				= ''; 
-	$debugLen		= 0;
+	//$debug_len		= 0;
 	$key					= 'atec_WPCA_'.WPCA::settings('salt').'_';
 	
 	if (WPCA::settings('p_debug') && !str_contains($suffix, 'f'))
@@ -120,13 +121,14 @@ public static function callback($buffer)
 			setTimeout(()=>{ const elem=document.getElementById("atec_wpca_debug"); if (elem) elem.remove(); }, 3000);
 			const elem=document.getElementById("atec_wpca_debug_script"); if (elem) elem.remove();
 		</script>';
-		$debugLen= strlen($debug);
+		//$debug_len= strlen($debug);
 	}
 	
 	$powered = '<a href="https://atecplugins.com/" style="position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; overflow:hidden; text-indent:-9999px;">Powered by atecplugins.com</a>';
+	//$powered_len = strlen($powered);
 
 	if (function_exists('gzencode')) { $compressed = gzencode($buffer.$debug.$powered); $gzip=true; }
-	apcu_store($key.$suffix.'_'.$id,array($hash, $gzip, $gzip?$compressed:$buffer.$debug.$powered, $gzip?strlen($compressed):$bufferLen+$debugLen+224));
+	apcu_store($key.$suffix.'_'.$id,array($hash, $gzip, $gzip?$compressed:$buffer.$debug.$powered));	//$gzip?strlen($compressed):$bufferLen+$debug_len+$powered_len
 	unset($compressed); 
 	unset($content);
 	//if (!empty($_COOKIE)) unset($_COOKIE);

@@ -56,6 +56,7 @@ return function($una)
 			$site_url= INIT::site_url();
 			foreach ($apcu_it as $entry)
 			{
+
 				preg_match($reg_apcu, $entry['key'], $match);
 				if (isset($match[2]))
 				{
@@ -66,7 +67,12 @@ return function($una)
 					$isArchive		= str_contains($match[1], 'a');
 					$isFeed			= str_contains($match[1], 'f');
 					
-					if ($isCat || $isTag || $isArchive) { $ex = explode('|', $match[2]); $id = (int) $ex[0]; $page = $ex[1]; }
+					if ($isCat || $isTag || $isArchive) 
+					{ 
+						$ex = explode('|', $match[2]); 
+						$id = (int) $ex[0]; 
+						$page = isset($ex[1]) ? (int) $ex[1] : 0;  // Default to page 0 if not paginated
+					}
 					else { $id = (int) $match[2]; $page=0; }
 					
 					$type		= $isCat?'category':($isTag?'tag':($isArchive?'archive':get_post_type($id)));
