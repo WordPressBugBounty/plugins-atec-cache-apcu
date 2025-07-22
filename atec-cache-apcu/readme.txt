@@ -6,7 +6,7 @@ Tested up to: 6.8
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.25
+Stable tag: 2.3.26
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,8 +94,12 @@ Advanced Page Cache is a ‘PRO’-level optimization that activates earlier tha
 
 == Changelog ==
 
+= 2.3.26 [2025.07.22] =
+* SVN update
+
 = 2.3.25 [2025.07.19] =
 * Framework changes, new ALIAS class
+* Respects DONOTCACHEPAGE constant — skips caching if defined on page.
 
 = 2.3.24 [2025.07.08] =
 * OC 2.0.6

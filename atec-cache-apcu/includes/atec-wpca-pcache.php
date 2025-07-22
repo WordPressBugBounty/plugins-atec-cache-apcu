@@ -88,6 +88,8 @@ public static function headers()
 public static function callback($buffer)
 {
 	if (($bufferLen = strlen($buffer))<1024) return $buffer;
+	if (defined('DONOTCACHEPAGE') && DONOTCACHEPAGE) return $buffer; // Skip cache output
+
 	if (self::$pcache_hit) return $buffer;
 	
 	if (is_null(self::$params)) self::$params = self::parse();

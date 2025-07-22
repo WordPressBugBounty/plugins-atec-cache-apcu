@@ -3,7 +3,7 @@
 * OC Name:  atec Object-Cache
 * Plugin URI: https://atecplugins.com/
 * Description: atec Object Cache with pluggable backend (APCu, Redis, Memcached)
-* Version: 2.0.6
+* Version: 2.0.7
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
 * OC Domain:  atec-object-cache
@@ -11,7 +11,17 @@
 
 declare(strict_types=1);
 defined('ABSPATH') || exit;
-define('ATEC_OC_VERSION', '2.0.6');
+
+// When DONOTCACHEOBJECT is defined, this object-cache.php acts as a transparent pass-through.
+if ( (defined('DONOTCACHEOBJECT') && DONOTCACHEOBJECT )) {
+	require_once ABSPATH . WPINC . '/class-wp-object-cache.php';
+	$GLOBALS['wp_object_cache'] = new WP_Object_Cache();
+	return;
+}
+else
+{
+
+define('ATEC_OC_VERSION', '2.0.7');
 
 function wp_cache_init() { $GLOBALS['wp_object_cache'] = WP_Object_Cache::instance(); }
 function wp_cache_add($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->add($key, $data, $group, (int) $expire); }
@@ -286,4 +296,6 @@ register_shutdown_function(function ()
 			error_log('[AOC AutoHeal] Stale core_updater.lock + .maintenance file cleared');	// phpcs:ignore
 	}
 });
+
+}
 ?>

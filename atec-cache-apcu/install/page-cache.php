@@ -3,7 +3,7 @@
 * PC Name:  atec Cache APCu - Page Cache
 * Plugin URI: https://atecplugins.com/
 * Description: atec Cache APCu - Advanced Page Cache.
-* Version: 2.0.6
+* Version: 2.0.7
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
 * OC Domain: atec-apcu-page-cache
