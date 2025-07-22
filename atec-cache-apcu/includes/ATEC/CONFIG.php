@@ -102,11 +102,37 @@ public static function adjust($content, $name, $value): string
 		$atecLines[] = $defineLine;
 	}
 
+	// if (!empty($atecLines))
+	// {
+	// 	sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
+	// 	if ($insertAt !== null) array_splice($newLines, $insertAt, 0, $atecLines);
+	// 	else array_unshift($newLines, ...$atecLines);
+	// 	$modified = true;
+	// }
+
+	// ✅ Summary of this change:
+	//	You ensure defines are inserted after <?php, never before.
+	// If no <?php is found (weird case), insert at the end of the file instead of top.
+	//	This fully prevents PHP parse errors.
 	if (!empty($atecLines))
 	{
 		sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
-		if ($insertAt !== null) array_splice($newLines, $insertAt, 0, $atecLines);
-		else array_unshift($newLines, ...$atecLines);
+	
+		if ($insertAt === null)
+		{
+			// Fallback: insert after <?php if found
+			foreach ($newLines as $i => $line)
+			{
+				if (preg_match('/^\s*<\?php/i', $line))
+				{
+					$insertAt = $i + 1;
+					break;
+				}
+			}
+			if ($insertAt === null) $insertAt = count($newLines); // fallback to end of file
+		}
+	
+		array_splice($newLines, $insertAt, 0, $atecLines);
 		$modified = true;
 	}
 

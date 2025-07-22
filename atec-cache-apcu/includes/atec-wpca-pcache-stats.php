@@ -76,10 +76,10 @@ return function($una)
 					else { $id = (int) $match[2]; $page=0; }
 					
 					$type		= $isCat?'category':($isTag?'tag':($isArchive?'archive':get_post_type($id)));
-					$title			= $id===0?'Homepage':($isCat?get_cat_name($id):($isTag?get_tag($id)->name:($isArchive?substr($id,0,4).'/'.substr($id,4,2):get_the_title($id))));
-					$link			= $id===0?$home_url.'/':($isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$site_url.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2, '0',STR_PAD_LEFT):get_permalink($id))));
+					$title			= $id===0 ? 'Homepage' : ($isCat?get_cat_name($id):($isTag?get_tag($id)->name:($isArchive?substr($id,0,4).'/'.substr($id,4,2):get_the_title($id))));
+					$link			= $id===0 ? $home_url.'/' : ($isCat?get_category_link($id):($isTag?get_tag_link($id):($isArchive?$site_url.'/'.substr($id,0,4).'/'.str_pad(substr($id,4,2),2, '0',STR_PAD_LEFT):get_permalink($id))));
 					if ($isFeed) $link.= 'feed/';
-					if ($page!=0) { $link=((str_contains($link, '?cat=') || str_contains($link, '?tag='))?$link.'&paged= ':rtrim($link, '/').'/page/').$page; }
+					if ($page !== 0) { $link=((str_contains($link, '?cat=') || str_contains($link, '?tag='))?$link.'&paged= ':rtrim($link, '/').'/page/').$page; }
 					
 					$short_url 	= preg_replace('/(^https?:\/\/)'.$reg.'/', '', $link);
 					echo
