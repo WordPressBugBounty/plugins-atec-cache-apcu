@@ -114,22 +114,103 @@ public static function adjust($content, $name, $value): string
 	//	You ensure defines are inserted after <?php, never before.
 	// If no <?php is found (weird case), insert at the end of the file instead of top.
 	//	This fully prevents PHP parse errors.
+	// if (!empty($atecLines))
+	// {
+	// 	sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
+	// 
+	// 	if ($insertAt === null)
+	// 	{
+	// 		// Fallback: insert after <?php if found
+	// 		foreach ($newLines as $i => $line)
+	// 		{
+	// 			if (preg_match('/^\s*<\?php/i', $line))
+	// 			{
+	// 				$insertAt = $i + 1;
+	// 				break;
+	// 			}
+	// 		}
+	// 		if ($insertAt === null) $insertAt = count($newLines); // fallback to end of file
+	// 	}
+	// 
+	// 	array_splice($newLines, $insertAt, 0, $atecLines);
+	// 	$modified = true;
+	// }
+	
+	// if (!empty($atecLines))
+	// {
+	// 	sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
+	// 
+	// 	if ($insertAt === null)
+	// 	{
+	// 		// Try before wp-settings.php
+	// 		foreach ($newLines as $i => $line)
+	// 		{
+	// 			if (preg_match('/require_once\s+.*wp-settings\.php/i', $line))
+	// 			{
+	// 				$insertAt = $i;
+	// 				break;
+	// 			}
+	// 		}
+	// 		// If not found, insert after <?php
+	// 		if ($insertAt === null)
+	// 		{
+	// 			foreach ($newLines as $i => $line)
+	// 			{
+	// 				if (preg_match('/^\s*<\?php/i', $line))
+	// 				{
+	// 					$insertAt = $i + 1;
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
+	// 		if ($insertAt === null) $insertAt = count($newLines); // fallback to end
+	// 	}
+	// 
+	// 	array_splice($newLines, $insertAt, 0, $atecLines);
+	// 	$modified = true;
+	// }
+	
 	if (!empty($atecLines))
 	{
 		sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
 	
 		if ($insertAt === null)
 		{
-			// Fallback: insert after <?php if found
+			// 1. Look for if ( ! defined( 'ABSPATH' ) )
 			foreach ($newLines as $i => $line)
 			{
-				if (preg_match('/^\s*<\?php/i', $line))
+				if (preg_match('/if\s*\(\s*!?\s*defined\s*\(\s*[\'"]ABSPATH[\'"]\s*\)/i', $line))
 				{
-					$insertAt = $i + 1;
+					$insertAt = $i;
 					break;
 				}
 			}
-			if ($insertAt === null) $insertAt = count($newLines); // fallback to end of file
+			// 2. Else look for require_once wp-settings.php
+			if ($insertAt === null)
+			{
+				foreach ($newLines as $i => $line)
+				{
+					if (preg_match('/require_once\s+.*wp-settings\.php/i', $line))
+					{
+						$insertAt = $i;
+						break;
+					}
+				}
+			}
+			// 3. Else after <?php
+			if ($insertAt === null)
+			{
+				foreach ($newLines as $i => $line)
+				{
+					if (preg_match('/^\s*<\?php/i', $line))
+					{
+						$insertAt = $i + 1;
+						break;
+					}
+				}
+			}
+			// 4. Fallback: end of file
+			if ($insertAt === null) $insertAt = count($newLines);
 		}
 	
 		array_splice($newLines, $insertAt, 0, $atecLines);
