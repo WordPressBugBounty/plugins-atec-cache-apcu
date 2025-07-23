@@ -421,7 +421,7 @@ public static function maybe_register_settings($dir, $slug, $noNav = false, $cus
 		}
 	}
 	
-	if ($require) require(esc_url("$dir/includes/atec-$slug-register-settings.php"));
+	if ($require) require("$dir/includes/atec-$slug-register-settings.php");
 }
 
 public static function integrity_check($plugin): void // only on activation or when agreed
