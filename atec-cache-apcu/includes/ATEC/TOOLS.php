@@ -228,13 +228,6 @@ public static function format_duration($seconds)
 	return $time;
 }
 
-public static function url_OLD(): string
-{
-	static $cached = null;
-	if ($cached === null) $cached = strtok(rtrim(add_query_arg($_GET, admin_url('admin.php')), '/'), '&');	// phpcs:ignore
-	return $cached;
-}
-
 private static $url_whitelist = ['page', 'action', 'id', 'tab', 'section', 'nav', 'updated', 'settings-updated', '_wpnonce'];
 
 public static function url( $page = null ): string

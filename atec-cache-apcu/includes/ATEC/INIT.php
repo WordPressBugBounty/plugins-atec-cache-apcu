@@ -158,13 +158,6 @@ public static function normalized_uri(): string
 	return $uri;
 }
 
-public static function admin_url_OLD($slug=''): string
-{
-	static $cached = null;
-	if ($cached === null) $cached = self::site_url().'/wp-admin';
-	return $cached . ($slug!=='' ? '/admin.php?page=atec_'.$slug : '');
-}
-
 public static function admin_url( $slug = '' ): string
 {
 	static $cached_base = null;
@@ -251,15 +244,6 @@ public static function _POST($key, $default = '')
 {
 	if (isset($_POST[$key])) return sanitize_text_field(wp_unslash($_POST[$key]));	// phpcs:ignore
 	return $default;
-}
-
-// OUTDATED: 250704 | CLEANUP: Delete
-public static function POST($key, $default = '', $raw = false)
-{
-	return self::_POST($key, $default);
-	if (!isset($_POST[$key])) return $default; 	// phpcs:ignore
-	$value = wp_unslash($_POST[$key]);		// phpcs:ignore
-	return $raw ? $value : sanitize_text_field($value);
 }
 
 public static function bool($value): bool { return filter_var($value, FILTER_VALIDATE_BOOLEAN); }
