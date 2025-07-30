@@ -86,8 +86,6 @@ public static function headers()
 
 public static function callback($buffer)
 {
-		
-	error_log('callback DONOTCACHEPAGE defined ?'.defined('DONOTCACHEPAGE'));
 	if (strlen($buffer)<1024) return $buffer;
 	if (defined('DONOTCACHEPAGE') && DONOTCACHEPAGE) return $buffer; // Skip cache output
 
