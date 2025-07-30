@@ -47,13 +47,13 @@ private static function init()
 		self::create_plugin('wpdp', 'deploy', 'Install & auto-update atec plugins', 'FREE', false, true),				// new TOOLS|SKIPPED
 		self::create_plugin('wpdv', 'developer', 'Debug toolbox for developers', 'PRO', false, true),				// new TOOLS
 		self::create_plugin('wpds', 'dir-scan', 'Scan folders by size and count', 'FREE', true, true),				// new TOOLS|SKIPPED
-		self::create_plugin('wpfd', 'flush-debug', 'Admin bar „debug.log” trash button', 'PRO', false, true),				// new TOOLS
+		self::create_plugin('wpdpp', 'duplicate-page-post', 'Duplicate posts/pages easily', 'FREE', false, true),				// new TOOLS
 
 		//20
+		self::create_plugin('wpfd', 'flush-debug', 'Admin bar „debug.log” trash button', 'PRO', false, true),				// new TOOLS
 		self::create_plugin('wpf', 'forms', 'Lightweight, flexible form builder with shortcode', 'PRO', false, true),				// new TOOLS
 		self::create_plugin('wpfc', 'fake-content', 'Generates fake posts, pages, users, and images for testing', 'PRO', false, true),				// new TOOLS
 		self::create_plugin('wpff', 'foxyfy', 'FoxyFy CDN integration', 'PRO', false, true),			// new TOOLS
-		self::create_plugin('wpdpp', 'duplicate-page-post', 'Duplicate posts/pages easily', 'FREE', false, true),				// new TOOLS
 		self::create_plugin('wphi', 'hook-inspector', 'Logs hook timings for profiling', 'PRO', false, true),			// new TOOLS
 
 		self::create_plugin('wpht', 'htaccess', '.htaccess file editor', '', false, true),			// new TOOLS

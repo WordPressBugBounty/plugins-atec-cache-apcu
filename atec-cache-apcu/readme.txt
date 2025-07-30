@@ -6,7 +6,7 @@ Tested up to: 6.8
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.30
+Stable tag: 2.3.31
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,6 +75,24 @@ No. This plugin is APCu-only and does not require other memory caches.
 = What makes this faster than other solutions? =
 It uses pure APCu without network latency, with optimized logic for set/get/flush and auto-purging support.
 
+= How do I use DONOTCACHEPAGE to skip page caching for specific requests? =
+You can define the constant DONOTCACHEPAGE to prevent a page from being stored in the cache. To use it correctly, make sure it is defined early during WordPress execution — before output begins.
+
+For example, in a plugin or theme:
+
+<code>
+add_action('template_redirect', function() {
+	if ( is_page('thank-you') || is_user_logged_in() ) {
+		define('DONOTCACHEPAGE', true);
+	}
+});
+</code>
+
+This ensures the current request is processed normally but not stored in the page cache.
+
+Important:
+If a page has already been cached, this logic will not run — because the cached version is served before WordPress reaches your code. To apply new exclusions like this, make sure to purge the page cache after defining the logic.
+
 == ‘PRO’ Features ==
 
 - AOC Mode (Advanced Object Cache)
@@ -93,6 +111,9 @@ Advanced Page Cache is a ‘PRO’-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.31 [2025.07.30] =
+* if (defined(\'DONOTCACHEPAGE\') && DONOTCACHEPAGE) return; // Skip serving cache
 
 = 2.3.30 [2025.07.23] =
 * Line 424 in INIT fixed

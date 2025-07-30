@@ -43,7 +43,9 @@
 		$result = apcu_store($fullKey, $var, max($expire, 0));
 		if (!$result) 
 		{
-			error_log("⚠️ APCu failed to store: $fullKey (" . gettype($var) . ")");
+			error_log("⚠️ APCu failed to store: $fullKey (" . gettype($var) . "), size: " . strlen(serialize($var)) . " bytes");
+			// Prevent stale data from being served
+			apcu_delete($fullKey);
 		}
 		return $result;
 	}

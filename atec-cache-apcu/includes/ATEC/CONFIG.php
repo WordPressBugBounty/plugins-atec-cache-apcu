@@ -440,7 +440,8 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 				{
 					$default= $key== 'WP_DEBUG_DISPLAY'?'true' : 'false';
 					$subst= $default;
-					$status[$key]= $value;
+					//$status[$key]= $value;
+					$status[$key] = ($subst === 'true');  // ✅ valid boolean assignment
 					$content = self::adjust($content, $key, $subst);
 				}
 			}

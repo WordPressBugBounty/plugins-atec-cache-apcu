@@ -166,7 +166,7 @@ return function($una, $license_ok)
 				echo
 				'</div>';
 				
-				if ($msg = WPC::pcache_detected()) TOOLS::msg('warning', $msg);
+				if ($msg = WPC::pcache_detected()) TOOLS::msg('warning', '⚠️ '.$msg);
 
 			echo
 			'</div>',

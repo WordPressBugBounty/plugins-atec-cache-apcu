@@ -327,24 +327,6 @@ public static function init($plugin)
 	TOOLS::flush();
 
 	$una = TOOLS::una(__DIR__);
-	if (in_array($una->action, ['play', 'pause']))
-	{
-		$plugin = TOOLS::clean_request('plugin', 'atec_group_nonce');
-		$plugin_file = $plugin . '/' . $plugin . '.php';
-		switch ($una->action)
-		{
-			case 'play':
-				activate_plugins($plugin_file);
-				break;
-				
-			case 'pause':
-				deactivate_plugins($plugin_file);
-				break;
-		}			
-	}
-
-	static $active_plugins = null;
-	if ($active_plugins===null) $active_plugins = get_option('active_plugins', []);
 
 	$atec_group_arr = GROUP::all_plugins();
 	$una = TOOLS::una(__DIR__);
@@ -371,7 +353,7 @@ public static function init($plugin)
 		$prefix = INIT::plugin_prefix($a->name);
 		$plugin = $prefix.$a->name;
 	
-		$is_installed = FS::exists(WP_PLUGIN_DIR.'/'.esc_attr($plugin));
+		$is_installed = FS::exists(INIT::plugin_url($plugin));
 		
 		if ($is_installed) 
 		{
@@ -423,14 +405,6 @@ public static function init($plugin)
 										$href = INIT::build_url($a->slug);
 										echo '<a class="atec-nodeco" href="', esc_url($href) ,'">', esc_attr($fixed_name), '</a>';
 										self::pro_or_free($a);
-										$href = INIT::build_url('group','pause', '', ['plugin'=>$installed[$a->name]]);
-										echo
-										'<div class="atec-row-right">',
-											'<a class="atec-nodeco button button-secondary atec-btn-small" title="Deactivate" ',
-												'href="', esc_url($href), '">',
-												'<span class="', esc_attr(TOOLS::dash_class('controls-pause')), '"></span>',
-											'</a>',
-										'</div>';
 									}
 	
 								self::row_end();
@@ -462,17 +436,8 @@ public static function init($plugin)
 								
 								self::row_start(0);
 									\ATEC\SVG::echo($a->slug);
-									$href = INIT::build_url('group','play', '', ['plugin'=>$installed[$a->name]]);
-									echo 
-									esc_attr($fixed_name);
+									echo esc_attr($fixed_name);
 									self::pro_or_free($a);
-									echo
-									'<div class="atec-row-right">',
-										'<a class="atec-nodeco button button-secondary" title="Activate" ',
-											'href="', esc_url($href), '">',
-											'<span class="', esc_attr(TOOLS::dash_class('controls-play')), '"></span>',
-										'</a>',
-									'</div>';
 								self::row_end();
 								
 							self::block_end();

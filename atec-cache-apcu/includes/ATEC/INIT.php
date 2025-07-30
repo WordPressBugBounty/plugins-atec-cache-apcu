@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
 final class INIT {
 
 static $require_install = [ 'wpc', 'wpca', 'wpcm', 'wpcr', 'wpds', 'wpf', 'wpfm', 'wpht', 'wppp', 'wps', 'wpmcl', 'wpsh', 'wpwp' ];
-static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpl', 'wpll', 'wplu', 'wpmcl', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu'];
+static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpl', 'wpll', 'wplu', 'wpmcl', 'wpmin', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu'];
 static $admin_styles_loaded = false;
 static $allowed_admin_tags = 
 	[	
@@ -204,7 +204,7 @@ public static function add_plugin_settings($plugin_file)
 
 public static function plugin_settings(array $links, $plugin_file): array
 {
-	$dir = WP_PLUGIN_DIR . '/' . dirname($plugin_file);
+	$dir = self::plugin_dir(dirname($plugin_file));
 	$slug = \ATEC\GROUP::slug_by_dir($dir);
 
 	$url = self::admin_url($slug);
@@ -233,12 +233,6 @@ public static function extension_enabled($type)
 			break;
 	}
 	return false;
-}
-
-public static function error_log($args)
-{
-	if ($args === null || $args === '' || $args === false) return;
-	\ATEC\FS::put(WP_CONTENT_DIR.'/atec-debug.log', (is_scalar($args) ? (string) $args : print_r($args, true))."\n", FILE_APPEND);	// phpcs:ignore
 }
 
 public static function _GET($key, $default = '')
@@ -403,7 +397,7 @@ public static function register_activation_deactivation_hook($plugin_file, $acti
 
 public static function maybe_register_settings($dir, $slug, $noNav = false, $custom = '')
 {
-	$option_page = $_POST['option_page'] ?? '';	// phpcs:ignore
+	$option_page = self::_POST('option_page');
 	$is_option_page = strpos($option_page, 'atec_' . strtoupper($slug)) !== false;
 
 	$require = $is_option_page;
@@ -494,7 +488,7 @@ public static function normalize_path(string $path): string
 public static function plugin_by_dir($dir): string
 {
 	$dir = self::normalize_path($dir);
-	$pluginDir = self::normalize_path(WP_PLUGIN_DIR);
+	$pluginDir = self::normalize_path(self::plugin_dir());
 
 	if (!$dir || !$pluginDir || strpos($dir, $pluginDir) !== 0) return '';
 
@@ -504,8 +498,15 @@ public static function plugin_by_dir($dir): string
 	return $parts[0] ?? '';
 }
 
-public static function plugin_url($plugin) : string
-{ return WP_PLUGIN_URL . '/' . $plugin; }
+public static function plugin_dir($plugin = null) : string
+{ 
+	return $GLOBALS['atec_plugins_globals']['WP_PLUGIN_DIR'] . ($plugin ? '/' . $plugin : '');
+}
+
+public static function plugin_url($plugin = null) : string
+{ 
+	return $GLOBALS['atec_plugins_globals']['WP_PLUGIN_URL'] . ($plugin ? '/' . $plugin : '');
+}
 
 public static function plugin_url_by_dir($dir) : string		// required by self::menu, reg_script, reg_style
 { return self::plugin_url(self::plugin_by_dir($dir)); }
@@ -519,7 +520,7 @@ public static function group_callback($plugin): callable
 { return function () use ($plugin) { self::group_page($plugin); 	}; }
 
 public static function dashboard_callback($plugin, $slug): callable
-{ return function () use ($plugin, $slug) { require WP_PLUGIN_DIR . '/' . $plugin . "/includes/atec-{$slug}-dashboard.php"; }; }
+{ return function () use ($plugin, $slug) { require self::plugin_dir($plugin) . "/includes/atec-{$slug}-dashboard.php"; }; }
 
 // restrict certain plugins to post/page editors
 // Maps capability keys (WP) and semantic role shortcuts (admin/editor)

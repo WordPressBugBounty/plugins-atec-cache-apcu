@@ -54,10 +54,10 @@ final class FS {
 
 	public static function fix_separator($str): string { return (DIRECTORY_SEPARATOR === '/') ? $str : str_replace('/', DIRECTORY_SEPARATOR, $str); 	}
 
-	public static function install_default_files($dir, $slug, &$s) : array
+	public static function install_default_files($dir, $slug, &$s, $public = false) : array
 	{
 		$notice = [];
-		$upload_dir = self::install_files($dir, '', [], $s);
+		$upload_dir = self::install_files($dir, '', [], $s, $public);
 		if (!$s)
 		{
 			INIT::build_notice($notice, '', 'Failed to create ‘uploads’ folder and files');
@@ -66,7 +66,7 @@ final class FS {
 		return ['notice' => $notice, 'upload_dir' => $upload_dir];
 	}
 	
-	public static function install_files($dir, $sub_dir, $arr, &$s) : string
+	public static function install_files($dir, $sub_dir, $arr, &$s, $public = false) : string
 	{
 		$plugin = INIT::plugin_by_dir($dir);
 		$plugin_dir = WP_PLUGIN_DIR .'/'. $plugin;
@@ -74,7 +74,7 @@ final class FS {
 		$upload_dir = self::upload_dir(str_replace('atec-', '', $plugin).$sub_dir);	// Base directory is uploads/plugin unless sub_dir is provided
 		self::mkdir($upload_dir);	// Ensure directory exists
 		$s = $s && (self::put($upload_dir.'/index.php', '<?php exit(403); ?>')!==false);	// Protect the directory
-		$s = $s && (self::put($upload_dir.'/.htaccess', 'Require local')!==false);			// Protect the directory
+		if (!$public) $s = $s && (self::put($upload_dir.'/.htaccess', 'Require local')!==false);			// Protect the directory
 		foreach($arr as $key=>$value)
 		{ $s = $s && self::copy($plugin_dir.'/install/'.$key, $upload_dir.'/'.$value, true); }
 		return $upload_dir;

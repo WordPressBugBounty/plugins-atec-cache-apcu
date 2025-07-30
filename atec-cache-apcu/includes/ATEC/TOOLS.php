@@ -138,7 +138,11 @@ public static function size_format($bytes, $decimals = 0)
 public static function abspath()
 {
 	static $cached = null;
-	if ($cached === null) { $cached = function_exists('get_home_path') ? @get_home_path() : ABSPATH; }
+	if ($cached === null) 
+	{ 
+		if (! function_exists('get_home_path')) require_once ABSPATH . 'wp-admin/includes/file.php';
+		$cached = get_home_path();
+	}
 	return $cached;
 }
 
@@ -272,13 +276,6 @@ public static function loader_dots(int $count = 9): void
 
 private static function progress_div(): void {}		// OUTDATED: 250628 | CLEANUP: Delete
 public static function progress(): void { }			// OUTDATED: 250628 | CLEANUP: Delete
-
-// Helper for long scripts like backup/restore
-function set_limit(int $seconds = 0): void 
-{
-	@set_time_limit($seconds);											// phpcs:ignore
-	@ini_set('max_execution_time', (string)$seconds);		// phpcs:ignore
-}
 
 public static function flush(): void
 {
@@ -452,11 +449,11 @@ public static function pro_only($una, $break=false): void
 
 public static function pro_missing($class= ''): void
 {
-	if ($class!== '' && class_exists($class)) return;
-	echo  '
-	<div class="atec-badge atec-dilb" style="background: #fff0f0;">
+	if ($class !== '' && class_exists($class)) return;
+	echo
+	'<div class="atec-badge atec-dilb" style="background: #fff0f0;">
 		<div class="atec-dilb" style="width:20px; margin-right:5px;">'; self::dash_span('dismiss'); echo '</div>
-		<div class="atec-dilb atec-vam">A required class-file is missing – please ';
+		<div class="atec-dilb atec-vam">A required class-file ('.esc_html($class).') is missing – please ';
 		if (is_plugin_active('atec-deploy/atec-deploy.php')) echo 'use <a href="', esc_url(admin_url().'admin.php?page= atec_wpdp'), '">';
 		else echo 'download/activate <a href="https://atecplugins.com/WP-Plugins/atec-deploy.zip">';
 		echo 'atec-deploy</a> to install the ‘PRO’ version of this plugin.
@@ -1303,9 +1300,12 @@ public static function active_no_cfg($str, $ok=true, $noCfg=true): void
 	$border		= $ok ? 'var(--border-success)' : 'var(--border-error)';
 	$color_class	= $ok ? 'green' : 'red';
 	echo
-	'<div class="atec-badge atec-box-nocfg" style="background:', esc_attr($bg_color), '; border: ', esc_attr($border), ';">
-		<div>'; self::dash_span('plugins-checked', 'atec-'.$color_class); echo '</div>
-		<div class="atec-', esc_attr($color_class), '">', esc_html($str), '.', ($noCfg ? ' No configuration required.' : ''), '</div>
+	'<div class="atec-badge atec-box-nocfg atec-db" style="background:', esc_attr($bg_color), '; border: ', esc_attr($border), ';">
+		<div class="atec-mb-5 atec-fs-16">'; 
+			self::dash_span('plugins-checked', 'atec-'.$color_class); 
+			echo ' atec <b>Just Works</b> Series<span class="atec-fs-14">', ($noCfg ? ' · No configuration required — it just works.' : ''), '</span>',
+		'</div>
+		<div class="atec-', esc_attr($color_class), '">', esc_html($str), '.</div>
 	</div>';
 }
 
