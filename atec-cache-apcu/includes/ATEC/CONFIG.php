@@ -3,6 +3,7 @@ namespace ATEC;
 defined('ABSPATH') || exit;
 
 use ATEC\FS;
+use ATEC\INIT;
 use ATEC\TOOLS;
 
 final class CONFIG {
@@ -102,74 +103,6 @@ public static function adjust($content, $name, $value): string
 		$atecLines[] = $defineLine;
 	}
 
-	// if (!empty($atecLines))
-	// {
-	// 	sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
-	// 	if ($insertAt !== null) array_splice($newLines, $insertAt, 0, $atecLines);
-	// 	else array_unshift($newLines, ...$atecLines);
-	// 	$modified = true;
-	// }
-
-	// ✅ Summary of this change:
-	//	You ensure defines are inserted after <?php, never before.
-	// If no <?php is found (weird case), insert at the end of the file instead of top.
-	//	This fully prevents PHP parse errors.
-	// if (!empty($atecLines))
-	// {
-	// 	sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
-	// 
-	// 	if ($insertAt === null)
-	// 	{
-	// 		// Fallback: insert after <?php if found
-	// 		foreach ($newLines as $i => $line)
-	// 		{
-	// 			if (preg_match('/^\s*<\?php/i', $line))
-	// 			{
-	// 				$insertAt = $i + 1;
-	// 				break;
-	// 			}
-	// 		}
-	// 		if ($insertAt === null) $insertAt = count($newLines); // fallback to end of file
-	// 	}
-	// 
-	// 	array_splice($newLines, $insertAt, 0, $atecLines);
-	// 	$modified = true;
-	// }
-	
-	// if (!empty($atecLines))
-	// {
-	// 	sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
-	// 
-	// 	if ($insertAt === null)
-	// 	{
-	// 		// Try before wp-settings.php
-	// 		foreach ($newLines as $i => $line)
-	// 		{
-	// 			if (preg_match('/require_once\s+.*wp-settings\.php/i', $line))
-	// 			{
-	// 				$insertAt = $i;
-	// 				break;
-	// 			}
-	// 		}
-	// 		// If not found, insert after <?php
-	// 		if ($insertAt === null)
-	// 		{
-	// 			foreach ($newLines as $i => $line)
-	// 			{
-	// 				if (preg_match('/^\s*<\?php/i', $line))
-	// 				{
-	// 					$insertAt = $i + 1;
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 		if ($insertAt === null) $insertAt = count($newLines); // fallback to end
-	// 	}
-	// 
-	// 	array_splice($newLines, $insertAt, 0, $atecLines);
-	// 	$modified = true;
-	// }
-	
 	if (!empty($atecLines))
 	{
 		sort($atecLines, SORT_STRING | SORT_FLAG_CASE);
@@ -460,7 +393,7 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 			// Protected debug.log file by the use of a rewrite rule
 			if ($debug_status_before!== $status['WP_DEBUG'])
 			{
-				$htaccess_path = FS::trailingslashit(WP_CONTENT_DIR).'.htaccess';
+				$htaccess_path = FS::trailingslashit(INIT::content_dir()).'.htaccess';
 				$htaccess = FS::get($htaccess_path);
 				if ($htaccess)
 				{

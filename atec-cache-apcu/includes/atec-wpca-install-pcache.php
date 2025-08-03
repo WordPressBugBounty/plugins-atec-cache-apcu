@@ -23,7 +23,7 @@ public static function init($p_cache)
 	$install_path = dirname(__DIR__).'/install/page-cache.php';
 	
 	$error_str = '‘advanced-cache.php’';
-	$target_path = WP_CONTENT_DIR.'/advanced-cache.php';
+	$target_path = INIT::content_dir().'/advanced-cache.php';
 	$content = FS::get($target_path);
 
 	if ($content && (!(str_contains($content, 'atec-apcu-page-cache') || str_contains($content, 'atec-cache-apcu-adv-page-cache'))))

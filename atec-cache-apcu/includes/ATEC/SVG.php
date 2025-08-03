@@ -27,21 +27,18 @@ defined('ABSPATH') || exit;
 final class SVG
 {
 
-private static $allowed_svg = [
-	'svg' => [ 'xmlns' => [], 'xmlns:xlink' => [], 'viewBox' => [], 'width' => [], 'height' => [], 'class' => [], 'style' => [] ],
-	'g' => [ 'transform' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ],
-	'path' => [ 'd' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ],
-	'stop' => [ 'offset' => [], 'stop-color' => [], 'style' => [] ],
-	
-	'defs' => [],
-	'linearGradient' => [ 'id' => [], 'x1' => [], 'y1' => [], 'x2' => [], 'y2' => [], 'gradientUnits' => [], 'gradientTransform' => [] ],
-	'radialGradient' => [ 'id' => [], 'cx' => [], 'cy' => [], 'r' => [], 'fx' => [], 'fy' => [], 'gradientUnits' => [], 'gradientTransform' => [] ],
-	'circle' => [ 'cx' => [], 'cy' => [], 'r' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ],
-	'use' => [ 'xlink:href' => [], 'href' => [], 'transform' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ]
-];
-
-
-
+	// private static $allowed_svg = [
+	// 	'svg' => [ 'xmlns' => [], 'xmlns:xlink' => [], 'viewBox' => [], 'width' => [], 'height' => [], 'class' => [], 'style' => [] ],
+	// 	'g' => [ 'transform' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ],
+	// 	'path' => [ 'd' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ],
+	// 	'stop' => [ 'offset' => [], 'stop-color' => [], 'style' => [] ],
+	// 	
+	// 	'defs' => [],
+	// 	'linearGradient' => [ 'id' => [], 'x1' => [], 'y1' => [], 'x2' => [], 'y2' => [], 'gradientUnits' => [], 'gradientTransform' => [] ],
+	// 	'radialGradient' => [ 'id' => [], 'cx' => [], 'cy' => [], 'r' => [], 'fx' => [], 'fy' => [], 'gradientUnits' => [], 'gradientTransform' => [] ],
+	// 	'circle' => [ 'cx' => [], 'cy' => [], 'r' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ],
+	// 	'use' => [ 'xlink:href' => [], 'href' => [], 'transform' => [], 'fill' => [], 'stroke' => [], 'class' => [], 'style' => [] ]
+	// ];
 
 	private static $svg = 
 	[

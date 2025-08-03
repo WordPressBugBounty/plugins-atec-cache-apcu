@@ -3,13 +3,14 @@ namespace ATEC_WPCA;
 defined('ABSPATH') || exit;
 
 use ATEC\FS;
+use ATEC\INIT;
 use ATEC\WPC;
 
 final class Install_OCache {
 	
 public static function init($option): string
 {
-	$target_path = WP_CONTENT_DIR.'/object-cache.php';
+	$target_path = INIT::content_dir().'/object-cache.php';
 	$content = FS::get($target_path);
 
 

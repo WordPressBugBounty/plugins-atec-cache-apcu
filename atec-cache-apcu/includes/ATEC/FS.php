@@ -16,7 +16,7 @@ final class FS {
 			$cached = self::trailingslashit(
 				defined(WP_DEBUG_LOG) && !is_bool(WP_DEBUG_LOG)
 				? WP_DEBUG_LOG
-				: WP_CONTENT_DIR
+				: INIT::content_dir()
 				).'debug.log';
 		}
 		return $cached;
@@ -69,7 +69,7 @@ final class FS {
 	public static function install_files($dir, $sub_dir, $arr, &$s, $public = false) : string
 	{
 		$plugin = INIT::plugin_by_dir($dir);
-		$plugin_dir = WP_PLUGIN_DIR .'/'. $plugin;
+		$plugin_dir = INIT::plugin_dir($plugin);
 		$sub_dir = $sub_dir === '' ? '' : '/'.$sub_dir;
 		$upload_dir = self::upload_dir(str_replace('atec-', '', $plugin).$sub_dir);	// Base directory is uploads/plugin unless sub_dir is provided
 		self::mkdir($upload_dir);	// Ensure directory exists

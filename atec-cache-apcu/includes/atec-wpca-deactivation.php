@@ -2,6 +2,7 @@
 defined('ABSPATH') || exit;
 
 use ATEC\FS;
+use ATEC\INIT;
 use ATEC\WPCA;
 
 (function() {
@@ -9,7 +10,7 @@ use ATEC\WPCA;
 	if (defined('ATEC_OC_ACTIVE_APCU'))
 	{
 		wp_cache_flush();
-		FS::unlink(FS::trailingslashit(WP_CONTENT_DIR).'object-cache.php');
+		FS::unlink(FS::trailingslashit(INIT::content_dir()).'object-cache.php');
 	}
 	
 	if (WPCA::settings('p_cache'))

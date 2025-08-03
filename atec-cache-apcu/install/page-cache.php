@@ -24,7 +24,7 @@ define('ATEC_ADV_PC_ACTIVE_APCU', true);
 		is_admin()
 	) return;
 	
-	@require WP_CONTENT_DIR.'/plugins/atec-cache-apcu/includes/atec-wpca-pcache.php';
+	@require 'plugins/atec-cache-apcu/includes/atec-wpca-pcache.php';
 	\ATEC_WPCA\PCache::init();
 
 })();

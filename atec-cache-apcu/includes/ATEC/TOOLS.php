@@ -52,7 +52,9 @@ public static function progress_percent($id, $percent = null)
 	}
 	else
 	{
-		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Inline script required for real-time progress
+		// Inline script needed for real-time visual feedback during streamed task execution.
+		// Cannot be enqueued due to progressive flush and mid-process updates.
+		// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
 		printf(
 			'<script>%s</script>',
 			"jQuery('#atec_progress_percent_" . esc_js($id) . "').css('width','" . esc_js($percent) . "%');jQuery(document.currentScript).remove();"
@@ -1012,17 +1014,16 @@ public static function clean_request_bool($key) : bool
 public static function clean_request( $key, $nonce = '', $type = 'text' )
 {
 	$nonce_to_check = ( $nonce !== '' ) ? $nonce : INIT::nonce();
-	if ( isset( $_POST[ $key ] ) ) 
+	$p_key= INIT::_POST($key);
+	if ($p_key) 
 	{
 		if ( ! check_admin_referer( $nonce_to_check ) ) return '';
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$value = wp_unslash( $_POST[ $key ] );	// Sanitizing before return 
+		$value = $p_key;
 	}
-	elseif ( isset( $_GET[ $key ] ) ) 
+	elseif ($g_key= INIT::_GET($key)) 
 	{
-		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ?? '' ) ), $nonce_to_check ) ) return '';		
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$value = wp_unslash( $_GET[ $key ] );		// Sanitizing before return 
+		if ( ! wp_verify_nonce( INIT::_GET('_wpnonce'), $nonce_to_check ) ) return '';		
+		$value = $g_key;
 	}
 	else 
 	{

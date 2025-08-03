@@ -285,7 +285,7 @@ private static function wpta_count_users()
 private static function load_style()
 {
 	TOOLS::reg_inline_style('dashboard',
-		'.atec-badge { display: inline-flex; align-items: center; 	white-space: nowrap; padding: 2px 4px; margin: 0; border-radius: 4px; }
+		'.atec-badge { display: inline-flex; align-items: center; white-space: nowrap; padding: 2px 4px; margin: 0; border-radius: 4px; }
 		.atec-badge-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; order:0; }
 		.atec-badge-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
 		.atec-badge > div { display: inline; }
@@ -301,7 +301,7 @@ private static function load_style()
 }
 
 private static function block_start($min_height=20, $min_width=255)
-{ echo '<div class="atec-dilb atec-box-white atec-vat" style="min-width: ', esc_attr($min_width), 'px; min-height: ', esc_attr($min_height), 'px; margin: 0 5px 5px 5px; padding: 5px 5px 0 5px;">'; }
+{ echo '<div class="atec-dilb atec-box-white atec-vat" style="max-width: 255px; min-width: ', esc_attr($min_width), 'px; min-height: ', esc_attr($min_height), 'px; margin: 0 5px 5px 5px; padding: 5px 5px 0 5px;">'; }
 
 private static function block_end()
 { echo '</div>'; }
@@ -344,16 +344,16 @@ public static function init($plugin)
 	$installed = [];
 	$not_installed = [];
 	$active = [];
-	
-	$show_active = false;
+	$active_plugins = get_option( 'active_plugins' );
+
+	$show_active = true;
 	$show_passive = false;
 	
 	foreach ($atec_group_arr as $a)
 	{
 		$prefix = INIT::plugin_prefix($a->name);
 		$plugin = $prefix.$a->name;
-	
-		$is_installed = FS::exists(INIT::plugin_url($plugin));
+		$is_installed = FS::exists(INIT::plugin_dir($plugin));
 		
 		if ($is_installed) 
 		{
@@ -386,7 +386,7 @@ public static function init($plugin)
 				if ($show_active)
 				{
 					self::border_block_start();
-	
+
 						foreach ($atec_group_arr as $a)
 						{
 							if (!isset($installed[$a->name])) continue;
@@ -494,10 +494,10 @@ public static function init($plugin)
 				'<center>
 					<p class="atec-fs-12" style="max-width:80%; line-height: 1.4em;">
 						Optimized for speed, size, and minimal CPU footprint.<br>
-						Adds under <strong>0.2 <small>ms</small></strong> per plugin — native PHP, zero bloat.<br>
-						Fully tested on Linux, Windows, macOS — Apache, NGINX, LiteSpeed.
+						Adds under <strong>0.2&nbsp;<small>ms</small></strong> per plugin — native PHP, zero bloat.<br>
+						Tested across Linux, Windows, macOS — Apache, NGINX, LiteSpeed and 🦊 <b>FoxyFy</b>.
 					</p>
-					<a class="atec-nodeco" class="atec-center button" href="https://de.wordpress.org/plugins/search/atec/" target="_blank">Visit all brand plugins in the WordPress directory.</a>
+					<a class="atec-nodeco atec-center button" href="https://de.wordpress.org/plugins/search/atec/" target="_blank">View all atec Plugins in the WordPress directory.</a>
 				</center>';
 
 				echo '
