@@ -604,7 +604,7 @@ private static $allowed_tr =
 		'hr'		=> ['class' => [] ] 
 	];
 
-// NEW: introduced 250710 | CLEANUP: remove table_tr
+// NEW: introduced 250710 | CLEANUP: remove table_tr
 public static function tr($tds = [], $tag = 'td', $class = ''): void
 { self::table_tr($tds, $tag, $class); }
 
@@ -661,7 +661,7 @@ public static function table_tr($tds = [], $tag = 'td', $class = ''): void
 	echo '</tr>';
 }
 
-// NEW: introduced 250710 | CLEANUP: remove table_td
+// NEW: introduced 250710 | CLEANUP: remove table_td
 public static function td($td = '', $class= '')
 { self::table_td($td, $class); }
 

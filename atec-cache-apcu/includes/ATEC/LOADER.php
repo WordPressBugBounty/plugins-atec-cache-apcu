@@ -29,9 +29,10 @@ private static function normalize_path($path)
 	return str_replace('\\', '/', $path);
 }
 
-private static function get_plugin_base_root($path) 
+private static function get_plugin_base_root($path)
 {
-	return dirname(str_replace('/includes/ATEC/', '/', $path));
+	$path = self::normalize_path($path);
+	return dirname(preg_replace('#/includes/ATEC/.*$#', '', $path));
 }
 
 public static function autoload($class)
@@ -50,9 +51,9 @@ public static function autoload($class)
 	if (strpos($class, 'ATEC\\') !== 0) return;		// Skip if not an ‘atec’ class	
 	if (isset($loaded[$class])) return;					// Skip if class already loaded
 
-	if (isset($class_map[$class])) 						// Load from known map
+	if (isset(self::$class_map[$class])) 				// Load from known map
 	{
-		require $class_map[$class]; 
+		require self::$class_map[$class]; 
 		$loaded[$class] = true;
 		return; 
 	}

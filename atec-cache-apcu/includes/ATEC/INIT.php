@@ -488,6 +488,7 @@ public static function content_dir() : string
 	if ($cached === null) $cached = dirname(self::plugin_dir());
 	return $cached;
 }
+
 public static function plugin_dir($plugin = null) : string
 { 
 	return $GLOBALS['atec_plugins_globals']['WP_PLUGIN_DIR'] . ($plugin ? '/' . $plugin : '');

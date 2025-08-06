@@ -47,3 +47,4 @@ public static function schedule($name)
 { return wp_get_schedule($name); }
 
 }
+?>
