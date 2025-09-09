@@ -13,7 +13,7 @@ use ATEC\WPCA;
 		FS::unlink(FS::trailingslashit(INIT::content_dir()).'object-cache.php');
 	}
 	
-	if (WPCA::settings('p_cache'))
+	if (WPCA::apcu_enabled() && WPCA::settings('p_cache'))
 	{
 		require(__DIR__.'/atec-wpca-install-pcache.php');
 		\ATEC_WPCA\Install_PCache::init(false);

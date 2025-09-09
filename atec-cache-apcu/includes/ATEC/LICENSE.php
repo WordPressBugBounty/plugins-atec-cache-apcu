@@ -16,7 +16,6 @@ final class LICENSE
 			🎁 ';
 
 			if ($slug=== 'wpmc') echo '<strong>Seven additional storage options</strong>';
-			elseif ($slug=== 'wpct') echo '<strong>Redis / Memcached storage</strong>';
 			else echo '<strong>Including over 40 valuable plugins</strong>';
 
 			echo
@@ -41,31 +40,15 @@ final class LICENSE
 						<li>⭐ Custom post types</li>
 						<li>⭐ Full page cache priming</li>';
 					}
-					elseif ($slug=== 'wpct')
-					{
-						echo
-						'<li>⭐ Object Cache</li>
-						<li>⭐ Database Tuning</li>
-						<li>⭐ Full page cache priming</li>
-						<li>⭐ <strong>WooCommerce</strong> product caching</li>
-				</ul>
+				echo
+				'</ul>
 			</div>
 
 			<div class="atec-dilb atec-ml-10">
 				<ul class="atec-border-white atec-bg-w">
-					<li>⭐ Minify HTML</li>
-					<li>⭐ Exclude URLs</li>
-					<li>⭐ Custom post types</li>';
-					}
-					else
-					{
-						echo
-						'<li>⭐ ‘Lifetime-site-License’</li>
-						<li>⭐ Access to all the ‘PRO’ features</li>';
-					}
-
-				echo
-				'</ul>
+					<li>⭐ ‘Lifetime-site-License’</li>
+					<li>⭐ Access to all the ‘PRO’ features</li>
+				</ul>
 			</div>
 
 		</div>';
@@ -74,7 +57,7 @@ final class LICENSE
 	public static function init($una)
 	{
 		if (!extension_loaded('openssl')) INIT::admin_notice($una->slug, 'warning', 'The openSSL extension is required for license handling.');
-		$is_atec = !in_array($una->slug,['wpmc', 'wpct'],true);
+		$is_atec = !in_array($una->slug,['wpmc'],true);
 
 		echo
 		'<div class="atec-border-white atec-center" style="margin: 20px auto; padding: 20px;">
@@ -102,7 +85,7 @@ final class LICENSE
 							$halfway = round(count($atec_group)/2);
 							foreach ($atec_group as $index => $p)
 							{
-								if (in_array($p->slug,['wpmc', 'wpct'])) continue;
+								if (in_array($p->slug,['wpmc'])) continue;
 								if ($index % $halfway===0) echo '<br>';
 								\ATEC\SVG::echo($p->slug, 'atec-m-3'); 
 							}
@@ -117,7 +100,7 @@ final class LICENSE
 						'No subscription. No registration required.</b>',
 					'</p>';
 
-					$domain = $una->slug=== 'wpmc' ? 'wpmegacache' : ($una->slug=== 'wpct' ? 'cachetune' : 'atecplugins');
+					$domain = $una->slug === 'wpmc' ? 'wpmegacache' : 'atecplugins';
 					$licenseUrl = 'https://'.$domain.'.com/license/';
 
 					echo

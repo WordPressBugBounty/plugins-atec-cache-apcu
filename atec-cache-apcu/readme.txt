@@ -6,7 +6,7 @@ Tested up to: 6.8
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.38
+Stable tag: 2.3.52
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,33 @@ Advanced Page Cache is a ‘PRO’-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.52 [2025.09.09] =
+* Fixed get_plugin_base_root on WIN
+
+= 2.3.51 [2025.08.10] =
+* SVN update and WP clean upload
+
+= 2.3.50 [2025.08.09] =
+* SVN WORKS
+
+= 2.3.44 [2025.08.09] =
+* SVN should work now
+
+= 2.3.43 [2025.08.09] =
+* SVN update
+
+= 2.3.42 [2025.08.09] =
+* SVN update
+
+= 2.3.41 [2025.08.09] =
+* SVN update
+
+= 2.3.40 [2025.08.09] =
+* Testing new SVN script
+
+= 2.3.39 [2025.08.09] =
+* Testing new SVN script
 
 = 2.3.38 [2025.08.06] =
 * get_plugin_base_root 👈 one level up

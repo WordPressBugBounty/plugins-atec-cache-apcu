@@ -11,6 +11,14 @@ final class CONFIG {
 private static $content;
 private static string $regBase = '[\/_\-\.\w\d]';
 
+// Check if path is within wp-content directory
+private static function valid_path($path)
+{
+    $path = wp_normalize_path( $path );
+    $path = realpath( $path );
+    return $path && strpos( $path, wp_normalize_path( WP_CONTENT_DIR ) ) === 0;
+}
+
 public static function path()
 {
 	static $cached = null;
@@ -328,7 +336,7 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 			{
 				$newLog = TOOLS::clean_request('custom_log');
 				$key= 'WP_DEBUG_LOG';
-				if ($newLog=== '' || $newLog=== $default_debug_path)
+				if ($newLog === '' || $newLog === $default_debug_path)
 				{
 					$una->action_msg= 'Reseted to default';
 					$subst= 'true';
@@ -337,7 +345,7 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 				}
 				else
 				{
-					if (!preg_match('/'.self::$regBase.'+/', $newLog) || !str_starts_with($newLog, '/'))
+					if (!self::valid_path($newLog))
 					{
 						$una->action_msg= 'Invalid path – reseted to default';
 						$subst= 'true';

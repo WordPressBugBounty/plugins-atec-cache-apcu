@@ -58,11 +58,9 @@ public static function nonce_key(string $slug): string
 public static function nonce_check(string $slug): void
 {
 	$key = self::nonce_key($slug);
-	$val = INIT::POST('nonce');
+	$val = INIT::_POST('nonce');
 
-	if (! wp_verify_nonce($val, $key)) {
-		wp_send_json_error(['error' => 'Nonce check failed', 'key' => $key], 403);
-	}
+	if (! wp_verify_nonce($val, $key)) { wp_send_json_error(['error' => 'Nonce check failed', 'key' => $key], 403); }
 }
 
 /**

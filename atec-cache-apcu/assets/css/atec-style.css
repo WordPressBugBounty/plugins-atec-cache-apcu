@@ -364,15 +364,15 @@
 /* BTN */
 .atec-confirm-btn { position: relative; display:flex; align-items:center; padding: 0 !important; }
 .atec-confirm-btn.button:focus:not(:focus-visible), .atec-confirm-btn.button:active { outline:none; }
-.atec-confirm-btn .atec-confirm-inner { display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; transition:all .15s ease; }
+.atec-confirm-btn .atec-confirm-inner { display:flex; align-items:center; justify-content:center; width:100%; transition:all .15s ease; }
 .atec-confirm-label 
 { 
-	display: none; position: absolute; top: 50%; left: 50%; font-size: 8px; color: #e50002; background: rgba(255, 255, 255, 0.9); line-height: 1; text-align: center; 
-	transform: translate(-50%, -50%) rotate(-45deg); transform-origin: center; pointer-events: none; border-radius: var(--px-3); white-space: nowrap; 
+	display: none; position: absolute; top: 50%; left: 50%; font-size: 8px; font-weight: 600; color: #fd0002; background: rgba(255, 255, 255, 0.5); line-height: 1; text-align: center; 
+	transform: translate(-50%, -50%) rotate(-22.5deg); transform-origin: center; pointer-events: none; border-radius: var(--px-3); white-space: nowrap; 
 }
 .atec-confirm-label::before { content: "Confirm?"; display: block; 	width: 100%; text-align: center; }
 .atec-confirm-btn.atec-confirm-ready .atec-confirm-label { display:block; }
-
+.atec-confirm-btn.atec-confirm-ready { color: #ac0001; }
 /* HELP */
 
 .atec-help	 

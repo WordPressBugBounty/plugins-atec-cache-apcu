@@ -539,9 +539,8 @@ public static function admin_head_styles()
 	$id = 'atec-admin-head';
 	wp_register_style($id, false, [], '1.0.0');
 	wp_enqueue_style($id);
-	wp_add_inline_style($id, '
-		.toplevel_page_atec_group .wp-menu-image img { max-width: 20px !important; max-height: 20px !important; }
-		#toplevel_page_atec_group .wp-submenu .atec-svg-icon { display: inline-flex; max-width: 20px !important; text-align: center; vertical-align: middle; margin: 0 6px 0 -3px; }
+	wp_add_inline_style($id,
+		'#toplevel_page_atec_group .wp-submenu .atec-svg-icon { display: inline-flex; max-width: 20px !important; text-align: center; vertical-align: middle; margin: 0 6px 0 -3px; }
 		#wpadminbar .atec-admin-bar-row { display: flex; gap: 5px; align-items: center; }
 		#wpadminbar .atec-admin-bar-row svg { display: block; flex: none; object-fit: contain; width: 18px; height: 18px; max-height: 18px; }
 	');
@@ -553,7 +552,7 @@ public static function menu($dir, $slug, $title, $css=[], $js=[]): bool
 	
 	static $style_loaded = null;
 	static $atec_group_active = null;
-	static $single_slug = ['wpmc', 'wpct'];
+	static $single_slug = ['wpmc'];
 
 	$single = in_array($slug, $single_slug);
 	$menu_slug = 'atec_'.$slug;
@@ -584,8 +583,8 @@ public static function menu($dir, $slug, $title, $css=[], $js=[]): bool
 		$group_slug = 'atec_group';
 		if ($atec_group_active===null) // add top-level group if not already present
 		{
-			$icon_url = self::plugin_url_by_dir($dir). '/includes/ATEC/SVG.php?logo=true';
-			add_menu_page('atec-systems', 'atec-systems', 'manage_options', $group_slug, $group_callback, $icon_url);
+			$icon_data = \ATEC\SVG::base64('wpa');
+			add_menu_page('atec-systems', 'atec-systems', 'manage_options', $group_slug, $group_callback, $icon_data);
 			add_submenu_page($group_slug, 'Group', '<span class="wp-menu-image dashicons-before dashicons-sos" style="margin: 0 8px 0 -5px; "></span>Dashboard', 'manage_options', $group_slug, $group_callback);
 			$atec_group_active = true;
 		}

@@ -294,7 +294,7 @@ private static function load_style()
 		.atec-status-label { font-weight: 600; margin-right: 4px; color: #222; }
 		.atec-status-value { color: #555; }
 		.dashicons { width:20px; height:20px; }
-		.atec-page A.button { border-color: #e0e0e0 !important; background: #f6f6f6; padding: 0 !important; }
+		.atec-page A.button { border-color: #e0e0e0 !important; background: #f6f6f6; }
 		.atec-page .button { min-width: 24px !important; min-height: 24px !important; }
 		.atec-pro, .atec-free { align-self: start; margin-left: -5px; font-size: 10px; }
 		');
@@ -385,6 +385,7 @@ public static function init($plugin)
 
 				if ($show_active)
 				{
+					TOOLS::h(3,'🟢 Active plugins');
 					self::border_block_start();
 
 						foreach ($atec_group_arr as $a)
@@ -424,6 +425,8 @@ public static function init($plugin)
 	
 				if ($show_passive)
 				{
+					TOOLS::h(3,'🟡 Paused plugins');
+
 					self::border_block_start();
 					
 						foreach ($atec_group_arr as $a)
@@ -445,9 +448,27 @@ public static function init($plugin)
 						
 					self::block_end();
 				}
+				
+				TOOLS::h(3,'💯 Our latest plugin');
+				
+				echo
+				'<div class="atec-db atec-border-white atec-mb-10">
+					<div class="atec-dilb atec-box-white atec-vat" style="margin: 0 auto; padding: 5px 5px 0 5px;">
+						<div class="atec-row atec-mb-5" style="padding: 0 5px; align-items: center; color: #f47218; font-weight: 600;">
+							🦊 FoxyFy <div class="atec-pro">PRO</div>
+							<div class="atec-row-right">
+								<a title="Download from atecplugins.com" class="atec-nodeco button button-secondary atec-btn-small" href="https://atecplugins.com/WP-Plugins/atec-foxyfy.zip" download=""><span class="dashicons dashicons-download"></span></a>
+							</div>
+						</div>
+						<hr>
+						<div style="padding: 0 5px 10px 5px;">Exclusive WordPress plugin to deliver your site worldwide using the all-new FoxyFy Content Delivery Network (CDN).</div>
+					</div>
+				</div>';
 
 				if (!empty($not_installed))
 				{
+					TOOLS::h(3,'🔵 Available plugins');
+
 					self::border_block_start();
 					
 						$atecplugins = 'https://atecplugins.com/';
@@ -469,10 +490,11 @@ public static function init($plugin)
 									echo
 									'<a class="atec-nodeco" href="', esc_url($href) ,'" target="_blank">', esc_attr(INIT::plugin_fixed_name($a->name)), '</a>';
 									self::pro_or_free($a);
+									$p = INIT::plugin_prefix($a->name).$a->name;
 									echo
 									'<div class="atec-row-right">
 										<a title="Download from atecplugins.com" class="atec-nodeco button button-secondary atec-btn-small" ',
-											'href="', esc_url($atecplugins), 'WP-Plugins/', esc_attr($plugin), '.zip" download>',
+											'href="', esc_url($atecplugins), 'WP-Plugins/', esc_attr($p), '.zip" download>',
 											'<span class="', esc_attr(TOOLS::dash_class('download')), '"></span>',
 										'</a>',
 									'</div>';
