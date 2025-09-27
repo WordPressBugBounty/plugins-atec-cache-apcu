@@ -15,7 +15,7 @@ final class LICENSE
 		'<div class="atec-db atec-mt-10">
 			🎁 ';
 
-			if ($slug=== 'wpmc') echo '<strong>Seven additional storage options</strong>';
+			if ($slug=== 'wpmc') echo '<strong>Six storage options</strong>';
 			else echo '<strong>Including over 40 valuable plugins</strong>';
 
 			echo
@@ -24,27 +24,26 @@ final class LICENSE
 			<div class="atec-dilb atec-mr-10">
 				<ul class="atec-border-white atec-bg-w">
 					<li>⭐ Priority support</li>
-					<li>⭐ Upgrades & updates</li>';
-					if (!$is_atec) echo '<li>⭐ ‘Lifetime-site-License’</li>';
+					<li>⭐ Upgrades & updates</li>
+				</ul>
+			</div>';
+
+
+			if ($slug=== 'wpmc')
+			{
+
 				echo
-				'</ul>
-			</div>
-
-			<div class="atec-dilb atec-ml-10">
-				<ul class="atec-border-white atec-bg-w">';
-
-					if ($slug=== 'wpmc')
-					{
-						echo
-						'<li>⭐ Minify HTML</li>
+				'<div class="atec-dilb atec-ml-10">
+					<ul class="atec-border-white atec-bg-w">
+						<li>⭐ Minify HTML</li>
 						<li>⭐ Custom post types</li>
-						<li>⭐ Full page cache priming</li>';
-					}
-				echo
-				'</ul>
-			</div>
+						<li>⭐ Full page cache priming</li>
+					</ul>
+				</div>';
+			}
 
-			<div class="atec-dilb atec-ml-10">
+			echo
+			'<div class="atec-dilb atec-ml-10">
 				<ul class="atec-border-white atec-bg-w">
 					<li>⭐ ‘Lifetime-site-License’</li>
 					<li>⭐ Access to all the ‘PRO’ features</li>
@@ -62,10 +61,10 @@ final class LICENSE
 		echo
 		'<div class="atec-border-white atec-center" style="margin: 20px auto; padding: 20px;">
 		
-			<h3 class="atec-row atec-fit atec-m-auto" style="align-items: center;">';
+			<h3 class="atec-row atec-fit atec-m-auto" style="align-items: baseline;">';
 				\ATEC\SVG::echo($una->slug=== 'wpmc' ? 'wpmc' : 'wpa', 'atec-vat');
 				if ($una->slug=== 'wpmc') echo 'Mega Cache';
-				else echo '<div><span class="atec-logo-text">tec</span>-Plugins</div>';
+				else echo '<span class="atec-logo-text" style="margin-right: -10px;">atec</span>-Plugins';
 				echo ' ‘PRO’ package',
 			'</h3>
 			
@@ -73,20 +72,20 @@ final class LICENSE
 				
 					self::feature_list($una->slug, $is_atec);
 					echo
-					'<div class="atec-db atec-fit atec-m-auto atec-border-white atec-bg-w" style="padding: 0 5px 15px 5px;">';
+					'<div class="atec-db atec-fit atec-m-auto atec-border-white atec-bg-w" style="padding: 5px 5px 5px 5px;">';
 						if (!$is_atec)
 						{
-							$arr = $una->slug=== 'wpmc' ? ['apcu', 'redis', 'memcached', 'mariadb', 'mysql'] : ['redis', 'memcached'];
-							foreach ($arr as $a) \ATEC\SVG::echo($a); 
+							$arr = $una->slug=== 'wpmc' ? ['disk', 'apcu', 'redis', 'memcached', 'mariadb', 'mysql'] : ['redis', 'memcached'];
+							foreach ($arr as $a) \ATEC\SVG::echo($a, 'atec-m-3'); 
 						}
 						else
 						{
 							$atec_group = GROUP::all_plugins();
-							$halfway = round(count($atec_group)/2);
+							$halfway = round(count($atec_group)/2)-1;
 							foreach ($atec_group as $index => $p)
 							{
 								if (in_array($p->slug,['wpmc'])) continue;
-								if ($index % $halfway===0) echo '<br>';
+								if ($index>0 && $index % $halfway===0) echo '<br>';
 								\ATEC\SVG::echo($p->slug, 'atec-m-3'); 
 							}
 						}

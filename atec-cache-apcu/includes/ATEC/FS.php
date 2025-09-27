@@ -70,8 +70,9 @@ final class FS {
 	{
 		$plugin = INIT::plugin_by_dir($dir);
 		$plugin_dir = INIT::plugin_dir($plugin);
+
 		$sub_dir = $sub_dir === '' ? '' : '/'.$sub_dir;
-		$upload_dir = self::upload_dir(str_replace('atec-', '', $plugin).$sub_dir);	// Base directory is uploads/plugin unless sub_dir is provided
+		$upload_dir = self::upload_dir($plugin).$sub_dir;	// Base directory is uploads/plugin unless sub_dir is provided
 		self::mkdir($upload_dir);	// Ensure directory exists
 		$s = $s && (self::put($upload_dir.'/index.php', '<?php exit(403); ?>')!==false);	// Protect the directory
 		if (!$public) $s = $s && (self::put($upload_dir.'/.htaccess', 'Require local')!==false);			// Protect the directory
@@ -97,7 +98,7 @@ final class FS {
 	{
 		$path = 
 			$p !== '' 
-			? self::trailingslashit(self::upload_basedir()) . INIT::plugin_prefix($p) . $p
+			? self::trailingslashit(self::upload_basedir()) . INIT::plugin_prefix($p) . str_replace('atec-', '', $p)
 			: self::upload_basedir();
 		return self::fix_separator($path);
 	}
