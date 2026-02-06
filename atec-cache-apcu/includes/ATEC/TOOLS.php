@@ -295,7 +295,7 @@ public static function ob_end_clean(): void
 
 // DASH AREA START
 
-private static $dashArr = ['admin-comments', 'admin-generic', 'admin-home', 'admin-plugins', 'admin-settings', 'admin-site', 'admin-tools', 'analytics', 'archive', 'awards', 'backup', 'businessman', 'clipboard', 'code-standards', 'controls-play', 'cover-image', 'database', 'database-add', 'edit', 'editor-code', 'editor-removeformatting', 'editor-table', 'feedback', 'format-gallery', 'forms', 'groups', 'hourglass', 'info', 'insert', 'list-view', 'performance', 'trash', 'translation', 'update'];
+private static $dashArr = ['admin-comments', 'admin-generic', 'admin-home', 'admin-plugins', 'admin-settings', 'admin-site', 'admin-tools', 'analytics', 'archive', 'awards', 'backup', 'businessman', 'clipboard', 'code-standards', 'controls-play', 'cover-image', 'database', 'database-add', 'edit', 'editor-code', 'editor-removeformatting', 'editor-table', 'feedback', 'format-gallery', 'forms', 'groups', 'hourglass', 'info', 'insert', 'list-view', 'performance', 'trash', 'translation', 'update','email'];
 
 public static function dash_class($icon, $class = ''): string
 { return 'dashicons dashicons-' . $icon . ($class !== '' ? ' '.$class : ''); }
@@ -321,18 +321,19 @@ private static function dash_and_button_div($dnb, string $class = ''): void
 	if (!empty($dnb->dash)) 
 	{
 		self::dash_span($dnb->dash);
-		if ($dnb->button=== '') return;
+		if ($dnb->button === '') return;
 	}
+
 	if (isset($dnb->button))
 	{
-		if ($dnb->button===true || (int)$dnb->button===1) { self::dash_span('yes-alt', 'atec-green'); }
-		elseif ($dnb->button=== '' || $dnb->button===false || $dnb->button===0) { self::dash_span('dismiss', 'atec-red'); }
-		elseif ($dnb->button !== '') echo '<span',  ($class !== '' ? ' '.esc_attr($class) : ''), '>', esc_html($dnb->button), '</span>';
+		// Only handle real booleans/ints here
+		if ($dnb->button === true || $dnb->button == 1) { self::dash_span('yes-alt', 'atec-green'); }
+		elseif ($dnb->button === '' || $dnb->button === false || $dnb->button == 0) { self::dash_span('dismiss', 'atec-red'); }
+		else { echo '<span', ($class !== '' ? ' '.esc_attr($class) : ''), '>', esc_html((string)$dnb->button), '</span>'; }
 	}
 }
 
-
-private static function dash_yes_no($yes) 
+public static function dash_yes_no($yes) 
 { return '<span class="'.TOOLS::dash_class($yes?'yes-alt' : 'dismiss', 'atec-'.($yes?'green' : 'red')).'"></span>'; }
 
 // DASH AREA START
@@ -342,10 +343,10 @@ private static function dash_yes_no($yes)
 public static function integrity_banner($dir) : void
 {
 	$plugin = INIT::plugin_by_dir($dir);
-	$link_yes = INIT::build_url('group', '', '', ['integrity' => true, 'plugin' => $plugin]);
+	$link_yes = INIT::build_url('group', '', '', ['integrity' => 'true', 'plugin' => $plugin]);
 	$link_no= str_replace('true', 'false', $link_yes);
 	echo
-	'<div class="button atec-sticky-left">',
+	'<div class="button atec-sticky-left" style="z-index: 100;">',
 		'<div class="atec-dilb" style="line-height:8px; padding-bottom: 2px;" title="One time connection on activation.">',
 			'<span class="atec-fs-8">Allow connection to</span><br><span class="atec-fs-10">atecplugins.com</span>',
 		'</div>',
@@ -477,7 +478,7 @@ private static function single_nav_tab($una, $act_nav, $icon, $button, $license_
 		'<div class="atec-db atec-pro" style="height:15px; padding-left:10px;">', 
 			(!$license_ok && $break ? 'PRO' : '&nbsp;'), 
 		'</div>',
-		'<a href="', esc_url($href), '" class="nav-tab', ($single ? ' nav-tab-single' : ''), ($una->nav=== $act_nav ? ' nav-tab-active' : ''), '">';
+		'<a href="', esc_url($href), '" class="nav-tab', ($single ? ' nav-tab-single' : ''), ($una->nav=== $act_nav ? ' nav-tab-active' : ''), '" title="', esc_html($act_nav) ,'">';
 			if (!empty($icon))
 			{
 				if (in_array($icon,self::$dashArr)) self::dash_span($icon,'atec-blue');
@@ -527,13 +528,13 @@ public static function ul($title = '', $lis = [], $class = ''): void
 
 	foreach ($lis as $li)
 	{
-		echo '<li>', wp_kses_post($li, self::$allowed_tr), '</li>';
+		if ($li) echo '<li>', wp_kses_post($li, self::$allowed_tr), '</li>';
 	}
 
 	echo '</ul>';
 }
 
-public static function div($arg, $str='', $border=false): void
+public static function div($arg, $str='', $class=''): void
 {
 	if (is_numeric($arg))
 	{
@@ -564,13 +565,11 @@ public static function div($arg, $str='', $border=false): void
 		}
 		elseif ($arg === 'btn')
 		{
-			echo
-			'<div class="atec-btn-div">';
+			echo '<div class="atec-btn-div'.($class?' '.$class:'').'">';
 		}
 		elseif ($arg === 'row')
 		{
-			echo
-			'<div class="atec-row">';
+			echo '<div class="atec-row'.($class?' '.$class:'').'">';
 		}
 	}
 }
@@ -635,10 +634,21 @@ public static function table_tr($tds = [], $tag = 'td', $class = ''): void
 		
 		if (!empty($td))
 		{
-			$td_plain = wp_strip_all_tags($td);
-			$right = 
-				preg_match('/^\s*[\d\.,]+\s*$/', $td_plain) // pure numbers
-				|| preg_match('/^\s*[\d\.,]+\s*(B|KB|MB|GB|TB|ms|s|%)\s*$/i', $td_plain); // size_format style
+			$td_plain = trim( wp_strip_all_tags($td) );
+
+			// Fast path: only if it looks numeric/with units do we consider right-aligning
+			$looks_numeric =
+				preg_match('/^\s*[\d\.,]+\s*$/', $td_plain) ||
+				preg_match('/^\s*[\d\.,]+\s*(?:B|KB|MB|GB|TB|ms|s|%)\s*$/i', $td_plain);
+
+			if ($looks_numeric) {
+				// Now do the (slower) IP checks to exclude IPs
+				$is_ip =
+					preg_match('/^(?:\d{1,3}\.){3}\d{1,3}(?:\/(?:[0-9]|[1-2][0-9]|3[0-2]))?$/', $td_plain) || // IPv4 + optional /0-32
+					preg_match('/^\[?(?:[A-Fa-f0-9]{1,4}:){1,7}[A-Fa-f0-9]{0,4}\]?$/', $td_plain);            // basic IPv6 forms
+
+				$right = !$is_ip;
+			} else $right = false;
 		}
 		else $right = false;
 
@@ -797,10 +807,10 @@ public static function badge($ok, $str_success, $str_failed = '', $margin = fals
 
 public static function p_info($str, $class = '', $warning = false): void
 {
-	$str = INIT::trailingdotit($str); 
-	echo '<div class="atec-badge atec-box-info">';
-		echo '<div>', $warning ? '🔸':'🔹', '</div>';
-		echo '<div ', ($class !== '' ? ' class="'.esc_attr($class).'"' : ''), '>', wp_kses_post(INIT::trailingdotit($str)), '</div>';
+	$str = INIT::trailingdotit($str);
+	echo '<div class="atec-badge atec-box-info" style="display:flex; gap:6px; align-items:flex-start; flex-wrap: nowrap;">';
+		echo '<div>', $warning ? '🔸' : '🔹', '</div>';
+		echo '<div', ($class !== '' ? ' class="' . esc_attr($class) . '"' : ''), '>', wp_kses_post(INIT::trailingdotit($str)), '</div>';
 	echo '</div>';
 }
 
@@ -1010,8 +1020,9 @@ public static function clean_request_bool($key) : bool
 
 public static function clean_request( $key, $nonce = '', $type = 'text' )
 {
+	$is_code = $type === 'code';
 	$nonce_to_check = ( $nonce !== '' ) ? $nonce : INIT::nonce();
-	$p_key= INIT::_POST($key);
+	$p_key= INIT::_POST($key, $is_code);
 	if ($p_key) 
 	{
 		if ( ! check_admin_referer( $nonce_to_check ) ) return '';
@@ -1019,7 +1030,7 @@ public static function clean_request( $key, $nonce = '', $type = 'text' )
 	}
 	elseif ($g_key= INIT::_GET($key)) 
 	{
-		if ( ! wp_verify_nonce( INIT::_GET('_wpnonce'), $nonce_to_check ) ) return '';		
+		if ( ! wp_verify_nonce( INIT::_GET('_wpnonce'), $nonce_to_check ) ) return '';
 		$value = $g_key;
 	}
 	else 
@@ -1027,7 +1038,7 @@ public static function clean_request( $key, $nonce = '', $type = 'text' )
 		return '';
 	}
 
-	return $type === 'textarea' ? sanitize_textarea_field( $value ) : sanitize_text_field( $value );
+	return $is_code ? $value : ($type === 'textarea' ? sanitize_textarea_field( $value ) : sanitize_text_field( $value ));
 }
 
 
@@ -1291,7 +1302,7 @@ public static function active_no_cfg($str, $ok=true, $noCfg=true): void
 	'<div class="atec-badge atec-box-nocfg atec-db" style="background:', esc_attr($bg_color), '; border: ', esc_attr($border), ';">
 		<div class="atec-mb-5 atec-fs-16">'; 
 			self::dash_span('plugins-checked', 'atec-'.$color_class); 
-			echo ' atec <b>Just Works</b> Series<span class="atec-fs-14">', ($noCfg ? ' · No configuration required — it just works.' : ''), '</span>',
+			echo ' atec <b>Just Works</b> Series ', ($noCfg ? ' · No configuration required — it just works.' : ''),
 		'</div>
 		<div class="atec-', esc_attr($color_class), '">', esc_html($str), '.</div>
 	</div>';
@@ -1302,8 +1313,6 @@ public static function page_header($una, $break=999, $about=false, $update=false
 	echo
 	'<div class="atec-page">';
 		$license_ok = self::header($una);
-
-		//if ($break<0) $break = $license_ok ? 999 : abs($break);
 
 		echo
 		'<div class="atec-main">';
@@ -1359,7 +1368,7 @@ public static function footer($slug= '')
 	'<div class="atec-footer atec-center atec-fs-12">
 		<span class="atec-ml-10" style="float:left;">
 			⏱️ <span>', esc_attr($loadTime), '</span> <span class="atec-fs-10">ms</span>';
-			if ($domain=== 'atecplugins') echo '&middot; <a class="atec-nodeco" href="', esc_url($href), '">atec-Plugins</a>';
+			if ($domain=== 'atecplugins') echo '&middot; <a class="atec-nodeco" href="', esc_url($href), '">atec-Plugins Dashboard</a>';
 			echo '
 		</span>
 		<span class="atec-dilb atec-float-right atec-mr-10">

@@ -35,9 +35,9 @@ final class LICENSE
 				echo
 				'<div class="atec-dilb atec-ml-10">
 					<ul class="atec-border-white atec-bg-w">
-						<li>⭐ Minify HTML</li>
 						<li>⭐ Custom post types</li>
 						<li>⭐ Full page cache priming</li>
+						<li>⭐ Exclude URLs</li>
 					</ul>
 				</div>';
 			}

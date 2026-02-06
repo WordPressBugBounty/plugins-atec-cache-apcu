@@ -1,7 +1,7 @@
 <?php
 defined('ABSPATH') || exit;
 
-use ATEC\ALIAS;
+
 use ATEC\TOOLS;
 use ATEC\WPC;
 
@@ -21,7 +21,8 @@ return function($una)
 			break;
 	}
 	
-	$apcu_it=new APCUIterator();
+	$pattern = '/^atec_WPCA_*_/';
+	$apcu_it = new APCUIterator();
 	$arr = iterator_to_array($apcu_it);
 	array_multisort(array_column($arr, 'key'), SORT_ASC, $arr);
 
@@ -47,20 +48,20 @@ return function($una)
 					[$salt, $group, $key] = explode(':', $entry['key'], 3);
 					echo
 					'<tr>';
-						ALIAS::td($c);
-						ALIAS::td($group);
-						ALIAS::td($key, 'atec-anywrap');
-						ALIAS::td($entry['num_hits'], 'atec-right');
-						ALIAS::td(gettype($entry['value']), 'atec-right');
-						ALIAS::td(size_format($entry['mem_size']), 'atec-nowrap atec-right');
-						ALIAS::td(htmlentities(substr(serialize($entry['value']),0,64)), 'atec-anywrap');
+						TOOLS::td($c);
+						TOOLS::td($group);
+						TOOLS::td($key, 'atec-anywrap');
+						TOOLS::td($entry['num_hits'], 'atec-right');
+						TOOLS::td(gettype($entry['value']), 'atec-right');
+						TOOLS::td(size_format($entry['mem_size']), 'atec-nowrap atec-right');
+						TOOLS::td(htmlentities(substr(serialize($entry['value']),0,64)), 'atec-anywrap');
 						TOOLS::dash_button_td($una, 'delete', 'APCu', 'trash', true, $entry['key']);
 					echo '
 					</tr>';
 				}
 			}
-			ALIAS::tr();
-			ALIAS::tr([$c, '2@', TOOLS::size_format($total), '2@'], 'td', 'bold');
+			TOOLS::tr();
+			TOOLS::tr([$c, '2@', TOOLS::size_format($total), '2@'], 'td', 'bold');
 			
 		TOOLS::table_footer();
 	}
@@ -94,9 +95,9 @@ return function($una)
 			</tr>';
 		}
 
-		ALIAS::tr();
-		if ($c===0) ALIAS::tr(['99@-/-']);
-		else ALIAS::tr([$c, '2@', TOOLS::size_format($total), ''], 'td', 'bold');
+		TOOLS::tr();
+		if ($c===0) TOOLS::tr(['99@-/-']);
+		else TOOLS::tr([$c, '2@', TOOLS::size_format($total), ''], 'td', 'bold');
 
 	TOOLS::table_footer();
 		
@@ -125,8 +126,8 @@ return function($una)
 			'</tr>';
 			$total+= $entry['mem_size'];
 		}
-		ALIAS::tr();
-		ALIAS::tr([$c, '2@', TOOLS::size_format($total)], 'td', 'bold');
+		TOOLS::tr();
+		TOOLS::tr([$c, '2@', TOOLS::size_format($total)], 'td', 'bold');
 		
 	TOOLS::table_footer();
 

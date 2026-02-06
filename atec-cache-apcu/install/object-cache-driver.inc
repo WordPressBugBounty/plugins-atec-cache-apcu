@@ -2,6 +2,7 @@
 	private function init_driver()
 	{
 		define('ATEC_OC_ACTIVE_APCU', true);
+		if (!defined('APC_ITER_KEY')) define('APC_ITER_KEY', 1);
 	}
 
 	private function exists($fullKey) { return isset($this->cache[$fullKey]) || apcu_exists($fullKey); }
@@ -53,8 +54,15 @@
 	public function flush()
 	{
 		$this->flush_runtime();
-		$apcu_it=new APCUIterator('/'.ATEC_OC_KEY_SALT.'/');
-		foreach ($apcu_it as $entry) apcu_delete($entry['key']);
+		$pattern = '/^' . preg_quote(ATEC_OC_KEY_SALT, '/') . ':/';
+		$it = new APCUIterator($pattern, APC_ITER_KEY, 200);
+	
+		$n = 0;
+		foreach ($it as $entry) {
+			apcu_delete($entry['key']);
+			//if (++$n >= 50000) break; // optional hard cap safety (prevents pathological cases)
+		}
+	
 		return true;
 	}
 
@@ -66,11 +74,13 @@
 		// Remove matching local cache entries
 		foreach ($this->cache as $fullkey => $_)
 		{
-			if (str_starts_with($fullkey, $needle)) unset($this->cache[$fullkey]);
+			//if (str_starts_with($fullkey, $needle)) unset($this->cache[$fullkey]);
+			if (strncmp($fullkey, $needle, strlen($needle)) === 0) unset($this->cache[$fullkey]);
 		}
 
-		// Remove matching APCu entries
-		$apcu_it = new APCUIterator('/' . preg_quote($needle, '/') . '/');
+		$pattern = '/^' . preg_quote($needle, '/') . ':/';
+		$apcu_it = new APCUIterator($pattern, APC_ITER_KEY, 200);
+
 		foreach ($apcu_it as $entry)
 		{
 			unset($this->cache[$entry['key']]);

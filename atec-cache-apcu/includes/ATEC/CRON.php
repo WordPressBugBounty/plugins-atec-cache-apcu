@@ -18,24 +18,32 @@ public static function run($name)
 public static function next($name)
 { return wp_next_scheduled($name); }
 
+// public static function next_ts($name)
+// {
+	// $next = self::next($name);
+	// return $next ? TOOLS::format_duration($next-time()) : false;
+// }
+
 public static function next_ts($name)
 {
 	$next = self::next($name);
-	return $next ? TOOLS::format_duration($next-time()) : false;
+	if (!$next) return false;
+	$diff = (int) ($next - time());
+	// if it's due or overdue, say so
+	if ($diff <= 0) return 'due';
+	return TOOLS::format_duration($diff);
 }
 
 public static function set($name, $desired, $offset = 0)
 {
 	self::clear($name);
 	wp_schedule_event(time() + $offset, $desired, $name);
-	//self::error_log($name);
 }
 
 public static function set_single($name, $delay = 5, $args = [])
 {
 	//self::clear($name); // Optional: avoid duplicates
 	wp_schedule_single_event(time() + $delay, $name, $args);
-	//self::error_log($name);
 }
 
 public static function error_log($name)

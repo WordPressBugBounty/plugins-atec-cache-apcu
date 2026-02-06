@@ -1,7 +1,7 @@
 <?php
 defined('ABSPATH') || exit;
 
-use ATEC\ALIAS;
+
 use ATEC\TOOLS;
 use ATEC\WPC;
 
@@ -37,17 +37,17 @@ public static function init()
 		$percent = $apcu_mem?$mem_used*100/$mem_size:-1;
 
 		TOOLS::table_header([], '', 'summary');
-			ALIAS::tr([__('Version', 'atec-cache-apcu').':', phpversion('apcu'), '']);
-			ALIAS::tr([__('Type', 'atec-cache-apcu').':', $apcu_cache['memory_type'], '']);
-			ALIAS::tr();
+			TOOLS::tr([__('Version', 'atec-cache-apcu').':', phpversion('apcu'), '']);
+			TOOLS::tr([__('Type', 'atec-cache-apcu').':', $apcu_cache['memory_type'], '']);
+			TOOLS::tr();
 			if ($percent>0)
 			{
-				ALIAS::tr([__('Memory', 'atec-cache-apcu').':', TOOLS::size_format($mem_size), '']);
-				ALIAS::tr([__('Used', 'atec-cache-apcu').':', TOOLS::size_format($mem_used), TOOLS::percent_format($percent)]);
-				ALIAS::tr([__('Items', 'atec-cache-apcu').':', number_format($apcu_cache['num_entries']), '']);
-				ALIAS::tr();
-				ALIAS::tr([__('Hits', 'atec-cache-apcu').':', number_format($apcu_cache['num_hits']), TOOLS::percent_format($relHits)]);
-				ALIAS::tr([__('Misses', 'atec-cache-apcu').':', number_format($apcu_cache['num_misses']), TOOLS::percent_format($relMisses)]);
+				TOOLS::tr([__('Memory', 'atec-cache-apcu').':', TOOLS::size_format($mem_size), '']);
+				TOOLS::tr([__('Used', 'atec-cache-apcu').':', TOOLS::size_format($mem_used), TOOLS::percent_format($percent)]);
+				TOOLS::tr([__('Items', 'atec-cache-apcu').':', number_format($apcu_cache['num_entries']), '']);
+				TOOLS::tr();
+				TOOLS::tr([__('Hits', 'atec-cache-apcu').':', number_format($apcu_cache['num_hits']), TOOLS::percent_format($relHits)]);
+				TOOLS::tr([__('Misses', 'atec-cache-apcu').':', number_format($apcu_cache['num_misses']), TOOLS::percent_format($relMisses)]);
 			}			
 		TOOLS::table_footer();
 

@@ -29,13 +29,15 @@ public static function init($p_cache)
 	if ($content && (!(str_contains($content, 'atec-apcu-page-cache') || str_contains($content, 'atec-cache-apcu-adv-page-cache'))))
 	{ return 'Another '.$error_str.' already exists - please deactivate it first'; }
 		
+	$wp_cache_active = $p_cache;
 	if ($p_cache) 
 	{
 		// Advanced cache is a PRO feature. Things must be handled here in case of PRO status being changed.
 		if (TOOLS::pro_license('wpca'))
 		{
-			if (!FS::copy($install_path, $target_path)) return 'Installing '.$error_str.' failed.';
+			if (!FS::copy($install_path, $target_path)) return 'Installing '.$error_str.' failed.'; 
 		}
+		else { $wp_cache_active = false; }		// Remove WP_CACHE if no PRO and no other advanced-cache.php
 	}
 	else 
 	{ 
@@ -43,7 +45,7 @@ public static function init($p_cache)
 		else $delete_pc = true;
 	}
 	
-	TOOLS::lazy_require_class(__DIR__, 'atec-set-wp-cache.php', 'set_WP_Cache', $p_cache, 'atec-cache-apcu');
+	TOOLS::lazy_require_class(__DIR__, 'atec-set-wp-cache.php', 'set_WP_Cache', $wp_cache_active, 'atec-cache-apcu');
 
 	if ($delete_pc)
 	{

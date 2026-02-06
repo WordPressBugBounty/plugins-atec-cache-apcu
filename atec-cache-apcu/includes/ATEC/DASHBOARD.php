@@ -135,6 +135,10 @@ private static function plugin_div($p)
 		case 'cache-redis':
 			self::group_badge('Object Cache', defined('ATEC_OC_ACTIVE_REDIS'), $p->slug);
 			break;
+			
+		case 'chat-sessions':
+			self::group_badge('Active', INIT::get_settings('wpcs','active'), $p->slug);
+			break;
 
 		case 'config':
 			$settings = INIT::get_settings('wpco');
@@ -163,6 +167,10 @@ private static function plugin_div($p)
 
 		case 'duplicate-page-post':
 			self::group_badge('Active', true, $p->slug);
+			break;
+
+		case 'foxyfy':
+			self::group_badge('Active', INIT::get_settings('wpff','active'), $p->slug);
 			break;
 
 		case 'hook-inspector':
@@ -332,12 +340,12 @@ public static function init($plugin)
 	$una = TOOLS::una(__DIR__);
 
 	$integrity = TOOLS::clean_request('integrity', 'atec_group_nonce');
-	if ($integrity!== '')
+	if ($integrity !== '')
 	{
-		$integrity = INIT::bool($integrity);
-		$integrityString= 'Thank you. Connection to atecplugins.com is '.($integrity== 'true'?'active':'disabled');
-		if ($integrity) INIT::integrity_check($plugin);
-		update_option('atec_allow_integrity_check', $integrity);
+		$integrity_bool = $integrity === 'true';
+		$integrityString= 'Thank you. Connection to atecplugins.com is '.($integrity_bool ? 'active' : 'disabled');
+		if ($integrity_bool) INIT::integrity_check($plugin);
+		update_option('atec_allow_integrity_check', $integrity_bool ? true : 'false');
 	}
 	else $integrityString = '';
 
@@ -354,7 +362,7 @@ public static function init($plugin)
 		$prefix = INIT::plugin_prefix($a->name);
 		$plugin = $prefix.$a->name;
 		$is_installed = FS::exists(INIT::plugin_dir($plugin));
-		
+
 		if ($is_installed) 
 		{
 			$installed[$a->name] = $plugin;
@@ -381,7 +389,7 @@ public static function init($plugin)
 					'</h3>',
 				'</div>';
 
-				if ($integrityString!== '') { echo '<div class="atec-db atec-center atec-mb-10">'; TOOLS::msg($integrity,$integrityString); echo '</div>'; }
+				if ($integrityString!== '') { echo '<div class="atec-db atec-center atec-mb-10">'; TOOLS::msg($integrity_bool,$integrityString); echo '</div>'; }
 
 				if ($show_active)
 				{
@@ -449,22 +457,24 @@ public static function init($plugin)
 					self::block_end();
 				}
 				
-				TOOLS::h(3,'💯 Our latest plugin');
-				
-				echo
-				'<div class="atec-db atec-border-white atec-mb-10">
-					<div class="atec-dilb atec-box-white atec-vat" style="margin: 0 auto; padding: 5px 5px 0 5px;">
-						<div class="atec-row atec-mb-5" style="padding: 0 5px; align-items: center; color: #f47218; font-weight: 600;">
-							🦊 FoxyFy <div class="atec-pro">PRO</div>
-							<div class="atec-row-right">
-								<a title="Download from atecplugins.com" class="atec-nodeco button button-secondary atec-btn-small" href="https://atecplugins.com/WP-Plugins/atec-foxyfy.zip" download=""><span class="dashicons dashicons-download"></span></a>
+				if (!isset($installed['foxyfy']))
+				{
+					TOOLS::h(3,'💯 Our latest plugin');
+					echo
+					'<div class="atec-db atec-border-white atec-mb-10">
+						<div class="atec-dilb atec-box-white atec-vat" style="margin: 0 auto; padding: 5px 5px 0 5px;">
+							<div class="atec-row atec-mb-5" style="padding: 0 5px; align-items: center; color: #f47218; font-weight: 600;">
+								🦊 FoxyFy <div class="atec-pro">PRO</div>
+								<div class="atec-row-right">
+									<a title="Download from atecplugins.com" class="atec-nodeco button button-secondary atec-btn-small" href="https://atecplugins.com/WP-Plugins/atec-foxyfy.zip" download=""><span class="dashicons dashicons-download"></span></a>
+								</div>
 							</div>
+							<hr>
+							<div style="padding: 0 5px 10px 5px;">Exclusive WordPress plugin to deliver your site worldwide using the all-new FoxyFy Content Delivery Network (CDN).</div>
 						</div>
-						<hr>
-						<div style="padding: 0 5px 10px 5px;">Exclusive WordPress plugin to deliver your site worldwide using the all-new FoxyFy Content Delivery Network (CDN).</div>
-					</div>
-				</div>';
-
+					</div>';
+				}
+				
 				if (!empty($not_installed))
 				{
 					TOOLS::h(3,'🔵 Available plugins');

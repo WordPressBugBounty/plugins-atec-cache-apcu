@@ -31,12 +31,12 @@ return function($una, $license_ok)
 		TOOLS::msg(false, 'The cache settings are inconsistent ('.$error.').<br>Please save again to auto-fix it');
 	}
 
-	echo
-	'<div class="atec-g atec-g-50">
-		<div>
-		
-			<div class="atec-border-white">
-				<h4>APCu ', esc_attr__('Object Cache', 'atec-cache-apcu'), ' '; TOOLS::enabled($o_cache); echo '</h4>';
+	TOOLS::div('g-50');
+	
+			TOOLS::div('border');
+			
+				echo
+				'<h4>APCu ', esc_attr__('Object Cache', 'atec-cache-apcu'), ' '; TOOLS::enabled($o_cache); echo '</h4>';
 
 				if (WPCA::apcu_enabled())
 				{
@@ -44,6 +44,7 @@ return function($una, $license_ok)
 					TOOLS::badge(defined('ATEC_OC_ACTIVE_APCU'), __('Object Cache', 'atec-cache-apcu').'#'.__('is active', 'atec-cache-apcu'), __('is inactive', 'atec-cache-apcu'));
 						if ($o_cache && $license_ok) TOOLS::msg(true, 'Advanced');
 					echo '</div>';
+					
 					echo
 					'<hr class="atec-mb-10">
 					<div class="atec-custom-form">
@@ -52,43 +53,44 @@ return function($una, $license_ok)
 							$slug = 'atec_WPCA';
 							settings_fields($slug);
 							do_settings_sections($slug);
+					TOOLS::div(-1);
+					echo '<div class="atec-help-toggle atec-fit atec-p-10" id="atec-wpca-status"></div>';
+					TOOLS::submit_button('#editor-break '.__('Save', 'atec-cache-apcu'));
 				}
 				else TOOLS::msg(false, 'APCu '.__('extension is NOT installed/enabled', 'atec-cache-apcu'));
 
-				echo
-				'</div>';
-				TOOLS::submit_button('#editor-break '.__('Save', 'atec-cache-apcu'));
-				echo
-				'<hr>';
+			TOOLS::div(-1);
 
-				if (!$license_ok) 
-				{
-					TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('object cache', 'atec-cache-apcu'), true);
-					echo '<br class="atec-mb-20">';
-				}
+			TOOLS::tr();
 
-				echo 
-				'<div class="atec-row">';
+			if (!$license_ok) 
+			{
+				TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('object cache', 'atec-cache-apcu'), true);
+				echo '<br class="atec-mb-20">';
+			}
+
+			TOOLS::div('row');
 				
-					TOOLS::help(__('Object Cache', 'atec-cache-apcu'),
-						__('The object cache is the main feature of the plugin and will speed up your site', 'atec-cache-apcu').'.');
-	
-					// NEEDS translation
-					TOOLS::help(__('‘PRO’ AOC Mode (Advanced Object Cache)', 'atec-cache-apcu'),
-						__('Improves performance by optimizing autoloaded options and internal caching behavior. Recommended for high-traffic sites.', 'atec-cache-apcu').'.');
+				TOOLS::help(__('Object Cache', 'atec-cache-apcu'),
+					__('The object cache is the main feature of the plugin and will speed up your site', 'atec-cache-apcu').'.');
+
+				// NEEDS translation
+				TOOLS::help(__('‘PRO’ AOC Mode (Advanced Object Cache)', 'atec-cache-apcu'),
+					__('Improves performance by optimizing autoloaded options and internal caching behavior. Recommended for high-traffic sites.', 'atec-cache-apcu').'.');
+
+				TOOLS::help(
+  					__('APCu Compatibility Check', 'atec-cache-apcu'),
+  					__('Runs a short test to see if APCu object caching is safe on this server (checks for multiple PHP workers and shared APCu memory). You can disable this after testing.', 'atec-cache-apcu')
+				);
 						
-				echo
-				'</div>';
+			TOOLS::div(-1);
 
-			echo
-			'</div>
-			
-		</div>
+		TOOLS::div(0);
 
-		<div>
+			TOOLS::div('border');
 		
-			<div class="atec-border-white">
-				<h4>', esc_attr__('APCu Page Cache', 'atec-cache-apcu'), ' '; TOOLS::enabled($p_cache); echo '</h4>';
+				echo
+				'<h4>', esc_attr__('APCu Page Cache', 'atec-cache-apcu'), ' '; TOOLS::enabled($p_cache); echo '</h4>';
 
 				if (WPCA::apcu_enabled())
 				{
@@ -96,6 +98,7 @@ return function($una, $license_ok)
 						TOOLS::badge($p_cache,__('Page Cache', 'atec-cache-apcu').'#'.__('is active', 'atec-cache-apcu'), __('is inactive', 'atec-cache-apcu'));
 						if (defined('ATEC_ADV_PC_ACTIVE_APCU')) TOOLS::msg(true, 'Advanced');
 					echo '</div>';
+					
 					echo
 					'<hr class="atec-mb-10">
 					<div class="atec-form atec-custom-form atec-mb-0">
@@ -124,14 +127,17 @@ return function($una, $license_ok)
 									</tr>';
 							TOOLS::table_footer();
 						}
-					echo
-					'</div>';
+					
+					TOOLS::div(-1);
 					TOOLS::submit_button('#editor-break '.__('Save', 'atec-cache-apcu'));
 				}
 				else TOOLS::msg(false, 'APCu '.__('extension is NOT installed/enabled', 'atec-cache-apcu'));
 
-				echo
-				'<hr>';
+				TOOLS::form_footer();
+					
+			TOOLS::div(-1);
+
+				TOOLS::tr();
 
 				if (!$license_ok) 
 				{
@@ -139,8 +145,7 @@ return function($una, $license_ok)
 					echo '<br class="atec-mb-20">';
 				}
 				
-				echo 
-				'<div class="atec-row">';
+				TOOLS::div('row');
 				
 					TOOLS::help(__('Page Cache', 'atec-cache-apcu'),
 						__('The page cache is an additional feature of this plugin', 'atec-cache-apcu').'. '.
@@ -162,26 +167,40 @@ return function($una, $license_ok)
 	
 					if (is_multisite()) TOOLS::msg('warning', __('The page cache is not designed to support multisites', 'atec-cache-apcu').'.<br>'.__('Please try the ‘Mega-Cache’-Plugin for multisites', 'atec-cache-apcu'), true);
 
-						
-				echo
-				'</div>';
+				TOOLS::div(-1);	
 				
 				if ($msg = WPC::pcache_detected()) TOOLS::msg('warning', '⚠️ '.$msg);
 
-			echo
-			'</div>',
-			
-		'</div>',
-
-		'</form>',
+	TOOLS::div(-2);	
 		
-	'</div>';
-
 	TOOLS::reg_inline_style('wpca_settings',
-	'
-		.atec-custom-form { min-height: 185px; }
-		p.submit { margin-top: 10px !important; }
+	'.atec-custom-form { min-height: 185px; }
+	p.submit { margin-top: 10px !important; }
 	');
+
+	echo
+	'<script>
+	(function(){
+	const el = document.getElementById("atec-wpca-status");
+	if(!el) return;
+
+	const label = "APCu Compatibility Check";
+	try {
+		const s = localStorage.getItem("atec_wpca_worker_test");
+		if(!s){ el.textContent = label + ": 🟠 not tested yet."; return; }
+		const r = JSON.parse(s);
+		const when = r.ts ? new Date(r.ts).toLocaleString() : "";
+		const v = (r.verdict || "unknown").toUpperCase();
+
+		let msg = label + ": " + v;
+		//if (when) msg += " (last tested: " + when + ")";
+		el.textContent = msg;
+	} catch(e){
+		el.textContent = label + ": 🟠 not tested yet.";
+	}
+	})();
+	</script>';
+
 
 }
 ?>

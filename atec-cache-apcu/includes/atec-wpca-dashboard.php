@@ -14,6 +14,7 @@ use ATEC\WPCA;
 		TOOLS::add_nav($una, true, '#memory APCu');
 		TOOLS::add_nav($una, WPCA::settings('p_cache'), '#blog Page Cache');
 	}
+	if (WPCA::settings('o_rest')) TOOLS::add_nav($una, true, '#php APCu Compatibility Check');
 
 	if (is_null( $license_ok = TOOLS::page_header($una, 999, false, false, defined('ATEC_OC_ACTIVE_APCU')) )) return;
 
@@ -37,6 +38,10 @@ use ATEC\WPCA;
 				
 			case 'Debug': 
 				TOOLS::lazy_require_class(__DIR__, 'atec-wpca-wpc-groups.php', 'ATEC_WPCA\\Groups', $una); 
+				break;
+
+			case 'APCu_Compatibility_Check': 
+				TOOLS::lazy_require(__DIR__, 'atec-wpca-rest-client.php', $una); 
 				break;
 		}
 			

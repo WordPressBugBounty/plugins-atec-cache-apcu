@@ -11,6 +11,17 @@ private static $params, $pcache_hit;
 public static function init()
 {
 	define('ATEC_PC_ACTIVE_APCU', true);
+
+	// ---- ultra-cheap preflight (avoid ob_start + hooks when pointless) ----
+
+	$method = $_SERVER['REQUEST_METHOD'] ?? '';	 // phpcs:ignore
+	if ($method !== 'GET' && $method !== 'HEAD') { @header('X-Cache: SKIP/METHOD'); return; }
+
+	foreach ($_COOKIE as $k => $v) { // phpcs:ignore
+		if (stripos($k, 'wordpress_logged_in_') === 0) return;
+	}
+
+	// Proceed only when preflight passes
 	self::$pcache_hit = false;
 	add_action('send_headers', [__CLASS__, 'headers']);
 	ob_start([__CLASS__, 'callback']);
@@ -18,20 +29,45 @@ public static function init()
 
 public static function headers()
 {
-	if (defined('DONOTCACHEPAGE') && DONOTCACHEPAGE) return; // Skip serving cache
-	if (($_SERVER['REQUEST_METHOD']??'')!== 'GET') { @header('X-Cache: SKIP:GET'); return; }	// phpcs:ignore
+	if (defined('DONOTCACHEPAGE') && DONOTCACHEPAGE) { @header('X-Cache: SKIP:DONOTCACHEPAGE'); return; }
+	if (is_404()) { @header('X-Cache: SKIP/404'); return; }
+	if (is_user_logged_in()) { @header('X-Cache: SKIP:LOGGED_IN'); return; }
 
-	$args = add_query_arg(null, null);
+	$uri = $_SERVER['REQUEST_URI'] ?? ''; // phpcs:ignore
+	if (str_contains($uri, '/password-reset/') || str_contains($uri, '/login/') || str_contains($uri, '/wp-admin/')) { @header('X-Cache: SKIP/LOGIN'); return; }
 
-	if (str_contains($args, '/password-reset/') || str_contains($args, '/login/') || str_contains($args, '/wp-admin/')) { @header('X-Cache: SKIP/LOGIN'); return; }
-	if (str_contains($args, '/?') && !(str_contains($args, '/?p=') || str_contains($args, '/?page_id='))) { @header('X-Cache: SKIP/QUERY'); return; }
+	if (str_contains($uri, '?'))
+	{
+		// extract query part
+		$parts = explode('?', $uri, 2);
+		$query = $parts[1];
 	
+		// allow only these keys
+		$allowed = array('p', 'page_id');
+		parse_str($query, $q);
+	
+		foreach ($q as $k => $v)
+		{
+			if (!in_array($k, $allowed, true)) { @header('X-Cache: SKIP/QUERY'); return; }
+		}
+	}
+
 	global $wp_query;
 	if ($wp_query->is_404 || $wp_query->is_search || $wp_query->is_login || $wp_query->is_admin) { @header('X-Cache: SKIP:IS_'); return; }
-	
-	if (class_exists('WooCommerce') && (is_cart() || is_checkout() || is_account_page() || is_woocommerce())) { @header('X-Cache: SKIP:WOO'); return; }
-	if (is_user_logged_in()) { @header('X-Cache: SKIP:LOGGED_IN'); return; }
-	
+
+	$isWooActive = class_exists('WooCommerce');
+	if ($isWooActive)
+	{
+		if (is_cart() || is_checkout() || is_account_page() || is_woocommerce()) { @header('X-Cache: SKIP:WOO'); return; }
+		if (!empty($_COOKIE))
+		{
+			foreach ($_COOKIE as $ck => $cv)
+			{
+				if (strpos($ck, 'wp_woocommerce_session_') === 0) { @header('X-Cache: SKIP:WOO'); return; }
+			}
+		}
+	}
+
 	self::$params = self::parse();
 	
 	if (is_array(self::$params))
@@ -48,7 +84,8 @@ public static function headers()
 	
 	@header('X-Cache-ID: '.$suffix.'_'.$id);
 	@header('X-Cache-Enabled: true');
-	
+	@header('Vary: Accept-Encoding');
+
 	if (($arr[2]??'')=== '') 
 	{ 
 		apcu_delete($key.$suffix.'_'.$id); 
@@ -68,16 +105,15 @@ public static function headers()
 				$zlib = 'zlib.output_compression';
 				$is_zlib_enabled = filter_var(ini_get($zlib), FILTER_VALIDATE_BOOLEAN);
 				if ($is_zlib_enabled) ini_set($zlib, 'Off');	// phpcs:ignore
-				@header('Vary: Accept-Encoding');
 				@header("Content-Encoding: gzip");
 				@header('X-Cache: HIT/GZIP');
-				echo $arr[2];									// phpcs:ignore
+				echo $arr[2];		// phpcs:ignore
 			}
 			else
 			{
 				@header('X-Cache: HIT');
 				if ($arr[1] && function_exists('gzdecode')) $arr[2] = gzdecode($arr[2]);
-				echo $arr[2];									// phpcs:ignore
+				echo $arr[2];		// phpcs:ignore
 			}
 			exit;
 		}
@@ -87,9 +123,25 @@ public static function headers()
 public static function callback($buffer)
 {
 	if (strlen($buffer)<1024) return $buffer;
-	if (defined('DONOTCACHEPAGE') && DONOTCACHEPAGE) return $buffer; // Skip cache output
-
+	if (defined('DONOTCACHEPAGE') && DONOTCACHEPAGE) return $buffer;
+		
 	if (self::$pcache_hit) return $buffer;
+		
+	$headers = headers_list();
+	if (is_array($headers))
+	{
+		foreach ($headers as $h)
+		{
+			if (stripos($h, 'Set-Cookie: wp_woocommerce_session_') === 0
+			 || stripos($h, 'Set-Cookie: woocommerce_items_in_cart') === 0
+			 || stripos($h, 'Set-Cookie: woocommerce_cart_hash') === 0)
+			{
+				// WP/Woo is creating/updating Woo state on THIS response.
+				// Do NOT store this HTML in APCu, because we can't replay the cookie.
+				return $buffer;
+			}
+		}
+	}
 	
 	if (is_null(self::$params)) self::$params = self::parse();
 	if (is_array(self::$params))
@@ -102,91 +154,150 @@ public static function callback($buffer)
 	
 	$gzip				= false; 
 	$compressed	= ''; 
-	$debug				= ''; 
 	$key					= 'atec_WPCA_'.WPCA::settings('salt').'_';
 	
-	if (WPCA::settings('p_debug') && !str_contains($suffix, 'f'))
+	$p_debug = WPCA::settings('p_debug');
+	$pos = strripos($buffer, '</body');
+	if ($pos !== false)
 	{
-		$debug= '
-			<script id="atec_wpca_debug_script">
-			console.log(\'APCu Cache: HIT '.get_locale().' | '.strtoupper($suffix).' | '.$id.'\');
-			var elemDiv = document.createElement("div");
-			elemDiv.innerHTML="🟢";
-			elemDiv.id="atec_wpca_debug";
-			elemDiv.style.cssText = "position:absolute;top:3px;width:8px;height:8px;font-size:8px;left:3px;z-index:99999;";
-			document.body.appendChild(elemDiv);
-			setTimeout(()=>{ const elem=document.getElementById("atec_wpca_debug"); if (elem) elem.remove(); }, 3000);
-			const elem=document.getElementById("atec_wpca_debug_script"); if (elem) elem.remove();
-		</script>';
-	}
-	
-	$powered = '<a href="https://atecplugins.com/" style="position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; overflow:hidden; text-indent:-9999px;">Powered by atecplugins.com</a>';
+		if ($p_debug && !str_contains($suffix, 'f'))
+		{
+			$debug= '
+				<script id="atec_wpca_debug_script">
+				console.log(\'APCu Cache: HIT '.get_locale().' | '.strtoupper($suffix).' | '.$id.'\');
+				var elemDiv = document.createElement("div");
+				elemDiv.innerHTML="🟢";
+				elemDiv.id="atec_wpca_debug";
+				elemDiv.style.cssText = "position:absolute;top:3px;width:8px;height:8px;font-size:8px;left:3px;z-index:99999;";
+				document.body.appendChild(elemDiv);
+				setTimeout(()=>{ const elem=document.getElementById("atec_wpca_debug"); if (elem) elem.remove(); }, 3000);
+				const elem=document.getElementById("atec_wpca_debug_script"); if (elem) elem.remove();
+			</script>';
+		}
+		else 	$debug	 = ''; 
 
-	if (function_exists('gzencode')) { $compressed = gzencode($buffer.$debug.$powered); $gzip=true; }
-	apcu_store($key.$suffix.'_'.$id,array($hash, $gzip, $gzip?$compressed:$buffer.$debug.$powered));
-	unset($compressed); 
-	unset($content);
+		$powered = '<a href="https://atecplugins.com/" style="position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; overflow:hidden; text-indent:-9999px;">Powered by atecplugins.com</a>';
+	
+		$buffer = substr($buffer, 0, $pos) . $debug.$powered . substr($buffer, $pos);
+	}
+
+	if (function_exists('gzencode')) { $compressed = gzencode($buffer); $gzip=true; }
+	apcu_store($key.$suffix.'_'.$id,array($hash, $gzip, $gzip?$compressed:$buffer));
+	unset($compressed);
+	if ($p_debug) 
+	{
+		$hide = '<style id="atec-wpca-hide-debug">#atec_wpca_debug{display:none!important}</style>';
+		$pos = strripos($buffer, '</body>');
+		if ($pos !== false) $buffer = substr($buffer, 0, $pos) . $hide . substr($buffer, $pos);
+	}
 	return $buffer;
 }
 
 public static function parse()
 {
 	global $wp_query;
+	if (empty($wp_query)) return 'NO_QUERY';
 
-	$hash	= '';
-	$suffix	= '';
-	
-	$isArchive= $wp_query->is_archive;
+	$hash = '';
+	$suffix = '';
+	$id = '';
+
+	$isArchive = !empty($wp_query->is_archive);
+	$isFeed = !empty($wp_query->is_feed);
+
 	if ($isArchive)
 	{
-		$isCat	= $wp_query->is_category;
-		$isTag	= $wp_query->is_tag;
-		$posts	= $wp_query->posts;
-	
-		foreach ($posts as $value) $hash.= $value->ID.' ';
-	
-		$hash = rtrim($hash);
-	
-		if ($isCat)
+		// Cheap archive hash: concat post IDs from main query
+		if (!empty($wp_query->posts))
 		{
-			$id = $wp_query->query_vars['cat']??'';
-			if (empty($id)) return 'CAT_EMPTY';
-			$id.= '|'.$wp_query->query_vars['paged'];
+			foreach ($wp_query->posts as $p)
+			{
+				if (isset($p->ID)) { $hash .= $p->ID . ' '; }
+			}
+			$hash = rtrim($hash);
+		}
+
+		if (!empty($wp_query->is_category))
+		{
+			$id = (string)($wp_query->query_vars['cat'] ?? '');
+			if ($id === '') return 'CAT_EMPTY';
+			$id .= '|' . (int)($wp_query->query_vars['paged'] ?? 0);
 			$suffix = 'c';
 		}
-		elseif ($isTag)
+		elseif (!empty($wp_query->is_tag))
 		{
-			$id = $wp_query->query_vars['tag_id']??'';
-			if (empty($id)) return 'TAG_EMPTY';
-			$id.= '|'.$wp_query->query_vars['paged'];
+			$id = (string)($wp_query->query_vars['tag_id'] ?? '');
+			if ($id === '') return 'TAG_EMPTY';
+			$id .= '|' . (int)($wp_query->query_vars['paged'] ?? 0);
 			$suffix = 't';
 		}
-		elseif ($isArchive)
+		else
 		{
-			$id = ($wp_query->query_vars['year']??'').($wp_query->query_vars['monthnum']??'');
-			if (empty($id)) return 'ARCH_EMPTY';
-			$id.= '|'.$wp_query->query_vars['paged'];
+			// Date/generic archive (still cheap: just query_vars)
+			$year  = (string)($wp_query->query_vars['year'] ?? '');
+			$month = (string)($wp_query->query_vars['monthnum'] ?? '');
+			if ($year === '' && $month === '') return 'ARCH_EMPTY';
+			$id = $year . $month . '|' . (int)($wp_query->query_vars['paged'] ?? 0);
 			$suffix = 'a';
 		}
 	}
 	else
 	{
-		if (is_home()) { $id = 0; $suffix= 'a'; }
+		if (!empty($wp_query->is_home))
+		{
+			// Blog index like archive
+			$id = '0';
+			$suffix = 'a';
+
+			if (!empty($wp_query->posts))
+			{
+				foreach ($wp_query->posts as $p)
+				{
+					if (isset($p->ID)) { $hash .= $p->ID . ' '; }
+				}
+				$hash = rtrim($hash);
+			}
+		}
 		else
 		{
-			$isPP = in_array(($wp_query->post->post_type ?? ''),['page', 'post']);
-			if (!$isPP) return 'INVALID_TYPE';
-			$id = $wp_query->post->ID;
+			// Singular post/page — use only wp_query props, no helpers
+			$post = $wp_query->post ?? ($wp_query->queried_object ?? null);
+
+			// If still missing, try cheap IDs from query_vars (no DB call)
+			if (!$post && !empty($wp_query->query_vars))
+			{
+				$maybe_id = (int)($wp_query->query_vars['p'] ?? $wp_query->query_vars['page_id'] ?? 0);
+				if ($maybe_id > 0)
+				{
+					// Create a tiny stub so we don't call WP functions
+					$post = (object)[
+						'ID' => $maybe_id,
+						'post_type' => ($wp_query->query_vars['post_type'] ?? 'post'),
+						'post_modified_gmt' => '',
+						'post_modified' => '',
+					];
+				}
+			}
+
+			if (!$post || empty($post->post_type) || !in_array($post->post_type, ['post','page'], true))
+			{
+				return 'INVALID_TYPE';
+			}
+
+			$id = (string)$post->ID;
 			$suffix = 'p';
+
+			// Prefer GMT for consistency; stay cheap (no extra lookups)
+			$hash = $post->post_modified_gmt ?? '';
+			if ($hash === '') $hash = $post->post_modified ?? '';
+			if ($hash === '') return 'NO_TIME';
 		}
-		$hash = $wp_query->post->post_modified ?? '';
-		if (empty($hash)) return 'NO_TIME';
 	}
-	
-	$isFeed= $wp_query->is_feed;
-	if ($isFeed) $suffix.= 'f';
-	
-	return ['suffix'=>$suffix, 'id'=>$id, 'hash'=>$hash, 'isfeed'=>$isFeed];
+
+	if ($isFeed) $suffix .= 'f';
+
+	// Note: headers() expects 'feed' key, not 'isfeed'
+	return ['suffix' => $suffix, 'id' => $id, 'hash' => $hash, 'feed' => $isFeed];
 }
 
 }

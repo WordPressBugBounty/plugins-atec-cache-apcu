@@ -2,7 +2,7 @@
 namespace ATEC_WPCA;
 defined('ABSPATH') || exit;
 
-use ATEC\ALIAS;
+
 use ATEC\TOOLS;
 
 final class Groups {
@@ -30,9 +30,9 @@ private static function debug_alloptions_integrity_check()
 
 		TOOLS::p_title('Settings Cache Debug Test');
 		TOOLS::table_header();
-			ALIAS::tr(['Set', $expected . ' ✅']);
-			ALIAS::tr(['Retrieved', $retrieved . ($ok1 ? ' ✅' : ' ❌')]);
-			ALIAS::tr(['After flush', $retrieved_after_flush . ($ok2 ? ' ✅' : ' ❌')]);
+			TOOLS::tr(['Set', $expected . ' ✅']);
+			TOOLS::tr(['Retrieved', $retrieved . ($ok1 ? ' ✅' : ' ❌')]);
+			TOOLS::tr(['After flush', $retrieved_after_flush . ($ok2 ? ' ✅' : ' ❌')]);
 		TOOLS::table_footer();
 
 		if (!$ok1 || !$ok2)
@@ -147,7 +147,7 @@ public static function init($una)
 			<div class="atec-box-white atec-fit atec-small atec-anywrap">';
 				TOOLS::table_header([__('Key', 'atec-cache-apcu'),__('Value', 'atec-cache-apcu')]);
 					$errors = self::parse_alloptions($alloptArr, $alloptAPCuArr);
-					if (!$errors) ALIAS::tr(['999@No mismatch']);
+					if (!$errors) TOOLS::tr(['999@No mismatch']);
 				TOOLS::table_footer();
 			echo
 			'</div>';

@@ -3,10 +3,10 @@
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.3.53
+* Version: 2.3.68
 * Requires at least: 4.9
-* Tested up to: 6.8
-* Tested up to PHP: 8.4.2
+* Tested up to: 6.9
+* Tested up to PHP: 8.4.12
 * Requires PHP: 7.4
 * Requires CP: 1.7
 * Premium URI: https://atecplugins.com
@@ -25,8 +25,7 @@ use ATEC\INIT;
 use ATEC\WPC;
 use ATEC\WPCA;
 
-INIT::set_version('wpca', '2.3.53');
-
+INIT::set_version('wpca', '2.3.68');
 if (INIT::is_real_admin())
 {
 	INIT::register_activation_deactivation_hook(__FILE__, 1, 1, 'wpca');
@@ -63,6 +62,14 @@ if (INIT::is_real_admin())
 						else $wp_admin_bar->add_node( [ 'id' => 'atec-wpca-pc', 'title' => '🗑️ PC', 'href' => '#', 'meta' => [ 'onclick' => 'atec_wpca_ajax_cb("p_cache")', 'title' => 'Flush PC'],]);
 					}
 				}, 999);
+			}
+
+			if (WPCA::settings('o_rest'))
+			{
+				add_action('admin_enqueue_scripts', function ($hook) {
+					$rest_url = add_query_arg('rest_route', '/atec-wpca/v1/worker-probe', site_url('/') );
+					wp_localize_script('atec-wpca-workers', 'ATEC_WPCA_WORKERS', [ 'restUrl' => esc_url_raw($rest_url), 'nonce'   => wp_create_nonce('wp_rest'), ]);
+				});
 			}
 		}
 	});
@@ -144,7 +151,17 @@ elseif (INIT::is_ajax())
 }
 
 if (!INIT::is_cli() && !INIT::is_cron())
-{ if (WPCA::apcu_enabled() && WPCA::settings('p_cache')) require(__DIR__.'/includes/atec-wpca-pcache-comments.php'); }
+{ 
+	if (WPCA::apcu_enabled()) 
+	{
+		if (WPCA::settings('p_cache')) require __DIR__.'/includes/atec-wpca-pcache-comments.php';
+		if (WPCA::settings('o_rest'))
+		{
+			require_once __DIR__ . '/includes/atec-wpca-rest-endpoint.php';
+			add_action('rest_api_init', ['\ATEC_WPCA\Rest', 'register']);
+		}
+	}
+}
 
 if (INIT::is_interactive())
 { if (defined('ATEC_OC_ACTIVE_APCU') && WPCA::settings('o_stats')) register_shutdown_function([WPCA::class, 'o_cache_stats']); }

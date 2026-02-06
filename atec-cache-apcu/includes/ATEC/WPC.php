@@ -142,10 +142,10 @@ public static function flushing_end($result): void
 public static function cache_block($dir, $una, $settings, $type, $enabled)
 {
 	$type_lower = strtolower($type);
-	echo
-	'<div class="atec-border-white">
 	
-		<h4>'; 
+	TOOLS::div('border');
+		echo
+		'<h4>'; 
 			TOOLS::enabled($enabled[$type_lower]);
 			echo ' ', esc_html(self::fix_name($type));	// phpcs:ignore
 			if ($enabled[$type_lower])
@@ -161,7 +161,9 @@ public static function cache_block($dir, $una, $settings, $type, $enabled)
 				'</a>';
 			}
 		echo 
-		'</h4><hr>';
+		'</h4>';
+		
+		TOOLS::hr();
 	
 		if ($enabled[$type_lower]) 
 		{
@@ -178,9 +180,7 @@ public static function cache_block($dir, $una, $settings, $type, $enabled)
 				));
 			if (in_array($type, ['APCu', 'JIT'])) require $dir.'/atec-'.$type.'-help.php';
 		}
-	
-	echo
-	'</div>';
+	TOOLS::div(-1);
 }
 
 public static function flush_cache($una, $settings, $type = null) 

@@ -72,7 +72,7 @@ final class WP_Object_Cache
 	private $cache = array();
 	private $np_groups = array('atec_np' => true);	// atec_np: atec-plugins version cache
 	private $global_groups = array();
-
+	private $isWoo = false;
 	private static $_instance;
 
 	public static function instance(): self
@@ -84,9 +84,13 @@ final class WP_Object_Cache
 	{
 		$this->multisite	= is_multisite();
 		$this->blog_prefix = $this->multisite ? get_current_blog_id() : '';
-		$unique_key = defined('AUTH_KEY') ? AUTH_KEY : get_option('blogname');
-		if (!defined('ATEC_OC_KEY_SALT')) define('ATEC_OC_KEY_SALT',hash('crc32', AUTH_KEY, FALSE));
+		
+		$unique_key = defined('AUTH_KEY') ? AUTH_KEY : (string) get_option('blogname');
+		if (!defined('ATEC_OC_KEY_SALT')) define('ATEC_OC_KEY_SALT', hash('crc32', $unique_key, false));
+
+		$this->isWoo = @file_exists(rtrim(ABSPATH, '/\\') . '/wp-content/plugins/woocommerce/woocommerce.php');
 		$this->init_driver();
+		if ($this->isWoo) $this->np_groups['term-queries'] = true;
 	}
 
 	/* OC DRIVER START */
@@ -191,6 +195,16 @@ final class WP_Object_Cache
 		// Skip persistent store for non-persistent groups
 		if (isset($this->np_groups[$group])) return $result;
 
+		if ($this->isWoo)
+		{
+			if (is_string($group) && strncmp($group, 'object_', 7) === 0) return $result;		// woo objects*
+			if (is_string($key))
+			{
+				if (strncmp($key, 'wc_cache_', 9) === 0) return $result;										// woo cache*
+				if (strlen($key) >= 12 && substr($key, -12) === '_cache_prefix') return $result;	// woo cache*
+			}
+		}
+		
 		// Special handling for options group
 		if ($group === 'options')
 		{

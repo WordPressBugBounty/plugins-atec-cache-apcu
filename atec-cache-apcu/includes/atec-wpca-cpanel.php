@@ -7,7 +7,6 @@ use ATEC\WPCA;
 
 return function($una) 
 {
-
 	TOOLS::little_block('WP & APCu '.__('Object Cache', 'atec-cache-apcu'));
 
 	switch ($una->action)
@@ -32,19 +31,20 @@ return function($una)
 	
 	$cache_settings = [];
 
-	echo
-	'<div class="atec-g atec-g-25">';
+	TOOLS::div('g-50');
+	
+			foreach(['WP', 'APCu'] as $type)
+			{
+				WPC::cache_block(__DIR__, $una, $cache_settings, $type, $enabled);
+				TOOLS::div($type==='APCu'?-1:0);
+			}
+	
+			if (defined('ATEC_OC_KEY_SALT'))
+			{
+				$stats = apcu_fetch(ATEC_OC_KEY_SALT.':atec:atec_wpca_oc_stats');
+				if (!empty($stats)) TOOLS::lazy_require(__DIR__, 'atec-wpca-ocache-stats.php', $una, $stats);
+			}
 
-		foreach(['WP', 'APCu'] as $type)
-		{ WPC::cache_block(__DIR__, $una, $cache_settings, $type, $enabled); }
-
-		if (defined('ATEC_OC_KEY_SALT'))
-		{
-			$stats = apcu_fetch(ATEC_OC_KEY_SALT.':atec:atec_wpca_oc_stats');
-			if (!empty($stats)) TOOLS::lazy_require(__DIR__, 'atec-wpca-ocache-stats.php', $una, $stats);
-		}
-
-	echo
-	'</div>';
+	TOOLS::div(-1);
 }
 ?>

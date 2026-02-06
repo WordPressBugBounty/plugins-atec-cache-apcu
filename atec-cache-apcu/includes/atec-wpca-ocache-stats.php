@@ -1,7 +1,7 @@
 <?php
 defined('ABSPATH') || exit;
 
-use ATEC\ALIAS;
+
 use ATEC\INIT;
 use ATEC\TOOLS;
 use ATEC\WPC;
@@ -23,18 +23,18 @@ return function($una, $stats)
 		$diff = time()-($ts = $stats['ts']??0);
 		$dayFrac	= $diff/86400;
 		TOOLS::table_header([], '', 'summary');
-			ALIAS::tr(['Started:', TOOLS::gmdate($ts)]);
-			ALIAS::tr(['Requests:', $stats['count']??0]);
-			ALIAS::tr();
+			TOOLS::tr(['Started:', TOOLS::gmdate($ts)]);
+			TOOLS::tr(['Requests:', $stats['count']??0]);
+			TOOLS::tr();
 			$hits = $stats['hits']??0; $misses = $stats['misses']??0; $total = $hits+$misses;
 			$sets = $stats['sets']??0;
-			ALIAS::tr(['Set:', number_format($sets)]);
-			ALIAS::tr(['Get:', number_format($hits+$misses)]);
+			TOOLS::tr(['Set:', number_format($sets)]);
+			TOOLS::tr(['Get:', number_format($hits+$misses)]);
 			if ($dayFrac>1)
 			{
-				ALIAS::tr();
-				ALIAS::tr(['Set:', number_format($sets/$dayFrac)]);
-				ALIAS::tr(['Get:', number_format(($total)/$dayFrac)]);
+				TOOLS::tr();
+				TOOLS::tr(['Set:', number_format($sets/$dayFrac)]);
+				TOOLS::tr(['Get:', number_format(($total)/$dayFrac)]);
 			}
 		TOOLS::table_footer();
 

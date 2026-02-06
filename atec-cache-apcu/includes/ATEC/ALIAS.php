@@ -2,6 +2,7 @@
 namespace ATEC;
 defined('ABSPATH') || exit;
 
+use ATEC\INIT;
 use ATEC\TOOLS;
 
 final class ALIAS

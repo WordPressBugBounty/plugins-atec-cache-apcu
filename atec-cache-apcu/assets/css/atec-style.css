@@ -149,7 +149,6 @@
 .atec-anywrap	{ white-space: break-spaces; word-wrap: anywhere; }
 .atec-label, .atec-headline	{ font-size: 1.1em; }
 .atec-label, .atec-bold { font-weight: 600; }
-.atec-nodeco	{ text-decoration: none !important; }
 .atec-under		{ padding-bottom: 1px; border-bottom: solid 1px var(--c-b); }
 .atec-small		{ font-size: 0.8em !important; }
 .atec-gap { display: flex; gap: 10px; align-items: center; }
@@ -364,7 +363,7 @@
 /* BTN */
 .atec-confirm-btn { position: relative; display:flex; align-items:center; padding: 0 !important; }
 .atec-confirm-btn.button:focus:not(:focus-visible), .atec-confirm-btn.button:active { outline:none; }
-.atec-confirm-btn .atec-confirm-inner { display:flex; align-items:center; justify-content:center; width:100%; transition:all .15s ease; }
+.atec-confirm-btn .atec-confirm-inner { display:flex; align-items:center; justify-content:center; width:100%; transition:all .15s ease; padding: 0 6px; }
 .atec-confirm-label 
 { 
 	display: none; position: absolute; top: 50%; left: 50%; font-size: 8px; font-weight: 600; color: #fd0002; background: rgba(255, 255, 255, 0.5); line-height: 1; text-align: center; 
@@ -477,6 +476,8 @@
 .atec-form h2 { font-size: 1.15em; }
 .atec-form h2:first-of-type { margin-top: 0; }
 .atec-form input, .atec-form select { max-height: auto !important; line-height: 2em; border: solid 1px var(--c-link-light); border-radius: var(--px-3); }
+
+.atec-nodeco	{ text-decoration: none !important; border: none; background: none; }
 
 /* PROGRESS */
 

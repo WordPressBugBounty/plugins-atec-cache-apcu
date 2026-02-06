@@ -105,11 +105,19 @@ if (\PHP_VERSION_ID < 80000) @require __DIR__.'/POLYFILL.php';
 
 // Register global AJAX handler for notice dismiss
 if (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action']) && $_REQUEST['action'] === 'atec_admin_notice_dismiss') 	// phpcs:ignore
-{
+{ 
 	add_action('wp_ajax_atec_admin_notice_dismiss', ['ATEC\\INIT', 'dismiss_notice']); 
 }
 else
-{
-	if (\ATEC\INIT::is_real_admin()) \ATEC\INIT::admin_debug_all();
+{ 
+	if (\ATEC\INIT::is_real_admin()) \ATEC\INIT::admin_debug_all(); 
 }
+
+(function() {
+	$pro = __DIR__ . '/PRO.php';
+	if (file_exists($pro)) {
+		require $pro;
+		if (method_exists('ATEC\\PRO', 'init')) \ATEC\PRO::init();
+	}
+});
 ?>

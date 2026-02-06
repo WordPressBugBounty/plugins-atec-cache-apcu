@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
 final class INIT {
 
 static $require_install = [ 'wpc', 'wpca', 'wpcm', 'wpcr', 'wpds', 'wpf', 'wpfm', 'wpht', 'wppp', 'wps', 'wpmcl', 'wpsh', 'wpwp' ];
-static $skip_load_check = ['wp4t', 'wpau', 'wpds', 'wpht', 'wpdpp', 'wpl', 'wpll', 'wplu', 'wpmcl', 'wpmin', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu'];
+static $skip_load_check = ['wp4t', 'wpau', 'wpcom', 'wpds', 'wpht', 'wpdpp', 'wpl', 'wpll', 'wplu', 'wpmcl', 'wpmin', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu'];
 static $admin_styles_loaded = false;
 static $allowed_admin_tags = 
 	[	
@@ -240,10 +240,11 @@ public static function _SERVER($key, $default = '')
 	return $default;
 }
 
-public static function _POST($key, $default = '')
+public static function _POST($key, $is_code=false)
 {
-	if (isset($_POST[$key])) return sanitize_text_field(wp_unslash($_POST[$key]));	// phpcs:ignore
-	return $default;
+	if (isset($_POST[$key])) $str = wp_unslash($_POST[$key]);	// phpcs:ignore
+	else $str = '';
+	return $is_code ? $str : sanitize_textarea_field($str);
 }
 
 public static function bool($value): bool { return filter_var($value, FILTER_VALIDATE_BOOLEAN); }
@@ -347,14 +348,10 @@ public static function is_atec_dev_mode(): bool
 }
 
 public static function client_ip(): string
-{
-	return self::_SERVER('REMOTE_ADDR');
-}
+{ return self::_SERVER('REMOTE_ADDR'); }
 
 public static function host_ip(): string
-{
-	return self::_SERVER('SERVER_ADDR');
-}
+{ return self::_SERVER('SERVER_ADDR'); }
 
 public static function is_localhost(): bool
 {
@@ -404,7 +401,8 @@ public static function maybe_register_settings($dir, $slug, $noNav = false, $cus
 
 public static function integrity_check($plugin): void // only on activation or when agreed
 {
-	if (get_option('atec_allow_integrity_check',false))
+	$integrity_bool = self::bool(get_option('atec_allow_integrity_check',false));
+	if ($integrity_bool)
 	{
 		$domain = rawurlencode(get_bloginfo('url'));
 		wp_remote_get("https://atecplugins.com/WP-Plugins/activated.php?plugin={$plugin}&domain={$domain}");
@@ -490,14 +488,10 @@ public static function content_dir() : string
 }
 
 public static function plugin_dir($plugin = null) : string
-{ 
-	return $GLOBALS['atec_plugins_globals']['WP_PLUGIN_DIR'] . ($plugin ? '/' . $plugin : '');
-}
+{ return $GLOBALS['atec_plugins_globals']['WP_PLUGIN_DIR'] . ($plugin ? '/' . $plugin : ''); }
 
 public static function plugin_url($plugin = null) : string
-{ 
-	return $GLOBALS['atec_plugins_globals']['WP_PLUGIN_URL'] . ($plugin ? '/' . $plugin : '');
-}
+{ return $GLOBALS['atec_plugins_globals']['WP_PLUGIN_URL'] . ($plugin ? '/' . $plugin : ''); }
 
 public static function plugin_url_by_dir($dir) : string		// required by self::menu, reg_script, reg_style
 { return self::plugin_url(self::plugin_by_dir($dir)); }
@@ -523,9 +517,10 @@ public static function current_user_can($role): bool
 	{
 		$cached = 
 			[	
-				'admin'  => current_user_can('manage_options'),
-				'editor' => current_user_can('edit_posts') || current_user_can('edit_pages'),
-				'user'  => current_user_can('edit_user'),
+				'admin'	=> current_user_can('manage_options'),
+				'editor'	=> current_user_can('edit_posts') || current_user_can('edit_pages'),
+				'user'	=> current_user_can('edit_user'),
+				'theme'	=> current_user_can('edit_theme_options'),
 			];
 	}
 
@@ -686,22 +681,27 @@ public static function admin_notice($slug, $type= '', $msg= ''): void
 		<button type="button" class="notice-dismiss" aria-label="Dismiss this notice" data-slug="' . esc_attr($slug) . '" data-id="' . esc_attr($id) . '"></button>
 	</div>';
 
-	add_action('admin_footer', function() 
+	static $admin_footer_loaded = null;
+	if (!$admin_footer_loaded)
 	{
-		$id = 'atec-admin-footer';
-		wp_register_script($id, false, ['jquery'], '1.0.0', true);
-		wp_enqueue_script($id);
-		wp_add_inline_script($id, '
-			jQuery(document).on("click", ".notice-dismiss", function() 
-			{
-				const id = jQuery(this).parent().attr("id");
-				jQuery.ajax({ 
-					url: ajaxurl, type: "POST", data: {action: "atec_admin_notice_dismiss", slug: jQuery(this).data("slug"), id: id },
-					success: function(response) { if (response.success) jQuery("#"+id).slideUp(); }
+		$admin_footer_loaded = true;
+		add_action('admin_footer', function() 
+		{
+			$id = 'atec-admin-footer';
+			wp_register_script($id, false, ['jquery'], '1.0.0', true);
+			wp_enqueue_script($id);
+			wp_add_inline_script($id, '
+				jQuery(document).on("click", ".notice-dismiss", function() 
+				{
+					const id = jQuery(this).parent().attr("id");
+					jQuery.ajax({ 
+						url: ajaxurl, type: "POST", data: {action: "atec_admin_notice_dismiss", slug: jQuery(this).data("slug"), id: id },
+						success: function(response) { if (response.success) jQuery("#"+id).slideUp(); }
+					});
 				});
-			});
-		');
-	}, 10 ,0);
+			');
+		}, 10 ,0);
+	}
 }
 
 public static function dismiss_notice()

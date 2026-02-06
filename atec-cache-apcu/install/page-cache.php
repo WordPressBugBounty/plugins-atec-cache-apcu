@@ -12,8 +12,8 @@
 defined('ABSPATH') || exit;
 define('ATEC_ADV_PC_ACTIVE_APCU', true);
 
-(function() {
-	
+(function()
+{
 	if
 	(
 		(defined('DOING_AJAX') && DOING_AJAX) ||
@@ -21,9 +21,12 @@ define('ATEC_ADV_PC_ACTIVE_APCU', true);
 		(defined('REST_REQUEST') && REST_REQUEST) ||
 		(defined('WP_CLI') && WP_CLI) ||
 		defined('WP_UNINSTALL_PLUGIN') ||
-		is_admin()
-	) return;
-	
+		(function_exists('is_admin') && is_admin())
+	)
+	{
+		return;
+	}
+
 	@require 'plugins/atec-cache-apcu/includes/atec-wpca-pcache.php';
 	\ATEC_WPCA\PCache::init();
 

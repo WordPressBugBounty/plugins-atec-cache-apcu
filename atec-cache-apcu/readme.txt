@@ -2,11 +2,11 @@
 Contributors: DocJoJo
 Tags: apcu, object cache, page cache, performance, persistent cache
 Requires CP: 1.7
-Tested up to: 6.8
+Tested up to: 6.9
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.53
+Stable tag: 2.3.68
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,51 @@ Advanced Page Cache is a ‘PRO’-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.68 [2026.01.05] =
+* Allow APCu Compatibility Check
+
+= 2.3.67 [2026.01.02] =
+* skipWoo
+
+= 2.3.66 [2026.01.02] =
+* New flush
+
+= 2.3.65 [2026.01.02] =
+* New flush
+
+= 2.3.64 [2026.01.02] =
+* new APCUIterator($pattern);
+
+= 2.3.63 [2026.01.02] =
+* new APCUIterator($pattern);
+
+= 2.3.62 [2025.12.09] =
+* WP 6.9 tested
+
+= 2.3.61 [2025.12.06] =
+* Minor fixes
+
+= 2.3.60 [2025.12.02] =
+* WP 6.9 tested
+
+= 2.3.59 [2025.12.02] =
+* WP 6.9 tested
+
+= 2.3.58 [2025.11.04] =
+* SVN cleanup
+
+= 2.3.57 [2025.11.04] =
+* Improved woo-skip
+
+= 2.3.56 [2025.10.21] =
+* @header(\'Vary: Accept-Encoding\');
+
+= 2.3.55 [2025.10.12] =
+* Fixed is_user_logged_in()
+
+= 2.3.54 [2025.10.11] =
+* Everest Forms FIX
 
 = 2.3.53 [2025.09.27] =
 * Plugin prefix fixed for all

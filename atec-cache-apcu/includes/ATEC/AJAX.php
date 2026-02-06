@@ -69,7 +69,7 @@ public static function nonce_check(string $slug): void
 */
 public static function load_script(string $slug, string $dir, string $ver = '1.0.1', array $deps = [], bool $lazy = false, array $extraData = []): void
 {
-	$filename = 'atec-' . $slug . '-ajax.js';
+	$filename = 'atec-' . $slug . '-ajax.min.js';
 	if (INIT::is_atec_dev_mode()) $filename = str_replace('.js', '.min.js', $filename);
 
 	$id				= self::script_id($slug);
