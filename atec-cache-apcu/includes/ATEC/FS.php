@@ -40,11 +40,11 @@ final class FS {
 	
 		$fp = @fopen($path, 'wb');
 			if (!$fp) return false;
-			if (!flock($fp, LOCK_EX)) { fclose($fp); return false; }
-				$written = fwrite($fp, $content);
-				fflush($fp);
-			flock($fp, LOCK_UN);
-		fclose($fp);
+			if (!@flock($fp, LOCK_EX)) { @fclose($fp); return false; }
+				$written = @fwrite($fp, $content);
+				@fflush($fp);
+			@flock($fp, LOCK_UN);
+		@fclose($fp);
 		return $written !== false;
 	}
 
@@ -125,23 +125,23 @@ final class FS {
 	{
 		if (!self::exists($source)) return false;
 		if (!$overwrite && self::exists($target)) return false;
-		$result = copy($source, $target);
+		$result = @copy($source, $target);
 		if ($result && $mode !== false) { self::chmod($target, $mode); }
 		return $result;
 	}
 
 	public static function delete($path, $recursive = false): bool
 	{
-		if (!file_exists($path)) return true;
+		if (!@file_exists($path)) return true;
 		if (is_dir($path)) return self::rmdir($path, $recursive);
-		return unlink($path);
+		return @unlink($path);
 	}
 
 	public static function dirlist($path, $include_hidden = true, $recursive = false) : array
 	{
 		if (!self::is_dir($path)) return [];
 		$result = [];
-		$items = scandir($path);
+		$items = @scandir($path);
 		foreach ($items as $item)
 		{
 			if ($item === '.' || $item === '..') continue;
@@ -151,52 +151,52 @@ final class FS {
 			$result[$item] = [
 				'name' => $item,
 				'type' => is_dir($full) ? 'folder' : 'file',
-				'size' => is_file($full) ? filesize($full) : 0,
-				'lastmodunix' => filemtime($full),
+				'size' => is_file($full) ? @filesize($full) : 0,
+				'lastmodunix' => @filemtime($full),
 			];
 			if ($recursive && is_dir($full) && !is_link($full)) { $result[$item]['files'] = self::dirlist($full, $include_hidden, true); }
 		}
 		return $result;
 	}
 
-	public static function exists($path): bool { return file_exists($path); }
-	public static function get($path, $default = false) { return self::exists($path) ? file_get_contents($path) : $default; }
+	public static function exists($path): bool { return @file_exists($path); }
+	public static function get($path, $default = false) { return self::exists($path) ? @file_get_contents($path) : $default; }
 	public static function get_array($path, $default = false) { return self::exists($path) ? @file($path) : $default; }
-	public static function getchmod($path): string { return self::exists($path) ? substr(sprintf('%o', fileperms($path)), -4) : '0000'; }
+	public static function getchmod($path): string { return self::exists($path) ? substr(sprintf('%o', @fileperms($path)), -4) : '0000'; }
 	public static function is_dir($dir): bool { return self::exists($dir) && is_dir($dir); }
 
 	public static function mkdir($dir, $chmod = 0755): bool
 	{
 		if (self::exists($dir)) return true;
-		return mkdir($dir, $chmod, true);
+		return @mkdir($dir, $chmod, true);
 	}
 
 	public static function move($source, $target, $overwrite = true): bool
 	{
 		if (!self::exists($source)) return false;
 		if (!$overwrite && self::exists($target)) return false;
-		return rename($source, $target);
+		return @rename($source, $target);
 	}
 
 	public static function mtime($path) { return self::exists($path) ? @filemtime($path) : false; }
-	public static function put($path, $content, $flags = 0) { return file_put_contents($path, $content, $flags); }
+	public static function put($path, $content, $flags = 0) { return @file_put_contents($path, $content, $flags); }
 
 	public static function rmdir($dir, $recursive = false): bool
 	{
 		if (!is_dir($dir)) return true;
-		if (!$recursive) return rmdir($dir);
-		foreach (scandir($dir) as $item)
+		if (!$recursive) return @rmdir($dir);
+		foreach (@scandir($dir) as $item)
 		{
 			if ($item === '.' || $item === '..') continue;
 			$path = $dir . DIRECTORY_SEPARATOR . $item;
-			if (is_link($path)) { unlink($path); }
+			if (is_link($path)) { @unlink($path); }
 			elseif (is_dir($path)) { self::rmdir($path, true); }
-			else { unlink($path); }
+			else { @unlink($path); }
 		}
-		return rmdir($dir);
+		return @rmdir($dir);
 	}
 
-	public static function size($path) { return self::exists($path) ? filesize($path) : false; }
+	public static function size($path) { return self::exists($path) ? @filesize($path) : false; }
 
 	public static function touch($path, $time = null, $atime = null): bool
 	{
@@ -205,7 +205,7 @@ final class FS {
 		return @touch($path, $time, $atime);
 	}
 
-	public static function unlink($path): bool { return self::exists($path) ? unlink($path) : true; }
+	public static function unlink($path): bool { return self::exists($path) ? @unlink($path) : true; }
 
 	// @codingStandardsIgnoreEnd
 

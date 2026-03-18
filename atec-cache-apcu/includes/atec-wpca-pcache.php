@@ -54,6 +54,9 @@ public static function headers()
 
 	global $wp_query;
 	if ($wp_query->is_404 || $wp_query->is_search || $wp_query->is_login || $wp_query->is_admin) { @header('X-Cache: SKIP:IS_'); return; }
+	// Skip WP password-protected posts/pages (avoid caching password form or unlocked content)
+	$post = $wp_query->post ?? null;
+	if ($post && !empty($post->post_password)) { 	@header('X-Cache: SKIP:POST_PASSWORD'); 	return; }
 
 	$isWooActive = class_exists('WooCommerce');
 	if ($isWooActive)
@@ -176,7 +179,11 @@ public static function callback($buffer)
 		}
 		else 	$debug	 = ''; 
 
-		$powered = '<a href="https://atecplugins.com/" style="position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; overflow:hidden; text-indent:-9999px;">Powered by atecplugins.com</a>';
+		//$powered = '<a href="https://atecplugins.com/" style="position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; overflow:hidden; text-indent:-9999px;">Powered by atecplugins.com</a>';
+		$powered = \ATEC\INIT::license_ok() ? '' : 
+		'<div class="atec-powered" style="font-size:10px;opacity:.65;text-align:center;margin:10px 0;">
+		  ⚡ Cached with <a href="https://atecplugins.com/" rel="nofollow noopener external" style="text-decoration:none;">atec Page Cache</a>
+		  </div>';
 	
 		$buffer = substr($buffer, 0, $pos) . $debug.$powered . substr($buffer, $pos);
 	}

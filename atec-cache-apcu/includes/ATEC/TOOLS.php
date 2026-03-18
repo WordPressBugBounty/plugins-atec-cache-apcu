@@ -326,10 +326,9 @@ private static function dash_and_button_div($dnb, string $class = ''): void
 
 	if (isset($dnb->button))
 	{
-		// Only handle real booleans/ints here
-		if ($dnb->button === true || $dnb->button == 1) { self::dash_span('yes-alt', 'atec-green'); }
-		elseif ($dnb->button === '' || $dnb->button === false || $dnb->button == 0) { self::dash_span('dismiss', 'atec-red'); }
-		else { echo '<span', ($class !== '' ? ' '.esc_attr($class) : ''), '>', esc_html((string)$dnb->button), '</span>'; }
+		if (is_string($dnb->button) && $dnb->button!=='0' && $dnb->button!=='1') { echo '<span', ($class !== '' ? ' '.esc_attr($class) : ''), '>', esc_html($dnb->button), '</span>'; }
+		elseif ($dnb->button === true || $dnb->button === 1 || $dnb->button === '1') { self::dash_span('yes-alt', 'atec-green'); }
+		else self::dash_span('dismiss', 'atec-red');
 	}
 }
 
@@ -730,7 +729,6 @@ public static function button_confirm($una, $action, $nav, $button): void
 	'</div>';
 }
 
-//	self::button($una, $action, $nav, $button, false, true); 
 public static function button($una, $action, $nav = '', $button = '', $primary = false, $confirm = false, $disabled = false): void
 {
 	if ($confirm) 
@@ -1037,7 +1035,6 @@ public static function clean_request( $key, $nonce = '', $type = 'text' )
 	{
 		return '';
 	}
-
 	return $is_code ? $value : ($type === 'textarea' ? sanitize_textarea_field( $value ) : sanitize_text_field( $value ));
 }
 

@@ -141,7 +141,7 @@ return function($una, $license_ok)
 
 				if (!$license_ok) 
 				{
-					TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('page cache', 'atec-cache-apcu'), true);
+					TOOLS::pro_feature($una, ' - '.__('this will enable the advanced', 'atec-cache-apcu').' '.__('page cache', 'atec-cache-apcu').' '.__(' and remove the footer attribution', 'atec-cache-apcu'), true);
 					echo '<br class="atec-mb-20">';
 				}
 				

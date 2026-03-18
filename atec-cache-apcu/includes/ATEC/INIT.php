@@ -418,7 +418,6 @@ public static function license_ok()
 	{
 		$cached = get_transient('atec_license_code');
 		if (!$cached) $cached = \ATEC\TOOLS::pro_license();
-
 	}
 	return $cached;
 }
