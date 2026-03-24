@@ -326,7 +326,7 @@ private static function dash_and_button_div($dnb, string $class = ''): void
 
 	if (isset($dnb->button))
 	{
-		if (is_string($dnb->button) && $dnb->button!=='0' && $dnb->button!=='1') { echo '<span', ($class !== '' ? ' '.esc_attr($class) : ''), '>', esc_html($dnb->button), '</span>'; }
+		if (is_string($dnb->button) && $dnb->button!=='0' && $dnb->button!=='1' && $dnb->button!=='') { echo '<span', ($class !== '' ? ' '.esc_attr($class) : ''), '>', esc_html($dnb->button), '</span>'; }
 		elseif ($dnb->button === true || $dnb->button === 1 || $dnb->button === '1') { self::dash_span('yes-alt', 'atec-green'); }
 		else self::dash_span('dismiss', 'atec-red');
 	}

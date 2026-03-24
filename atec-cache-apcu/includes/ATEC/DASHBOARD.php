@@ -33,7 +33,6 @@ private static function render_on_off_button($fill, $isOn = true)
 	</div>';
 }
 
-
 private static function group_badge($str='', $ok=true, $slug = '', $nav= '', $warn=false, $status=[]): void
 {
 	if ($str==='' && in_array($slug, ['wpfd','wprt']))
@@ -484,6 +483,7 @@ public static function init($plugin)
 						$atecplugins = 'https://atecplugins.com/';
 						$megacache = 'https://wpmegacache.com/';
 						$license_ok = INIT::license_ok();
+						$isDevMode = get_option('atec_dev_mode');
 
 						foreach ($atec_group_arr as $a)
 						{

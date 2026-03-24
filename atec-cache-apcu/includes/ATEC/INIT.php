@@ -401,8 +401,7 @@ public static function maybe_register_settings($dir, $slug, $noNav = false, $cus
 
 public static function integrity_check($plugin): void // only on activation or when agreed
 {
-	$integrity_bool = self::bool(get_option('atec_allow_integrity_check',false));
-	if ($integrity_bool)
+	if (self::bool(get_option('atec_allow_integrity_check',false)))
 	{
 		$domain = rawurlencode(get_bloginfo('url'));
 		wp_remote_get("https://atecplugins.com/WP-Plugins/activated.php?plugin={$plugin}&domain={$domain}");

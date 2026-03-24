@@ -27,8 +27,6 @@ final class DB
 		}
 	
 		return [ 'data' => $data_size, 'index' => $index_size ];
-
-		return $size;
 	}
 	
 	public static function db_info(): array

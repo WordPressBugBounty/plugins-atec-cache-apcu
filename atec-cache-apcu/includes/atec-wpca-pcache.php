@@ -8,6 +8,12 @@ final class PCache {
 	
 private static $params, $pcache_hit;
 
+private static function atec_wpca_is_login_request() {
+	if (function_exists('is_login')) return is_login();
+	if (!isset($_SERVER['SCRIPT_NAME'])) return false;
+	return false !== stripos(wp_login_url(), $_SERVER['SCRIPT_NAME']);
+}
+
 public static function init()
 {
 	define('ATEC_PC_ACTIVE_APCU', true);
@@ -53,7 +59,7 @@ public static function headers()
 	}
 
 	global $wp_query;
-	if ($wp_query->is_404 || $wp_query->is_search || $wp_query->is_login || $wp_query->is_admin) { @header('X-Cache: SKIP:IS_'); return; }
+	if ($wp_query->is_404 || $wp_query->is_search || $wp_query->is_admin || self::atec_wpca_is_login_request()) { @header('X-Cache: SKIP:IS_'); return; }
 	// Skip WP password-protected posts/pages (avoid caching password form or unlocked content)
 	$post = $wp_query->post ?? null;
 	if ($post && !empty($post->post_password)) { 	@header('X-Cache: SKIP:POST_PASSWORD'); 	return; }
