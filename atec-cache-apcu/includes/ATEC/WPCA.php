@@ -10,7 +10,11 @@ public static function settings($key, $refresh=false)
 {
 	static $cached = null;
 	if ($cached===null || $refresh) $cached = INIT::get_settings('wpca');
-	if ($key==='salt')	return $cached[$key] ?? '';
+	if ($key==='salt') 
+	{
+		if (!defined('ATEC_PC_KEY_SALT')) require_once dirname(__DIR__).'/atec-wpca-pc-key-salt.php';
+		return ATEC_PC_KEY_SALT;
+	}
 	else return (bool) INIT::bool($cached[$key] ?? 0);
 }
 

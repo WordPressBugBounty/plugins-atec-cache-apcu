@@ -165,44 +165,20 @@ public static function callback($buffer)
 	$compressed	= ''; 
 	$key					= 'atec_WPCA_'.WPCA::settings('salt').'_';
 	
-	$p_debug = WPCA::settings('p_debug');
 	$pos = strripos($buffer, '</body');
 	if ($pos !== false)
 	{
-		if ($p_debug && !str_contains($suffix, 'f'))
-		{
-			$debug= '
-				<script id="atec_wpca_debug_script">
-				console.log(\'APCu Cache: HIT '.get_locale().' | '.strtoupper($suffix).' | '.$id.'\');
-				var elemDiv = document.createElement("div");
-				elemDiv.innerHTML="🟢";
-				elemDiv.id="atec_wpca_debug";
-				elemDiv.style.cssText = "position:absolute;top:3px;width:8px;height:8px;font-size:8px;left:3px;z-index:99999;";
-				document.body.appendChild(elemDiv);
-				setTimeout(()=>{ const elem=document.getElementById("atec_wpca_debug"); if (elem) elem.remove(); }, 3000);
-				const elem=document.getElementById("atec_wpca_debug_script"); if (elem) elem.remove();
-			</script>';
-		}
-		else 	$debug	 = ''; 
-
-		//$powered = '<a href="https://atecplugins.com/" style="position:absolute; top:-9999px; left:-9999px; width:1px; height:1px; overflow:hidden; text-indent:-9999px;">Powered by atecplugins.com</a>';
-		$powered = \ATEC\INIT::license_ok() ? '' : 
-		'<div class="atec-powered" style="font-size:10px;opacity:.65;text-align:center;margin:10px 0;">
-		  ⚡ Cached with <a href="https://atecplugins.com/" rel="nofollow noopener external" style="text-decoration:none;">atec Page Cache</a>
+		$powered = \ATEC\INIT::license_ok() ? '' :
+		'<div class="atec-powered" style="font-size:10px;opacity:.65;text-align:center;margin:10px 0;pointer-events:none;">
+		  ⚡ Cached with <a href="https://atecplugins.com/" rel="nofollow noopener external" style="text-decoration:none;pointer-events:auto;display:inline;">atec Page Cache</a>
 		  </div>';
 	
-		$buffer = substr($buffer, 0, $pos) . $debug.$powered . substr($buffer, $pos);
+		$buffer = substr($buffer, 0, $pos) . $powered . substr($buffer, $pos);
 	}
 
 	if (function_exists('gzencode')) { $compressed = gzencode($buffer); $gzip=true; }
 	apcu_store($key.$suffix.'_'.$id,array($hash, $gzip, $gzip?$compressed:$buffer));
 	unset($compressed);
-	if ($p_debug) 
-	{
-		$hide = '<style id="atec-wpca-hide-debug">#atec_wpca_debug{display:none!important}</style>';
-		$pos = strripos($buffer, '</body>');
-		if ($pos !== false) $buffer = substr($buffer, 0, $pos) . $hide . substr($buffer, $pos);
-	}
 	return $buffer;
 }
 

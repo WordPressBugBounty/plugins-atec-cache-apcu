@@ -95,13 +95,14 @@ private static function init()
 		self::create_plugin('wpsv', 'svg', 'Enable SVG uploads', 'PRO', false, true),
 		self::create_plugin('wpta', 'temp-admin', 'Temporary admin accounts', 'PRO', false, true),
 
-		self::create_plugin('wpts', 'translation-status', 'Diagnostic tool to check WordPress core/plugin/theme translations', 'FREE', false, true),
+		self::create_plugin('wpts', 'translation-status', 'Diagnostic tool to check WordPress core/plugin/theme translations', 'FREE', true, true),
 		self::create_plugin('wpur', 'user-roles', 'Manage user roles/caps', 'View and edit users', false, true),
 		self::create_plugin('wpva', 'virtual-author', 'Adds a virtual author dropdown to posts', 'PRO', false, true),
+		self::create_plugin('wpwf', 'withdrawal-form', 'Adds a simple withdrawal form', 'Multi language', true, true),
 		self::create_plugin('wpwms', 'web-map-service', 'Privacy-safe web maps', 'atecmap.com API discount', true, true),
-		self::create_plugin('wpwp', 'webp', 'Auto-convert images to WebP', 'PNG, GIF, BMP support', true, true),
 
 		// 60
+		self::create_plugin('wpwp', 'webp', 'Auto-convert images to WebP', 'PNG, GIF, BMP support', true, true),
 		self::create_plugin('wpmc', 'mega-cache', 'Ultra-fast page cache', '8 storage types + Woo support', true, true),
 	];
 }

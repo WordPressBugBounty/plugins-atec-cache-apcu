@@ -3,7 +3,7 @@
 * OC Name:  atec Object-Cache
 * Plugin URI: https://atecplugins.com/
 * Description: atec Object Cache with pluggable backend (APCu, Redis, Memcached)
-* Version: 2.0.7
+* Version: 2.0.8
 * Author: Chris Ahrweiler ℅ atecplugins.com
 * Author URI: https://atec-systems.com/
 * OC Domain:  atec-object-cache
@@ -21,7 +21,7 @@ if ( (defined('DONOTCACHEOBJECT') && DONOTCACHEOBJECT )) {
 else
 {
 
-define('ATEC_OC_VERSION', '2.0.7');
+define('ATEC_OC_VERSION', '2.0.8');
 
 function wp_cache_init() { $GLOBALS['wp_object_cache'] = WP_Object_Cache::instance(); }
 function wp_cache_add($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->add($key, $data, $group, (int) $expire); }
@@ -29,7 +29,6 @@ function wp_cache_add_multiple(array $data, $group = '', $expire = 0) { return W
 function wp_cache_set($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->set($key, $data, $group, (int) $expire); }
 function wp_cache_set_multiple(array $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->set_multiple($data, $group, (int) $expire); }
 function wp_cache_get($key, $group = '', $force = false, &$found = null) { return WP_Object_Cache::instance()->get($key, $group, $force, $found); }
-function wp_cache_get_pre($fullkey, &$found = null) { return WP_Object_Cache::instance()->get_pre($fullkey, $found); }
 function wp_cache_get_multiple($keys, $group = '', $force = false) { return WP_Object_Cache::instance()->get_multiple($keys, $group, $force); }
 function wp_cache_replace($key, $data, $group = '', $expire = 0) { return WP_Object_Cache::instance()->replace($key, $data, $group, (int) $expire); }
 function wp_cache_delete($key, $group = '') { return WP_Object_Cache::instance()->delete($key, $group); }
@@ -85,8 +84,9 @@ final class WP_Object_Cache
 		$this->multisite	= is_multisite();
 		$this->blog_prefix = $this->multisite ? get_current_blog_id() : '';
 		
-		$unique_key = defined('AUTH_KEY') ? AUTH_KEY : (string) get_option('blogname');
-		if (!defined('ATEC_OC_KEY_SALT')) define('ATEC_OC_KEY_SALT', hash('crc32', $unique_key, false));
+		$unique_base = (defined('AUTH_KEY') ? AUTH_KEY : '')."\0".(defined('DB_NAME') ? DB_NAME : '');
+		$unique_key = $unique_base!=="\0" ? $unique_base : (string) get_option('blogname');
+		if (!defined('ATEC_OC_KEY_SALT')) define('ATEC_OC_KEY_SALT', hash('crc32', "oc\0".$unique_key, false));
 
 		$this->isWoo = @file_exists(rtrim(ABSPATH, '/\\') . '/wp-content/plugins/woocommerce/woocommerce.php');
 		$this->init_driver();
@@ -206,6 +206,7 @@ final class WP_Object_Cache
 		}
 		
 		// Special handling for options group
+		/*
 		if ($group === 'options')
 		{
 			if ($key === 'alloptions')
@@ -216,7 +217,7 @@ final class WP_Object_Cache
 			}
 			elseif ($key === 'cron') return $result;       // Skip persisting cron
 		}
-
+		*/
 		return $this->set_p($fullKey, $var, $expire);
 	}
 
@@ -278,7 +279,7 @@ final class WP_Object_Cache
 		return true;
 	}
 
-	public function switch_to_blog($blog_id) { $this->blog_prefix = $this->multisite ? $blog_id . ' : ' : ''; }
+	public function switch_to_blog($blog_id) { $this->blog_prefix = $this->multisite ? $blog_id . ':' : ''; }
 
 	public function stats()
 	{
@@ -291,25 +292,6 @@ final class WP_Object_Cache
 	}
 
 }
-
-// Automatically clean up stale WordPress update lock on shutdown
-register_shutdown_function(function ()
-{
-
-	if (defined('DOING_AJAX') || defined('DOING_CRON') || defined('WP_UNINSTALL_PLUGIN') || defined('WP_CLI') || (defined('REST_REQUEST') && REST_REQUEST) || !is_admin()) return;
-
-	// Get the update lock timestamp set by WordPress core
-	// If the lock is numeric and has expired, it’s safe to clear
-	$lock = get_option('core_updater.lock');
-	if (is_numeric($lock) && time() > (int)$lock)
-	{
-		delete_option('core_updater.lock');
-		unlink(ABSPATH . '.maintenance');	// phpcs:ignore
-	
-		if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) 
-			error_log('[AOC AutoHeal] Stale core_updater.lock + .maintenance file cleared');	// phpcs:ignore
-	}
-});
 
 }
 ?>

@@ -11,14 +11,10 @@ final class TOOLS
 // STRINGS
 
 public static function str_istarts_with(string $haystack, string $needle): bool 
-{
-	return strncasecmp($haystack, $needle, strlen($needle)) === 0;
-}
+{ return strncasecmp($haystack, $needle, strlen($needle)) === 0; }
 
 public static function stri_contains(string $haystack, string $needle): bool 
-{
-	return stripos($haystack, $needle) !== false;
-}
+{ return stripos($haystack, $needle) !== false; }
 
 // TOOLS
 
@@ -564,11 +560,11 @@ public static function div($arg, $str='', $class=''): void
 		}
 		elseif ($arg === 'btn')
 		{
-			echo '<div class="atec-btn-div'.($class?' '.$class:'').'">';
+			echo '<div class="atec-btn-div'.esc_attr($class?' '.$class:'').'">';
 		}
 		elseif ($arg === 'row')
 		{
-			echo '<div class="atec-row'.($class?' '.$class:'').'">';
+			echo '<div class="atec-row'.esc_attr($class?' '.$class:'').'">';
 		}
 	}
 }

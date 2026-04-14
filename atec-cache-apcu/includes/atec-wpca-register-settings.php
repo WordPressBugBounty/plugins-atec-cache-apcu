@@ -9,8 +9,7 @@ use ATEC\WPCA;
 (function() {
 	
 	$is_updated = INIT::is_settings_updated();
-	// OUTDATED: 250717 | CLEANUP: User INIT::_GET
-	if (!$is_updated && (($_GET['action'] ?? '') === 'flushWPCA')) 		// phpcs:ignore
+	if (!$is_updated && ((INIT::_GET('action') ?? '') === 'flushWPCA')) 		// phpcs:ignore
 	{
 		wp_cache_delete( 'alloptions', 'options' );
 		WPCA::settings('',true);	// Refresh the WPCA settings cache
@@ -55,7 +54,8 @@ use ATEC\WPCA;
 	register_setting($page_slug, $option_group, function($input) 
 	{
 		if (!is_array($input)) return [];
-		CHECK::sanitize_boolean($input, ['o_cache', 'o_admin', 'o_stats', 'p_cache', 'p_admin', 'p_debug']);
+		CHECK::sanitize_boolean($input, ['o_cache', 'o_admin', 'o_stats', 'p_cache', 'p_admin']);
+		unset($input['p_debug']);
 		return $input;
 	});
 

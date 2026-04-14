@@ -37,11 +37,15 @@ private static function get_plugin_base_root($path)
 
 public static function autoload($class)
 {
-	$GLOBALS['atec_plugins_globals'] = [
-		'WP_PLUGIN_URL'	=> self::get_plugin_base_root(plugin_dir_url(__FILE__)),
-		'WP_PLUGIN_DIR'	=> self::get_plugin_base_root(plugin_dir_path(__FILE__)),
-	];
-	
+	// One assignment per request: every ATEC plugin shares this LOADER/autoload; the paths are derived from
+	// this file’s location and are identical no matter which plugin first required LOADER.php.
+	if ( empty( $GLOBALS['atec_plugins_globals'] ) ) {
+		$GLOBALS['atec_plugins_globals'] = [
+			'WP_PLUGIN_URL' => self::get_plugin_base_root( plugin_dir_url( __FILE__ ) ),
+			'WP_PLUGIN_DIR' => self::get_plugin_base_root( plugin_dir_path( __FILE__ ) ),
+		];
+	}
+
 	$WP_PLUGIN_DIR = $GLOBALS['atec_plugins_globals']['WP_PLUGIN_DIR'];
 
 	static $loaded = [];
@@ -119,5 +123,5 @@ else
 		require $pro;
 		if (method_exists('ATEC\\PRO', 'init')) \ATEC\PRO::init();
 	}
-});
+})();
 ?>

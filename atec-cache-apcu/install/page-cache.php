@@ -27,7 +27,7 @@ define('ATEC_ADV_PC_ACTIVE_APCU', true);
 		return;
 	}
 
-	@require 'plugins/atec-cache-apcu/includes/atec-wpca-pcache.php';
+	require_once 'plugins/atec-cache-apcu/includes/atec-wpca-pcache.php';
 	\ATEC_WPCA\PCache::init();
 
 })();

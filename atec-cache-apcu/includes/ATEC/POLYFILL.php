@@ -1,4 +1,6 @@
 <?php
+defined('ABSPATH') || exit;
+
 // GLOBAL SCOPE: no namespace here!
 
 if (!function_exists('str_contains')) {

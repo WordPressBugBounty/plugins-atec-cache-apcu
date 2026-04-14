@@ -19,7 +19,7 @@ public static function init($p_cache)
 	$lastOptName = 'atec_WPCA_settings_last';
 	$last_settings = get_option($lastOptName,[]);
 	
-	$delete_pc = WPCA::settings('p_debug') !== INIT::bool($last_settings['p_debug'] ?? 0);
+	$delete_pc = false;
 	$install_path = dirname(__DIR__).'/install/page-cache.php';
 	
 	$error_str = '‘advanced-cache.php’';
@@ -27,7 +27,10 @@ public static function init($p_cache)
 	$content = FS::get($target_path);
 
 	if ($content && (!(str_contains($content, 'atec-apcu-page-cache') || str_contains($content, 'atec-cache-apcu-adv-page-cache'))))
-	{ return 'Another '.$error_str.' already exists - please deactivate it first'; }
+	{
+		if ($p_cache) return 'Another '.$error_str.' already exists - please deactivate it first'; 
+		else return '';
+	}
 		
 	$wp_cache_active = $p_cache;
 	if ($p_cache) 

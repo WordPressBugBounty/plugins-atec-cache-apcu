@@ -120,11 +120,6 @@ return function($una, $license_ok)
 										<th scope="row">', esc_html__('Admin bar ‘PC Flush’ icon', 'atec-cache-apcu'), '</th>
 										<td>'; CHECK::checkbox(['opt-name' => $option_key, 'name' => 'p_admin', 'value' => WPCA::settings('p_admin')]); echo '</td>
 									</tr>';
-									echo
-									'<tr>
-										<th scope="row">', esc_html__('Show debug', 'atec-cache-apcu'), '<br><span style="font-size:80%; color:#999;">', esc_html__('Cache indicator and browser console log', 'atec-cache-apcu'), '.</span></th>
-										<td>'; CHECK::checkbox(['opt-name' => $option_key, 'name' => 'p_debug', 'value' => WPCA::settings('p_debug')]); echo '</td>
-									</tr>';
 							TOOLS::table_footer();
 						}
 					
@@ -155,12 +150,6 @@ return function($una, $license_ok)
 					// NEEDS translation
 					TOOLS::help(__('‘PRO’ APC Mode (Advanced Page Cache)', 'atec-cache-apcu'),
 						__('Serves full page HTML earlier than standard caching for maximum performance', 'atec-cache-apcu').'.');
-
-					if ($p_cache)
-					{
-						TOOLS::help(__('‘Show debug’', 'atec-cache-apcu'),
-							__('The ‘Show debug’ feature is for temporary use. It will show a small green circle in the upper left corner, when the page is served from cache. In addition you will find further details in your browser console. Please flush the page cache, once you are done with testing', 'atec-cache-apcu').'.');
-					}
 
 					TOOLS::help(__('Multiple PC plugins', 'atec-cache-apcu'),
 						__('Do not use multiple page cache plugins simultaneously', 'atec-cache-apcu').'.', true);

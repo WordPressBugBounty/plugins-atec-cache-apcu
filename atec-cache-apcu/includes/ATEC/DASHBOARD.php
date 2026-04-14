@@ -33,7 +33,7 @@ private static function render_on_off_button($fill, $isOn = true)
 	</div>';
 }
 
-private static function group_badge($str='', $ok=true, $slug = '', $nav= '', $warn=false, $status=[]): void
+private static function group_badge($str='', $ok=true, $slug = '', $nav= '', $warn=false): void
 {
 	if ($str==='' && in_array($slug, ['wpfd','wprt']))
 	{
@@ -73,17 +73,6 @@ private static function group_badge($str='', $ok=true, $slug = '', $nav= '', $wa
 			'</div>',
 		'</a>',
 	'</div>';
-	if (!empty($status)) self::status_line($status);
-}
-
-private static function status_line($arr, $br=false): void
-{
-	if ($br) echo '<br class="atec-break">';
-	echo
-	'<div class="atec-status-line">',
-		'<div class="atec-dilb atec-status-label">', esc_html($arr['label']), ':</div>',
-		'<div class="atec-dilb atec-status-value">', esc_html($arr['text']), '</div>',
-	'</div>';
 }
 
 private static function plugin_div($p)
@@ -94,16 +83,13 @@ private static function plugin_div($p)
 	switch ($p->name)
 	{
 		case 'anti-spam':
-			$result = self::wpas_count_spam();
-			self::group_badge('Anti SPAM', true, $p->slug , 'Settings', false, $result);
+			self::group_badge('Anti SPAM', true, $p->slug , 'Settings', false);
 			break;
 
 		case 'backup':
 			$settings = INIT::get_settings('wpb');
 			$active = INIT::bool($settings['automatic'] ?? 0);
-			$wpb_dir = $settings['path']??'';
-			$latest = $wpb_dir!=='' ? self::wpb_latest_backup($wpb_dir) : [];
-			self::group_badge('Automatic', $active, $p->slug, 'Settings', false, $latest);
+			self::group_badge('Automatic', $active, $p->slug, 'Settings', false);
 			break;
 
 		case 'banner':
@@ -121,10 +107,9 @@ private static function plugin_div($p)
 		case 'cache-apcu':
 			$settings = INIT::get_settings('wpca');
 			$o_cache = INIT::bool($settings['o_cache'] ?? 0);
-			$p_cache = INIT::bool($settings['p_cache'] ?? 0);		
+			$p_cache = INIT::bool($settings['p_cache'] ?? 0);
 			self::group_badge('Object Cache', $o_cache, $p->slug);
 			self::group_badge('Page Cache', $p_cache, $p->slug);
-			if ($p_cache) self::wpca_count_pages();
 			break;
 
 		case 'cache-memcached':
@@ -177,8 +162,7 @@ private static function plugin_div($p)
 			break;
 
 		case 'limit-login':
-			$result = self::wpll_count_blocked();
-			self::group_badge('Protected', true, $p->slug, '', false, $result);
+			self::group_badge('Protected', true, $p->slug, '', false);
 			break;
 
 		case 'login-url':
@@ -200,8 +184,7 @@ private static function plugin_div($p)
 			break;
 
 		case 'stats':
-			$result = ['label' => 'Visitors lately', 'text' => (int) INIT::get_settings('wps','today')];
-			self::group_badge('Active', true, $p->slug, '', false, $result);
+			self::group_badge('Active', true, $p->slug, '', false);
 			break;
 
 		case 'smtp-mail':
@@ -209,7 +192,6 @@ private static function plugin_div($p)
 			break;
 
 		case 'temp-admin':
-			$result = self::wpta_count_users();
 			self::group_badge('', true, $p->slug);
 			break;
 
@@ -234,61 +216,6 @@ private static function plugin_div($p)
 	'</div>';
 }
 
-private static function wpas_count_spam()
-{
-	$stats = 
-	get_option('atec_WPAS_stats', []);
-	$thisMonth  = gmdate('Y-m');
-	$thisCount  = $stats[$thisMonth] ?? 0;
-
-	return ['label'=>'Blocked '.gmdate('y/m'), 'text'=>number_format($thisCount)];
-}
-
-private static function wpb_latest_backup($dir)
-{
-	$files = glob(rtrim($dir, '/') . '/*.zip');
-	if (!$files) $files = [];
-	else usort($files, function($a, $b) { return filemtime($b) - filemtime($a); 	});
-
-	if (isset($files[0]))
-	{
-		$date = gmdate('m-d', filemtime($files[0]));
-		preg_match('/^atec_backup_([A-Z]+)_/', basename($files[0]), $match);
-		$type = $match[1] ?? '';
-		$result =  $type. " {$date}";
-	}
-	else $result = 'No files found';
-	return ['label' => 'Latest', 'text' => $result];
-}
-
-private static function wpca_count_pages()
-{
-	if (!defined('ATEC_OC_KEY_SALT')) return;
-	if (class_exists('APCUIterator'))
-	{
-		$pattern = '/^atec_WPCA_[^ ]+_h_[0-9]+$/';
-		$count = iterator_count(new \APCUIterator($pattern));
-		return ['label' => 'Pages cached', 'text'=>$count];
-	}
-}
-
-private static function wpll_count_blocked()
-{
-	$option_key		= 'wpll_stats';
-	$settings 		= INIT::get_settings($option_key,[]);
-	$stats 	 		= $settings['stats']??[];
-	$count			= $stats['blocked'] ?? 0;
-	return ['label' => 'Blocked', 'text'=>$count];
-}
-
-private static function wpta_count_users()
-{
-	$users = get_users();
-	$tempUsers = 0;
-	foreach($users as $u) { if (str_starts_with($u->user_login,'wpta_')) { $tempUsers++; } }
-	return ['label' => 'Temp users', 'text'=>$tempUsers];
-}
-
 private static function load_style()
 {
 	TOOLS::reg_inline_style('dashboard',
@@ -296,10 +223,6 @@ private static function load_style()
 		.atec-badge-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; order:0; }
 		.atec-badge-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
 		.atec-badge > div { display: inline; }
-	
-		.atec-status-line { display: inline-flex; color: #444; font-size: 12px; align-self: middle; }
-		.atec-status-label { font-weight: 600; margin-right: 4px; color: #222; }
-		.atec-status-value { color: #555; }
 		.dashicons { width:20px; height:20px; }
 		.atec-page A.button { border-color: #e0e0e0 !important; background: #f6f6f6; }
 		.atec-page .button { min-width: 24px !important; min-height: 24px !important; }
