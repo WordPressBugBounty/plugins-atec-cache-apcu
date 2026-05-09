@@ -5,7 +5,6 @@ defined('ABSPATH') || exit;
 use ATEC\FS;
 use ATEC\INIT;
 use ATEC\TOOLS;
-use ATEC\WPCA;
 
 final class Install_PCache {
 	

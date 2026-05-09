@@ -265,18 +265,13 @@ public static function loader_dots(int $count = 9): void
 	}
 }
 
-private static function progress_div(): void {}		// OUTDATED: 250628 | CLEANUP: Delete
-public static function progress(): void { }			// OUTDATED: 250628 | CLEANUP: Delete
-
 public static function flush(): void
 {
 	while (true)
 	{
 		if (ob_get_level() <= 0) break;
-
 		$status = ob_get_status();
 		if (!empty($status['name']) && str_contains($status['name'], 'gzhandler')) break;
-
 		if (!@ob_end_flush()) break;
 	}
 	@flush();

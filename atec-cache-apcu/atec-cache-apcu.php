@@ -3,7 +3,7 @@
 * Plugin Name:  atec Cache APCu
 * Plugin URI: https://atecplugins.com/
 * Description: Super fast APCu-Object-Cache and the only APCu based page-cache plugin available.
-* Version: 2.3.74
+* Version: 2.3.75
 * Requires at least: 4.9
 * Tested up to: 6.9
 * Tested up to PHP: 8.4.12
@@ -25,7 +25,7 @@ use ATEC\INIT;
 use ATEC\WPC;
 use ATEC\WPCA;
 
-INIT::set_version('wpca', '2.3.74');
+INIT::set_version('wpca', '2.3.75');
 if (INIT::is_real_admin())
 {
 	INIT::register_activation_deactivation_hook(__FILE__, 1, 1, 'wpca');
@@ -48,19 +48,8 @@ if (INIT::is_real_admin())
 				add_action('admin_enqueue_scripts', function () { \ATEC\AJAX::generic_inline('wpca'); });
 				add_action('admin_bar_menu', function($wp_admin_bar) use($o_admin, $p_admin)
 				{
-					if ($o_admin)
-					{
-						if (method_exists(\ATEC\INIT::class, 'admin_bar_button')) INIT::admin_bar_button($wp_admin_bar, 'wpca', '🗑️ OC', 'o_cache', 'Flush Oject Cache', 'oc');
-						// OUTDATED: 250706 | CLEANUP: remove
-						else $wp_admin_bar->add_node( [ 'id' => 'atec-wpca-oc', 'title' => '🗑️ OC', 'href' => '#', 'meta' => [ 'onclick' => 'atec_wpca_ajax_cb("o_cache")', 'title' => 'Flush OC'],]);
-					}
-					
-					if ($p_admin) 
-					{
-						if (method_exists(\ATEC\INIT::class, 'admin_bar_button')) INIT::admin_bar_button($wp_admin_bar, 'wpca', '🗑️ PC', 'p_cache', 'Flush Page Cache', 'pc');
-						// OUTDATED: 250706 | CLEANUP: remove
-						else $wp_admin_bar->add_node( [ 'id' => 'atec-wpca-pc', 'title' => '🗑️ PC', 'href' => '#', 'meta' => [ 'onclick' => 'atec_wpca_ajax_cb("p_cache")', 'title' => 'Flush PC'],]);
-					}
+					if ($o_admin) INIT::admin_bar_button($wp_admin_bar, 'wpca', '🗑️ OC', 'o_cache', 'Flush Oject Cache', 'oc');
+					if ($p_admin) INIT::admin_bar_button($wp_admin_bar, 'wpca', '🗑️ PC', 'p_cache', 'Flush Page Cache', 'pc');
 				}, 999);
 			}
 
@@ -113,7 +102,7 @@ if (INIT::is_real_admin())
 		
 	})();
 	
-	if (defined('ATEC_OC_ACTIVE_APCU') && defined('ATEC_OC_VERSION') && ATEC_OC_VERSION!== '2.0.8')
+	if (defined('ATEC_OC_ACTIVE_APCU') && defined('ATEC_OC_VERSION') && ATEC_OC_VERSION!== '2.0.9')
 	{
 		require(__DIR__.'/includes/atec-wpca-install-ocache.php');
 		\ATEC_WPCA\Install_OCache::init(true);
