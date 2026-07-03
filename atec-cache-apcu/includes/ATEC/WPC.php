@@ -2,8 +2,9 @@
 namespace atec;
 defined('ABSPATH') || exit;
 
-use atec\INIT;
-use atec\TOOLS;
+use ATEC\CPANEL;
+use ATEC\INIT;
+use ATEC\TOOLS;
 
 class WPC
 {
@@ -142,29 +143,32 @@ public static function flushing_end($result): void
 public static function cache_block($dir, $una, $settings, $type, $enabled)
 {
 	$type_lower = strtolower($type);
-	
-	TOOLS::div('border');
-		echo
-		'<h4>'; 
-			TOOLS::enabled($enabled[$type_lower]);
-			echo ' ', esc_html(self::fix_name($type));	// phpcs:ignore
+
+	echo 
+	'<div class="atec-head" style="height: 36px !important;">
+		<h3>', 
+			CPANEL::enabled_dot($enabled[$type_lower]), ' ', 
+			esc_html(self::fix_name($type));
+
 			if ($enabled[$type_lower])
-			{
-				$href = INIT::build_url($una, 'flush', 'Cache', ['type' => $type]);
-				echo 
-				'<a title="', esc_attr__('Empty cache', 'atec-cache-apcu'), '" ',
-					'class=" atec-float-right button" style="margin-top: -5px;" id="', esc_attr($type),'_flush" ',
-					'href="', esc_url($href), '">', wp_kses_post(self::dash_trash()), '<span>';
-					echo $type === 'WP' ?  esc_attr__('Site', 'atec-cache-apcu') : esc_attr__('All', 'atec-cache-apcu'); 
-					echo
-					'</span>',
-				'</a>';
-			}
-		echo 
-		'</h4>';
+				{
+					$href = INIT::build_url($una, 'flush', 'Cache', ['type' => $type]);
+					echo 
+					'<a title="', esc_attr__('Empty cache', 'atec-cache-apcu'), '" ',
+						'class="atec-float-right button atec-ml-20" id="', esc_attr($type),'_flush" ',
+						'href="', esc_url($href), '">', wp_kses_post(self::dash_trash()), '<span>';
+						echo $type === 'WP' ?  esc_attr__('Site', 'atec-cache-apcu') : esc_attr__('All', 'atec-cache-apcu'); 
+						echo
+						'</span>',
+					'</a>';
+				}
+				
+		echo		
+		'</h3>
+	</div>';
+
+	TOOLS::div('border');
 		
-		TOOLS::hr();
-	
 		if ($enabled[$type_lower]) 
 		{
 			$tmp = in_array($type, ['OP', 'WP']) ? $type.'C' : $type;

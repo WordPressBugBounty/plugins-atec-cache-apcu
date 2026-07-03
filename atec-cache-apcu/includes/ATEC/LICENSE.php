@@ -16,7 +16,7 @@ final class LICENSE
 			🎁 ';
 
 			if ($slug=== 'wpmc') echo '<strong>Six storage options</strong>';
-			else echo '<strong>Including over 40 valuable plugins</strong>';
+			else echo '<strong>Including over 60+ valuable plugins</strong>';
 
 			echo
 			'<br class="atec-mb-10">
@@ -59,7 +59,7 @@ final class LICENSE
 		$is_atec = !in_array($una->slug,['wpmc'],true);
 
 		echo
-		'<div class="atec-border-white atec-center" style="margin: 20px auto; padding: 20px;">
+		'<div class="atec-center" style="margin: 20px auto; padding: 20px;">
 		
 			<h3 class="atec-row atec-fit atec-m-auto" style="align-items: baseline;">';
 				\ATEC\SVG::echo($una->slug=== 'wpmc' ? 'wpmc' : 'wpa', 'atec-vat');
@@ -72,7 +72,7 @@ final class LICENSE
 				
 					self::feature_list($una->slug, $is_atec);
 					echo
-					'<div class="atec-db atec-fit atec-m-auto atec-border-white atec-bg-w" style="padding: 5px 5px 5px 5px;">';
+					'<div class="atec-db atec-m-auto atec-border-white atec-bg-w" style="padding: 5px;">';
 						if (!$is_atec)
 						{
 							$arr = $una->slug=== 'wpmc' ? ['disk', 'apcu', 'redis', 'memcached', 'mariadb', 'mysql'] : ['redis', 'memcached'];
@@ -81,7 +81,7 @@ final class LICENSE
 						else
 						{
 							$atec_group = GROUP::all_plugins();
-							$halfway = round(count($atec_group)/2)-1;
+							$halfway = round(count($atec_group)/2);
 							foreach ($atec_group as $index => $p)
 							{
 								if (in_array($p->slug,['wpmc'])) continue;

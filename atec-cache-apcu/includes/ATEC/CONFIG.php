@@ -7,9 +7,15 @@ use ATEC\INIT;
 use ATEC\TOOLS;
 
 final class CONFIG {
-	
-private static $content;
+
 private static string $regBase = '[\/_\-\.\w\d]';
+
+public static function backup($content, $plugin)
+{
+	if (empty($content)) return;
+	$backup_path= str_replace('.php', '.atec-'.$plugin.'-bck.php', self::path());
+	FS::put($backup_path, $content);
+}
 
 // Check if path is within wp-content directory
 private static function valid_path($path)
@@ -35,10 +41,126 @@ public static function path()
 	return $cached;
 }
 
+/** Expression written to wp-config.php for ATEC_WP_DEBUG_REPORTING. */
+public static function debug_reporting_expr(): string
+{
+	return 'E_ALL & ~E_NOTICE & ~E_USER_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED';
+}
+
+/** Short token derived from AUTH_KEY — used in the obfuscated debug log filename. */
+public static function secure_debug_log_token(): string
+{
+	$key = '';
+	if (defined('AUTH_KEY') && AUTH_KEY !== '' && !str_contains(AUTH_KEY, 'put your unique phrase here'))
+		$key = AUTH_KEY;
+	elseif (defined('SECURE_AUTH_KEY') && SECURE_AUTH_KEY !== '')
+		$key = SECURE_AUTH_KEY;
+	else
+		$key = function_exists('wp_salt') ? wp_salt('auth') : 'atec-debug';
+
+	return substr(hash('sha256', $key), 0, 16);
+}
+
+/** Default debug log path: wp-content/atec-debug-{token}.log (not guessable without AUTH_KEY). */
+public static function secure_debug_log_path(): string
+{
+	return wp_normalize_path(FS::trailingslashit(INIT::content_dir()) . 'atec-debug-' . self::secure_debug_log_token() . '.log');
+}
+
+/** Must-use plugin that applies ATEC_WP_DEBUG_REPORTING after wp_debug_mode(). */
+public static function mu_reporting_version(): string
+{
+	return '1.2.36';
+}
+
+public static function mu_reporting_basename(): string
+{
+	return 'atec-debug-reporting.php';
+}
+
+public static function mu_reporting_path(): string
+{
+	return wp_normalize_path(WPMU_PLUGIN_DIR . '/' . self::mu_reporting_basename());
+}
+
+/** PHP source written to mu-plugins — not tied to any plugin install/ folder. */
+public static function mu_reporting_content(): string
+{
+	$version = self::mu_reporting_version();
+
+	return <<<PHP
+<?php
 /**
- * Adjust, add, or remove a define() or error_reporting() line in wp-config.php content.
+ * Plugin Name: atec Debug Reporting
+ * Description: Applies ATEC_WP_DEBUG_REPORTING after wp_debug_mode(). Managed by atec Debug.
+ * Version: {$version}
+ */
+
+defined('ABSPATH') || exit;
+
+define('ATEC_DEBUG_REPORTING_VERSION', '{$version}');
+
+if (!defined('WP_DEBUG') || !WP_DEBUG) {
+	return;
+}
+
+\$level = defined('ATEC_WP_DEBUG_REPORTING')
+	? (int) constant('ATEC_WP_DEBUG_REPORTING')
+	: (E_ALL & ~E_NOTICE & ~E_USER_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
+error_reporting(\$level);
+
+PHP;
+}
+
+public static function install_mu_reporting(): bool
+{
+	if (!defined('WPMU_PLUGIN_DIR')) return false;
+
+	if (defined('ATEC_DEBUG_REPORTING_VERSION')
+		&& ATEC_DEBUG_REPORTING_VERSION === self::mu_reporting_version()) {
+		return true;
+	}
+
+	FS::mkdir(WPMU_PLUGIN_DIR);
+	return (bool) FS::put(self::mu_reporting_path(), self::mu_reporting_content());
+}
+
+public static function remove_mu_reporting(): bool
+{
+	return FS::unlink(self::mu_reporting_path());
+}
+
+public static function sync_mu_reporting(bool $wp_debug): void
+{
+	if ($wp_debug) self::install_mu_reporting();
+	else self::remove_mu_reporting();
+}
+
+public static function is_secure_debug_log_path(string $path): bool
+{
+	return (bool) preg_match('#/atec-debug-[a-f0-9]{16}\.log$#', wp_normalize_path($path));
+}
+
+private static function migrate_debug_log_path(string $content): string
+{
+	if (self::check_define($content, 'WP_DEBUG') !== 1 || self::check_define($content, 'WP_DEBUG_LOG') !== 1)
+		return $content;
+
+	if (preg_match(self::reg_define_expr('WP_DEBUG_LOG'), $content, $m))
+	{
+		$val = wp_normalize_path(trim($m[1] ?? '', "'\""));
+		if (strtolower($val) === 'true' || str_ends_with($val, '/debug.log') || preg_match('#contentatec-debug-[a-f0-9]{16}\.log$#', $val))
+			return self::adjust($content, 'WP_DEBUG_LOG', self::secure_debug_log_path());
+	}
+
+	return $content;
+}
+
+/**
+ * Adjust, add, or remove a define() line in wp-config.php content.
  *
- * @param string $name Define name (e.g., WP_DEBUG, WP_MEMORY_LIMIT, WP_ERROR for error_reporting)
+ * @param string $name Define name (e.g., WP_DEBUG, WP_MEMORY_LIMIT, WP_ERROR for ATEC_WP_DEBUG_REPORTING)
  * @param mixed  $value Boolean true/false, or string for custom path/memory limit
  * @modifies $content directly
  */
@@ -55,9 +177,9 @@ public static function adjust($content, $name, $value): string
 	}
 
 	$isErrorReporting = ($name === 'WP_ERROR');
-	$defineName = $isErrorReporting ? null : $name;
+	$defineName = $isErrorReporting ? 'ATEC_WP_DEBUG_REPORTING' : $name;
 	$definePattern = $isErrorReporting
-	? '/^\s*error_reporting\(/i'
+	? '/^\s*(?:error_reporting\s*\(|define\s*\(\s*[\'"]ATEC_WP_DEBUG_REPORTING[\'"]\s*,)/i'
 	: self::reg_define_expr($defineName);
 
 	$atecLines = [];
@@ -105,7 +227,7 @@ public static function adjust($content, $name, $value): string
 	if ($shouldInsertDefine)
 	{
 		$defineLine = $isErrorReporting
-			? 'error_reporting(E_ALL & ~E_DEPRECATED); // added by atec-Plugins'
+			? "define( 'ATEC_WP_DEBUG_REPORTING', " . self::debug_reporting_expr() . " ); // added by atec-Plugins"
 			: "define( '" . $defineName . "', " . (is_bool($value) ? ($value ? 'true' : 'false') : "'{$value}'") . " ); // added by atec-Plugins";
 
 		$atecLines[] = $defineLine;
@@ -185,6 +307,53 @@ public static function check_define($content, $name): int
 	return 1;
 }
 
+private static function runtime_bool(string $name): bool
+{
+	return defined($name) && constant($name);
+}
+
+private static function sync_status_from_runtime(
+	array &$status,
+	array $debug_WP_,
+	array $other_WP_,
+	string &$debug_path,
+	bool &$custom_log,
+	string $secure_debug_path
+): void {
+	foreach ($debug_WP_ as $key)
+	{
+		if ($key === 'WP_DEBUG_LOG')
+		{
+			if (!self::runtime_bool('WP_DEBUG_LOG'))
+			{
+				$status['WP_DEBUG_LOG'] = false;
+				$debug_path = $secure_debug_path;
+				$custom_log = false;
+			}
+			else
+			{
+				$status['WP_DEBUG_LOG'] = true;
+				$log = WP_DEBUG_LOG;
+				if (is_string($log) && $log !== '')
+				{
+					$debug_path = wp_normalize_path($log);
+					$custom_log = !self::is_secure_debug_log_path($debug_path);
+				}
+				else
+				{
+					$debug_path = $secure_debug_path;
+					$custom_log = false;
+				}
+			}
+		}
+		else $status[$key] = self::runtime_bool($key);
+	}
+
+	foreach ($other_WP_ as $key) $status[$key] = self::runtime_bool($key);
+
+	$status['WP_MEMORY_LIMIT'] = defined('WP_MEMORY_LIMIT') ? WP_MEMORY_LIMIT : '40M';
+}
+
 private static function parse($config)
 {
 	// Collapse phpdoc blocks like /**#@+ ... */ or /** ... */
@@ -222,16 +391,13 @@ public static function render_prism($text, $type='php')
 	echo '<div class="atec-code">';
 		echo '<pre style="background: transparent; margin: 0;">';
 			echo '<code class="language-', esc_attr($type), '">';
-			
-				// Only escape if needed (e.g., for PHP), but output raw for apacheconf
 				if ($type === 'apacheconf') echo $text; 																// phpcs:ignore
 				else echo htmlspecialchars($text, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8');	// phpcs:ignore
-
 			echo '</code>';
 		echo '</pre>';
 	echo '</div>';
 }
-	
+
 public static function reg_prism()
 {
 	static $cached = null;
@@ -281,13 +447,6 @@ public static function put($content)
 	return FS::put(self::path(), $content); 
 }
 
-public static function backup($content, $plugin)
-{
-	if (empty($content)) return;
-	$backup_path= str_replace('.php', '.atec-'.$plugin.'-bck.php', self::path());
-	FS::put($backup_path, $content);
-}
-
 public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_log, &$debug_path)
 {
 	$una->action_msg = '';
@@ -296,9 +455,27 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 	
 	$content 							= self::get();
 	$wp_config_path				= self::path();
+
+	if ($content !== '' && self::check_define($content, 'WP_DEBUG') === 1
+		&& preg_match('/error_reporting\s*\([^)]*atec-Plugins/i', $content)
+		&& !preg_match('/define\s*\(\s*[\'"]ATEC_WP_DEBUG_REPORTING[\'"]/i', $content))
+	{
+		$content = self::adjust($content, 'WP_ERROR', true);
+		self::put($content);
+	}
+
+	$migrated = self::migrate_debug_log_path($content);
+	if ($migrated !== $content)
+	{
+		$content = $migrated;
+		self::put($content);
+	}
+
+	self::sync_mu_reporting(self::check_define($content, 'WP_DEBUG') === 1);
+
 	$custom_log 					= false;
-	$default_debug_path 		= FS::debug_path();
-	$debug_path 					= $default_debug_path;
+	$secure_debug_path			= self::secure_debug_log_path();
+	$debug_path 					= $secure_debug_path;
 
 	$debug_WP_ 		= ['WP_DEBUG', 'WP_DEBUG_DISPLAY', 'WP_DEBUG_LOG'];
 	$other_WP_ 			= ['SCRIPT_DEBUG', 'WP_ALLOW_REPAIR', 'SAVEQUERIES', 'WP_AUTO_UPDATE_CORE'];
@@ -308,21 +485,8 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 	$status = [];
 	foreach ($all_WP_ as $wp_) { $status[$wp_] = ($wp_ === 'WP_MEMORY_LIMIT') ? '40M' : false; }
 
-	preg_match_all('/define\(\s?[\'"]([\w]+)[\'"]\s*,\s*[\'"]?('.self::$regBase.'+)[\'"]?\s*\);\s*(\/\/.*)?/', $content, $m1);
-	foreach($m1[0] as $m)
-	{
-		preg_match('/define\(\s?\'([\w]+)\',\s?[\']?('.self::$regBase.'+)[\']?\s?\);/', $m, $m2);
-		if (isset($m2[1], $m2[2]) && in_array($m2[1], $all_WP_))
-		{
-			$status[$m2[1]] = (bool) (strtolower($m2[2])== 'true');
-			if ($m2[1]=== 'WP_DEBUG_LOG')
-			{
-				if (!in_array(strtolower($m2[2]),['true', 'false'])) { $status[$m2[1]]=true; $custom_log=true; $debug_path= $m2[2]!== ''?$m2[2]:WP_DEBUG_LOG; }
-			}
-		}
-	}
+	self::sync_status_from_runtime($status, $debug_WP_, $other_WP_, $debug_path, $custom_log, $secure_debug_path);
 
-	$debug_status_before = $status['WP_DEBUG'];
 	if (in_array($una->nav,['Debug', 'Memory', 'Queries', 'Repair', 'Updates', 'Script']) || $una->slug=== 'wpco') // All tabs with WP_ checkbox
 	{
 		if ($una->action== 'delete') { FS::unlink($debug_path); }
@@ -336,27 +500,27 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 			{
 				$newLog = TOOLS::clean_request('custom_log');
 				$key= 'WP_DEBUG_LOG';
-				if ($newLog === '' || $newLog === $default_debug_path)
+				if ($newLog === '' || wp_normalize_path($newLog) === $secure_debug_path)
 				{
-					$una->action_msg= 'Reseted to default';
-					$subst= 'true';
-					$debug_path= $default_debug_path;
-					$custom_log=false;
+					$una->action_msg = 'Reset to secure default log path';
+					$subst = $secure_debug_path;
+					$debug_path = $secure_debug_path;
+					$custom_log = false;
 				}
 				else
 				{
 					if (!self::valid_path($newLog))
 					{
-						$una->action_msg= 'Invalid path – reseted to default';
-						$subst= 'true';
-						$debug_path= $default_debug_path;
-						$custom_log=false;
+						$una->action_msg = 'Invalid path – reset to secure default';
+						$subst = $secure_debug_path;
+						$debug_path = $secure_debug_path;
+						$custom_log = false;
 					}
 					else
 					{
-						$subst= $newLog;
-						$debug_path= $newLog;
-						$custom_log=true;
+						$subst = wp_normalize_path($newLog);
+						$debug_path = $subst;
+						$custom_log = true;
 					}
 				}
 				$status[$key]=true;
@@ -371,7 +535,10 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 			{
 				$key= $una->action;
 				$status[$una->action]= $set;
-				$subst= $status[$una->action]?'true' : 'false';
+				if ($una->action === 'WP_DEBUG_LOG' && $set && !$custom_log)
+					$subst = $secure_debug_path;
+				else
+					$subst = $status[$una->action] ? 'true' : 'false';
 			}
 
 			if ($una->action== 'default')
@@ -391,40 +558,20 @@ public static function init(&$una, &$status, &$memlimit, &$debug_WP_, &$custom_l
 				$content = self::adjust($content, $key, $subst);
 			}
 
-			if ($content!== '') self::put($content);
+			if ($content !== '')
+			{
+				self::put($content);
+				if ($una->action === 'default' || $una->action === 'WP_DEBUG')
+					self::sync_mu_reporting((bool) $status['WP_DEBUG']);
+			}
+
+			if ($una->action === 'WP_DEBUG_LOG' && $set && !$custom_log)
+				$una->action_msg = 'Log file: wp-content/atec-debug-' . self::secure_debug_log_token() . '.log (derived from AUTH_KEY)';
 
 			if (in_array($una->action,['default', 'WP_DEBUG']) && $status['WP_DEBUG']==false)
 				TOOLS::reg_inline_script('wpd_hide', 'jQuery("#wp-admin-bar-atec_wpd_admin_bar").remove();');
 			if (in_array($una->action,['SAVEQUERIES']) && $status['SAVEQUERIES']==false)
 				TOOLS::reg_inline_script('wpd_hide_sq', 'jQuery("#wp-admin-bar-atec_wpd_admin_bar_sq").remove();');
-
-			// Protected debug.log file by the use of a rewrite rule
-			if ($debug_status_before!== $status['WP_DEBUG'])
-			{
-				$htaccess_path = FS::trailingslashit(INIT::content_dir()).'.htaccess';
-				$htaccess = FS::get($htaccess_path);
-				if ($htaccess)
-				{
-					$reg = '/#{0,4} BEGIN ATEC-DEBUG-LOG[\n|\s|\S]*#{0,4} END ATEC-DEBUG-LOG\n{0,2}([\n|\s|\S]*)/';
-					$htaccess = preg_replace($reg, "$1", $htaccess);
-				}
-
-				if ($status['WP_DEBUG'])
-				{
-					$install_dir = plugin_dir_path(__DIR__).'install/';
-					$install_path = $install_dir.'htaccess_debug_log.txt';
-					$replace = FS::get($install_path);
-					if ($replace) $htaccess = $replace."\n\n".$htaccess;
-				}
-
-				if ($htaccess=== '') @FS::unlink($htaccess_path);
-				else
-				{
-					$result = @FS::put($htaccess_path, $htaccess);
-					if (!is_wp_error($result) && $status['WP_DEBUG'])
-						$una->action_msg= 'The debug.log file is now protected through a rewrite rule - if mod_rewrite.c is enabled on your server';
-				}
-			}
 		}
 	}
 

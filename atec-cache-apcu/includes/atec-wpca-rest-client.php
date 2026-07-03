@@ -2,19 +2,28 @@
 namespace ATEC_WPCA;
 defined('ABSPATH') || exit;
 
+use ATEC\CPANEL;
 use ATEC\TOOLS;
 
-return function($una) 
+return function($una)
 {
-	TOOLS::little_block(__('Test Results', 'atec-cache-apcu'));
 
-	echo '<code class="atec-border-white atec-code" id="atec-wpca-workers-out" style="white-space:pre-wrap;overflow:auto;"></code>';
+	CPANEL::cpanel_header($una, __('Test Results', 'atec-cache-apcu'));
 
-	//$rest_url = rest_url('atec-wpca/v1/worker-probe');
+	TOOLS::div('border-g');
+
+	TOOLS::div('btn');
+		echo
+		'<button type="button" class="button button-secondary" id="atec-wpca-workers-quick">', esc_html__('Quick test', 'atec-cache-apcu'), '</button>',
+		'<button type="button" class="button button-secondary" id="atec-wpca-workers-overlap">', esc_html__('Overlap test', 'atec-cache-apcu'), '</button>';
+	TOOLS::div(-1);
+
+	echo '<pre class="atec-border-white atec-code atec-m-0" id="atec-wpca-workers-out" style="white-space:pre-wrap;overflow:auto;display:block;max-width:100%;"></pre>';
+
 	$rest_url = add_query_arg(
-	'rest_route',
-	'/atec-wpca/v1/worker-probe',
-	site_url('/')   // WP install base (/wordpress/)
+		'rest_route',
+		'/atec-wpca/v1/worker-probe',
+		site_url('/')
 	);
 
 	$rest_nonce = wp_create_nonce('wp_rest');
@@ -125,9 +134,9 @@ return function($una)
 		}
 
 		let verdict = "unknown";
-		if (pids.length <= 1) verdict = "🟡 inconclusive";
-		else if (sharedEver) verdict = "🟢 safe";
-		else verdict = "🔴 not_safe";
+		if (pids.length <= 1) verdict = "inconclusive";
+		else if (sharedEver) verdict = "safe";
+		else verdict = "not_safe";
 
 		saveLocal({
 		verdict,
@@ -136,9 +145,6 @@ return function($una)
 		pids: pids,
 		ts: Date.now()
 		});
-
-		//log("");
-		//log("Saved result locally ✅");
 
 	}
 
@@ -160,13 +166,9 @@ return function($una)
 		});
 	}
 
-	// quick: more requests, no delay
 	bind(btnQuick, () => runTest(20, 8, 0));
-
-	// overlap: fewer requests but each sleeps a bit server-side to increase chance of different workers
 	bind(btnOverlap, () => runTest(20, 8, 200));
 
-	// auto-run light test on load (keeps noise low)
 	disableButtons(true);
 	runTest(10, 4, 0)
 		.catch(e => { reset(); log(String(e && e.message ? e.message : e)); })
@@ -174,5 +176,7 @@ return function($una)
 
 	})();
 	</script>';
+
+	TOOLS::div(-1);
 };
 ?>

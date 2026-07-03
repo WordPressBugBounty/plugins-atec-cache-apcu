@@ -11,13 +11,19 @@ final class FS {
 	public static function debug_path(): string
 	{
 		static $cached = null;
-		if ($cached === null) 
+		if ($cached === null)
 		{
-			$cached = self::trailingslashit(
-				defined(WP_DEBUG_LOG) && !is_bool(WP_DEBUG_LOG)
-				? WP_DEBUG_LOG
-				: INIT::content_dir()
-				).'debug.log';
+			if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG)
+			{
+				$log = WP_DEBUG_LOG;
+				$cached = (is_string($log) && $log !== '')
+					? $log
+					: CONFIG::secure_debug_log_path();
+			}
+			else
+			{
+				$cached = self::trailingslashit(INIT::content_dir()) . 'debug.log';
+			}
 		}
 		return $cached;
 	}
@@ -25,6 +31,11 @@ final class FS {
 	public static function htaccess_path(): string
 	{
 		return self::home_path() . '.htaccess';
+	}
+
+	public static function robots_path(): string
+	{
+		return self::home_path() . 'robots.txt';
 	}
 	
 	public static function home_path(): string

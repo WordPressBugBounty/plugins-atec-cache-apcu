@@ -63,6 +63,11 @@ public static function nonce_check(string $slug): void
 	if (! wp_verify_nonce($val, $key)) { wp_send_json_error(['error' => 'Nonce check failed', 'key' => $key], 403); }
 }
 
+public static function send_nonce(string $slug): void
+{
+	wp_send_json_success(['nonce' => wp_create_nonce(self::nonce_key($slug))]);
+}
+
 /**
 * Load and localize a plugin-specific AJAX script.
 * Registers script "atec-{$slug}-ajax-script" and injects nonce + ajaxurl as "atec_{$slug}_ajax".

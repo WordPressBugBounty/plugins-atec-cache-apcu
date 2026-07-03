@@ -2,11 +2,11 @@
 Contributors: DocJoJo
 Tags: apcu, object cache, page cache, performance, persistent cache
 Requires CP: 1.7
-Tested up to: 6.9
+Tested up to: 7.0
 Requires at least:4.9
 Requires PHP: 7.4
 Tested up to PHP: 8.4.5
-Stable tag: 2.3.75
+Stable tag: 2.3.77
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,12 @@ Advanced Page Cache is a ‘PRO’-level optimization that activates earlier tha
 6. Cache comparison (APCu, Redis, Memcached)
 
 == Changelog ==
+
+= 2.3.77 [2026.06.24] =
+* New CPANEL framework class
+
+= 2.3.76 [2026.06.20] =
+* Introduces $instructions
 
 = 2.3.75 [2026.04.29] =
 * OC => 2.0.9

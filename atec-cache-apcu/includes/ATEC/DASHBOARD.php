@@ -136,9 +136,9 @@ private static function plugin_div($p)
 
 		case 'debug':
 			self::group_badge('DEBUG', defined('WP_DEBUG') && WP_DEBUG, $p->slug, 'Debug', true);
-			self::group_badge('D_DISPLAY', WP_DEBUG && (defined('WP_DEBUG_DISPLAY') ? WP_DEBUG_DISPLAY : true), $p->slug, 'Debug', true);
-			self::group_badge('D_LOG',defined('WP_DEBUG_LOG') && WP_DEBUG_LOG, $p->slug,'Debug',true);
-			self::group_badge('SAVEQUERIES',defined('SAVEQUERIES') && SAVEQUERIES, $p->slug,'Queries',true);
+			self::group_badge('D_DISPLAY', defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY, $p->slug, 'Debug', true);
+			self::group_badge('D_LOG', defined('WP_DEBUG_LOG') && WP_DEBUG_LOG, $p->slug,'Debug',true);
+			self::group_badge('SAVEQUERIES', defined('SAVEQUERIES') && SAVEQUERIES, $p->slug,'Queries',true);
 			break;
 
 		case 'deploy':
@@ -237,7 +237,7 @@ private static function block_end()
 { echo '</div>'; }
 
 private static function border_block_start()
-{ echo '<div class="atec-db atec-border-white atec-mb-10">'; }
+{ echo '<div class="atec-db atec-border atec-mb-10">'; }
 
 private static function row_start($padding='0 5px')
 { echo '<div class="atec-row atec-mb-5" style="padding: ', esc_attr($padding), '; align-items: center;">'; }
@@ -307,7 +307,7 @@ public static function init($plugin)
 					'<h3 class="atec-mt-0 atec-mb-5">';
 						\ATEC\SVG::echo('wpa');
 						echo
-						' atec Plugins · Dashboard',
+						'&nbsp;atec Plugins · Dashboard',
 					'</h3>',
 				'</div>';
 
@@ -383,7 +383,7 @@ public static function init($plugin)
 				{
 					TOOLS::h(3,'💯 Our latest plugin');
 					echo
-					'<div class="atec-db atec-border-white atec-mb-10">
+					'<div class="atec-db atec-border atec-mb-10">
 						<div class="atec-dilb atec-box-white atec-vat" style="margin: 0 auto; padding: 5px 5px 0 5px;">
 							<div class="atec-row atec-mb-5" style="padding: 0 5px; align-items: center; color: #f47218; font-weight: 600;">
 								🦊 FoxyFy <div class="atec-pro">PRO</div>
@@ -406,7 +406,7 @@ public static function init($plugin)
 						$atecplugins = 'https://atecplugins.com/';
 						$megacache = 'https://wpmegacache.com/';
 						$license_ok = INIT::license_ok();
-						$isDevMode = get_option('atec_dev_mode');
+						$isDevMode = INIT::is_atec_dev_mode();
 
 						foreach ($atec_group_arr as $a)
 						{

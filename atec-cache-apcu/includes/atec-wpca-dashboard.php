@@ -1,12 +1,14 @@
 <?php
 defined('ABSPATH') || exit;
 
+use ATEC\CPANEL;
 use ATEC\TOOLS;
 use ATEC\WPCA;
 
 (function() {
 
 	$una = TOOLS::una(__DIR__, 'Settings');
+	CPANEL::instructions_load(__DIR__, $una);
 	TOOLS::add_nav($una, true, '#archive Cache');
 
 	if (WPCA::apcu_enabled())
@@ -20,32 +22,33 @@ use ATEC\WPCA;
 
 		switch ($una->nav)
 		{
-			case 'Settings': 
-				TOOLS::lazy_require(__DIR__, 'atec-wpca-settings.php', $una, $license_ok); 
-				break;
-				
-			case 'Cache': 
-				TOOLS::lazy_require(__DIR__, 'atec-wpca-cpanel.php', $una); 
-				break;
-				
-			case 'APCu': 
-				TOOLS::lazy_require(__DIR__, 'atec-wpca-groups.php', $una); 
-				break;
-				
-			case 'Page_Cache': 
-				TOOLS::lazy_require(__DIR__, 'atec-wpca-pcache-stats.php', $una); 
-				break;
-				
-			case 'Debug': 
-				TOOLS::lazy_require_class(__DIR__, 'atec-wpca-wpc-groups.php', 'ATEC_WPCA\\Groups', $una); 
+			case 'Settings':
+				TOOLS::lazy_require(__DIR__, 'atec-wpca-settings.php', $una, $license_ok);
 				break;
 
-			case 'APCu_Compatibility_Check': 
-				TOOLS::lazy_require(__DIR__, 'atec-wpca-rest-client.php', $una); 
+			case 'Cache':
+				TOOLS::lazy_require(__DIR__, 'atec-wpca-cpanel.php', $una);
+				break;
+
+			case 'APCu':
+				TOOLS::lazy_require(__DIR__, 'atec-wpca-groups.php', $una);
+				break;
+
+			case 'Page_Cache':
+				TOOLS::lazy_require(__DIR__, 'atec-wpca-pcache-stats.php', $una);
+				break;
+
+			case 'Debug':
+				TOOLS::lazy_require_class(__DIR__, 'atec-wpca-wpc-groups.php', 'ATEC_WPCA\\Groups', $una);
+				break;
+
+			case 'APCu_Compatibility_Check':
+				TOOLS::lazy_require(__DIR__, 'atec-wpca-rest-client.php', $una);
 				break;
 		}
-			
+
 	TOOLS::page_footer();
+	TOOLS::loader_dots(0);   // remove this line once TOOLS is rolled out 260624
 
 })();
 ?>

@@ -12,24 +12,34 @@ public static function clear($name)
 public static function get($name)
 { return wp_get_scheduled_event($name); }
 
-public static function run($name)
-{ do_action($name); }
+public static function run($name, $args = null)
+{
+	$event = wp_get_scheduled_event($name, $args ?? []);
+	if (!$event) return false;
+
+	$args = $event->args ?? [];
+
+	// Future event — queue an immediate single run. Already due — leave the existing entry.
+	if ($event->timestamp > time())
+	{
+		$ok = wp_schedule_single_event(time(), $name, $args);
+		if (!$ok && wp_next_scheduled($name, $args)) $ok = true;
+	}
+	else $ok = true;
+
+	if ($ok && function_exists('spawn_cron')) spawn_cron();
+
+	return $ok;
+}
 
 public static function next($name)
 { return wp_next_scheduled($name); }
-
-// public static function next_ts($name)
-// {
-	// $next = self::next($name);
-	// return $next ? TOOLS::format_duration($next-time()) : false;
-// }
 
 public static function next_ts($name)
 {
 	$next = self::next($name);
 	if (!$next) return false;
 	$diff = (int) ($next - time());
-	// if it's due or overdue, say so
 	if ($diff <= 0) return 'due';
 	return TOOLS::format_duration($diff);
 }
@@ -42,7 +52,6 @@ public static function set($name, $desired, $offset = 0)
 
 public static function set_single($name, $delay = 5, $args = [])
 {
-	//self::clear($name); // Optional: avoid duplicates
 	wp_schedule_single_event(time() + $delay, $name, $args);
 }
 

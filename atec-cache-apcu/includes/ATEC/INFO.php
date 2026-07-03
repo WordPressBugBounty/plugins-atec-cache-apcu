@@ -8,6 +8,51 @@ use ATEC\TOOLS;
 
 final class INFO {
 
+	private static function format_faq_answer(string $answer): string
+	{
+		$answer = trim($answer);
+		if ($answer === '') return '';
+
+		$parts = preg_split('/(<code>.*?<\/code>)/s', $answer, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$html = '';
+
+		foreach ($parts as $part) {
+			if ($part === '') continue;
+
+			if (preg_match('/^<code>(.*?)<\/code>$/s', $part, $m)) {
+				$code = trim($m[1]);
+				$html .= '<pre class="atec-code atec-border-white"><code>'
+					. esc_html($code) . '</code></pre>';
+				continue;
+			}
+
+			$text = trim($part);
+			if ($text === '') continue;
+
+			$text = preg_replace("/\r\n?/", "\n", $text);
+			$text = preg_replace("/\n{3,}/", "\n\n", $text);
+
+			foreach (preg_split('/\n\s*\n/', $text) as $block) {
+				$block = trim($block);
+				if ($block === '') continue;
+
+				if (preg_match('/^[A-Za-z][^:\n]{0,60}:$/', $block)) {
+					$html .= '<p class="atec-m-0 atec-mt-10"><strong>' . esc_html($block) . '</strong></p>';
+					continue;
+				}
+
+				$lines = array_map('trim', explode("\n", $block));
+				$lines = array_values(array_filter($lines, static fn($l) => $l !== ''));
+				$block = implode("\n", $lines);
+				$block = preg_replace("/\n+/", ' ', $block);
+
+				$html .= '<p>' . wp_kses_post($block) . '</p>';
+			}
+		}
+
+		return $html;
+	}
+
 	private static function parse_readme_faq($readme)
 	{
 		if (!preg_match('/^== Frequently Asked Questions ==\s*(.*?)^\s*==/sm', $readme . "\n==", $matches)) { return ''; }
@@ -17,7 +62,7 @@ final class INFO {
 		$output = '<div class="readme-faq">';
 		foreach ($qna_matches as $qna) {
 			$question = trim($qna[1]);
-			$answer	= nl2br(esc_html(trim($qna[2])));
+			$answer	= self::format_faq_answer($qna[2]);
 
 			$output .= '<div class="faq-item">';
 			$output .= '<div class="faq-question">' . esc_html($question) . '</div>';
@@ -37,7 +82,11 @@ final class INFO {
 		TOOLS::reg_inline_style('info',
 		'.readme-content .faq-item { margin-bottom: 1.5em; padding: 0.5em; border-left: 3px solid #0073aa; background: #f9f9f9; border-radius: 3px; }
 		.readme-content .faq-question { font-weight: 600; font-size: 1em; margin-bottom: 0.25em; color: #23282d; }
-		.readme-content .faq-answer { margin: 0; color: #444; line-height: 1.6; }');
+		.readme-content .faq-answer { margin: 0; color: #444; line-height: 1.5; }
+		.readme-content .faq-answer p { margin: 0 0 0.5em; }
+		.readme-content .faq-answer p:last-child { margin-bottom: 0; }
+		.readme-content .faq-answer pre.atec-code { margin: 0.25em 0 0.5em; font-size: 0.92em; line-height: 1.35; max-width: 100%; }
+		.readme-content .faq-answer pre.atec-code code { display: block; padding: 0; margin: 0; border: 0; background: transparent; max-width: none; white-space: pre-wrap; line-height: inherit; }');
 
 		echo
 		'<div id="readme" class="atec-mt-10 atec-box-white atec-anywrap" style="font-size: 1.125em; max-width: 100%; padding: 20px;">';

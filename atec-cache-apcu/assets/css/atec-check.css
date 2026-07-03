@@ -6,7 +6,9 @@
 
 .atec_checkbox_button_div 
 { 
-	display:flex; height:32px; color: var(--c-link); background: white; border: var(--border-button); border-radius: var(--px-3); 
+	display:flex; height:32px; 
+	color: var(--wp-admin-theme-color);
+	background: white; border: var(--border-button); border-color: var(--wp-admin-theme-color); border-radius: var(--px-3); 
 	width: fit-content; padding:3px 10px 26px 8px; 
 }
 .atec-ckbx { display: inline-block; }
@@ -29,3 +31,11 @@
 .atec-ckbx-mini .slider.round { border-radius: 16px; }
 
 .atec-ckbx .slider.round:before { border-radius: 50%; }
+
+.atec-btn-confirm { display: inline-flex; align-items: center; gap: 6px; }
+.atec-btn-confirm input[type="checkbox"] 
+{
+	flex: 0 0 auto; margin: 0 !important; padding: 0 !important; width: 16px !important; height: 16px !important; min-width: 16px !important; min-height: 16px !important;
+	border: none !important; line-height: normal !important; vertical-align: middle; appearance: auto; 
+	-webkit-appearance: checkbox; accent-color: var(--wp-admin-theme-color, #2271b1); cursor: pointer;
+}

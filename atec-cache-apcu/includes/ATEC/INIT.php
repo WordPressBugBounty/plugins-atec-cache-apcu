@@ -12,8 +12,8 @@ defined('ABSPATH') || exit;
 // ===== Static Toolbox Class =====
 final class INIT {
 
-static $require_install = [ 'wpc', 'wpca', 'wpcm', 'wpcr', 'wpds', 'wpf', 'wpfm', 'wpht', 'wppp', 'wps', 'wpmcl', 'wpsh', 'wpwp' ];
-static $skip_load_check = ['wp4t', 'wpau', 'wpcom', 'wpds', 'wpht', 'wpdpp', 'wpl', 'wpll', 'wplu', 'wpmcl', 'wpmin', 'wpocb', 'wppp', 'wps', 'wpsi', 'wpsmc', 'wpsr', 'wpsv', 'wpta', 'wpu', 'wpwf'];
+static $require_install = [ 'wpc', 'wpca', 'wpcm', 'wpcr', 'wpds', 'wpf', 'wpfm', 'wpht', 'wpmcl', 'wppp', 'wprbt', 'wps', 'wpwp' ];
+static $skip_load_check = [ 'wp4t', 'wpau', 'wpav', 'wpbl', 'wpcom', 'wpcro', 'wpds', 'wphc', 'wpht', 'wpdpp', 'wpl', 'wpll', 'wplu', 'wpmcl', 'wpmin', 'wpocb', 'wppo', 'wppp', 'wps', 'wpur', 'wprbt', 'wpsi', 'wpsr', 'wpsmc', 'wpsv', 'wpta', 'wpu', 'wpwf' ];
 static $admin_styles_loaded = false;
 static $allowed_admin_tags = 
 	[	
@@ -143,7 +143,7 @@ public static function site_host(): string
 public static function site_url_path(): string
 {
 	static $cached = null;
-	if ($cached === null) $cached = rtrim(wp_parse_url(self::site_url(),PHP_URL_PATH), '/');
+	if ($cached === null) $cached = rtrim((string) (wp_parse_url(self::site_url(), PHP_URL_PATH) ?? ''), '/');
 	return $cached;
 }
 

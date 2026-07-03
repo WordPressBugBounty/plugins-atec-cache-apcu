@@ -11,19 +11,16 @@ final class CHECK
 	public static function form($slug, $hidden=[])
 	{
 		echo
-		'<div class="atec-border-white">
-			<form class="atec-form" method="post" action="options.php">';
-				if (!empty($hidden))
-				{
-					foreach ($hidden as $key => $value)
-					{ echo '<input type="hidden" name="', esc_attr($slug), '_settings[', esc_attr($key), ']" value="', esc_attr($value), '">'; }
-				}
-				settings_fields($slug);
-				do_settings_sections($slug);
-				TOOLS::submit_button();
-			echo '
-			</form>
-		</div>';
+		'<form class="atec-form" method="post" action="options.php">';
+			if (!empty($hidden))
+			{
+				foreach ($hidden as $key => $value)
+				{ echo '<input type="hidden" name="', esc_attr($slug), '_settings[', esc_attr($key), ']" value="', esc_attr($value), '">'; }
+			}
+			settings_fields($slug);
+			do_settings_sections($slug);
+			TOOLS::submit_button();
+		echo '</form>';
 	}
 
 	// SANITIZE AREA START
@@ -88,8 +85,8 @@ final class CHECK
 			{
 				$disabled=true;
 				echo 
-				'<a class="atec-nodeco atec-blue" href="', esc_url($href), '">
-					<span class="atec-dilb atec-fs-9">'; TOOLS::dash_span('awards', 'atec-blue atec-fs-16'); echo 'PRO feature – please upgrade.</span>
+				'<a class="atec-nodeco" href="', esc_url($href), '">
+					<span class="atec-dilb atec-fs-9">'; TOOLS::dash_span('awards', 'atec-fs-16'); echo 'PRO feature – please upgrade.</span>
 				</a><br>';
 			}
 			echo

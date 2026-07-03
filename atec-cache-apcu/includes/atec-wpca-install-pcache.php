@@ -47,7 +47,8 @@ public static function init($p_cache)
 		else $delete_pc = true;
 	}
 	
-	TOOLS::lazy_require_class(__DIR__, 'atec-set-wp-cache.php', 'set_WP_Cache', $wp_cache_active, 'atec-cache-apcu');
+	if (!class_exists('ATEC_set_WP_Cache', false)) TOOLS::lazy_require_class(__DIR__, 'atec-set-wp-cache.php', 'set_WP_Cache', $wp_cache_active, 'atec-cache-apcu');
+	else \ATEC_set_WP_Cache::init($activate, 'atec-cache-apcu');
 
 	if ($delete_pc)
 	{

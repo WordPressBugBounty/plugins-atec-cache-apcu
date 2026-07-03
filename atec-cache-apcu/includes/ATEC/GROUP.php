@@ -24,85 +24,97 @@ private static function init()
 	self::$initialized = true;
 
 	self::$plugins = [
-		self::create_plugin('wp4t', '404-tracker', 'Lightweight 404 logger for broken links', 'FREE', true, true),		
-		self::create_plugin('wpap', 'admin-progress', 'Lightweight admin hook progress bar', 'PRO', false, true),	
-		self::create_plugin('wpas', 'anti-spam', 'Privacy-first spam protection', '5 extra defense layers', false, true),	
-		self::create_plugin('wpau', 'auth-keys', 'Randomize wp-config.php keys', 'PRO', false, true),	
+		self::create_plugin('wp4t', '404-tracker', 'Lightweight 404 logger for broken links', 'FREE', true, true),
+		self::create_plugin('wpap', 'admin-progress', 'Lightweight admin hook progress bar', 'PRO', false, true),
+		self::create_plugin('wpas', 'anti-spam', 'Privacy-first spam protection', '5 extra defense layers', false, true),
+		self::create_plugin('wpau', 'auth-keys', 'Randomize wp-config.php keys', 'PRO', false, true),
 		self::create_plugin('wpav', 'avatar', 'Set a custom avatar for any WordPress user', 'PRO', false, true),	
 		
 		self::create_plugin('wpb', 'backup', 'Fast, reliable backup & restore', 'FTP & SSH storage', true, false),
+		self::create_plugin('wpbl', 'broken-links', 'Scan pages/posts for broken links', 'PRO', false, true),
 		self::create_plugin('wpbn', 'banner', 'Temporary site banner', 'FREE', false, true),
 		self::create_plugin('wpbs', 'bot-shield', 'Early-stage bot shield to block bad actors', 'PRO', false, true),
 		self::create_plugin('wpbu', 'bunny', 'Light BunnyCDN integration', 'PRO', false, true),
-		self::create_plugin('wpc', 'code', 'Custom PHP snippets', 'Add & manage snippets', false, true),
 
 		//10
+		self::create_plugin('wpc', 'code', 'Custom PHP snippets', 'Add & manage snippets', false, true),
 		self::create_plugin('wpca', 'cache-apcu', 'APCu page & object cache', 'Advanced page cache', true, true),
 		self::create_plugin('wpci', 'cache-info', 'OPcache, Object-Cache, JIT info', 'PHP extension overview', true, true),
-		self::create_plugin('wpcm', 'cache-memcached', 'Memcached Object Cache', 'PRO', false, true),	
-		self::create_plugin('wpcs', 'chat-sessions', 'Private 1:1 chat & video on your own site', 'PRO', false, true),
-		self::create_plugin('wpco', 'config', 'Lightweight toolkit for WP config & cleanup', 'Performance & WooCommerce optimizations', false, true),
+		self::create_plugin('wpck', 'cookies', 'Simple cookie consent bar using WP Consent API', 'PRO', false, true),
+		self::create_plugin('wpcm', 'cache-memcached', 'Memcached Object Cache', 'PRO', false, true),
 
+		self::create_plugin('wpco', 'config', 'Lightweight toolkit for WP config & cleanup', 'Performance & WooCommerce optimizations', false, true),
 		self::create_plugin('wpcr', 'cache-redis', 'Redis Object Cache', 'PRO', false, true),
+		self::create_plugin('wpcro', 'cron', 'Cron Manager', 'PRO', false, true),
 		self::create_plugin('wpcom', 'conditional-menu', 'Pick a different menu per theme location on each page/post', 'PRO', false, true),
 		self::create_plugin('wpce', 'custom-email', 'Define who receives comment emails', 'PRO', false, true),
-		self::create_plugin('wpdb', 'database', 'Optimize and clean up DB', 'Posts, comments, transients', true, true),
-		self::create_plugin('wpd', 'debug', 'Debug log in admin bar', 'Queries, includes, cron jobs', true, true),	
 
 		//20
+		self::create_plugin('wpdb', 'database', 'Optimize and clean up DB', 'Posts, comments, transients', true, true),
+		self::create_plugin('wpd', 'debug', 'Debug log in admin bar', 'Queries, includes, wp-config', true, true),	
 		self::create_plugin('wpdp', 'deploy', 'Install & auto-update atec plugins', 'FREE', false, true),
 		self::create_plugin('wpdv', 'developer', 'Debug toolbox for developers', 'PRO', false, true),	
 		self::create_plugin('wpds', 'dir-scan', 'Scan folders by size and count', 'FREE', true, true),
+
 		self::create_plugin('wpdpp', 'duplicate-page-post', 'Duplicate posts/pages easily', 'FREE', true, true),		
 		self::create_plugin('wpfd', 'flush-debug', 'Admin bar „debug.log” trash button', 'FREE', false, true),		
-
-		self::create_plugin('wpf', 'forms', 'Lightweight, flexible form builder with shortcode', 'PRO', false, true),		
+		self::create_plugin('wpf', 'forms', 'Lightweight, flexible form builder with shortcode', 'PRO', false, true),
 		self::create_plugin('wpfc', 'fake-content', 'Generates fake posts, pages, users, and images for testing', 'PRO', false, true),		
-		self::create_plugin('wpff', 'foxyfy', 'FoxyFy CDN integration', 'FREE', false, true),
-		self::create_plugin('wphi', 'hook-inspector', 'Logs hook timings for profiling', 'PRO', false, true),	
-		self::create_plugin('wpht', 'htaccess', '.htaccess file editor', 'PRO', false, true),
+		self::create_plugin('wpfm', 'file-manager', 'Super lightweight File Manager', 'PRO', false, true),
 
 		// 30
+		self::create_plugin('wpff', 'foxyfy', 'FoxyFy CDN integration', 'FREE', false, true),
+		self::create_plugin('wphc', 'hosting-check', 'Check your WordPress hosting setup in plain English', 'FREE', true, true),	
+		self::create_plugin('wphi', 'hook-inspector', 'Logs hook timings for profiling', 'PRO', false, true),	
+		self::create_plugin('wpht', 'htaccess', '.htaccess file editor', 'PRO', false, true),
+		self::create_plugin('wpic', 'image-compressor', 'Shrink oversized JPEG and PNG uploads in place', 'PRO', false, true),
+
 		self::create_plugin('wplalo', 'lazy-load', 'Lightweight lazy loader for images, iframes, and videos', 'PRO', false, true),
 		self::create_plugin('wplu', 'login-url', 'Custom login URL', 'PRO', false, true),
 		self::create_plugin('wplf', 'local-fonts', 'Lean, automatic localizer for Bunny & Google Fonts.', 'PRO', false, true),
 		self::create_plugin('wpll', 'limit-login', 'Limit login attempts', 'Attack stats', false, true),
 		self::create_plugin('wpmcl', 'media-cleaner', 'Clean up unused media files', 'Full media scanning', false, true),
 
+		// 40
 		self::create_plugin('wpmi', 'migrate', 'Full site migration', 'FTP Upload & Migration', false, true),
 		self::create_plugin('wpmin', 'minify', 'Smart minifier for CSS and JS files', 'PRO', false, true),	
 		self::create_plugin('wpms', 'media-size', 'Brizy image size override', 'FREE', false, true),
 		self::create_plugin('wpmt', 'meta-tags', 'Custom meta tags per page', 'Auto description tags', true, true),	
 		self::create_plugin('wpmtm', 'maintenance-mode', '1-click visitor lockout', 'FREE', false, true),		
 
-		// 40
 		self::create_plugin('wpocb', 'oc-benchmark', 'Object Cache Benchmark', 'Options, simulation and real requests benchmarks', false, true),
+		self::create_plugin('wppc', 'privacy-check', 'Scan your homepage for external domains', 'PRO', false, true),
 		self::create_plugin('wppp', 'page-performance', 'Measure PageScore & SpeedIndex', 'PRO', false, true),	
 		self::create_plugin('wppo', 'poly-addon', 'Polylang string overrides', 'PRO', false, false),	
 		self::create_plugin('wppr', 'profiler', 'Plugin/theme performance', 'Page timing & queries', true, true),
-		self::create_plugin('wprd', 'redirect', 'Create and manage redirects with ease', 'Support for wildcard and regex-based rules', false, true),
 
+		// 50
+		self::create_plugin('wprbt', 'robots', 'Edit robots.txt with WordPress-safe defaults', 'PRO', false, true),
+		self::create_plugin('wprd', 'redirect', 'Create and manage redirects with ease', 'Support for wildcard and regex-based rules', false, true),
+		self::create_plugin('wprev', 'revisions', 'Revisions manager', 'PRO', false, true),
 		self::create_plugin('wprt', 'runtime', 'Runtime stats in admin bar', 'FREE', false, true),
 		self::create_plugin('wps', 'stats', 'Lightweight, GDPR-safe stats', 'World map view', true, true),
+
 		self::create_plugin('wpsi', 'system-info', 'Full server/system info', 'PHP, OS, config files', true, true),
 		self::create_plugin('wpsm', 'smtp-mail', 'Custom SMTP for wp_mail', 'DKIM & spam test', true, true),
 		self::create_plugin('wpsmc', 'server-monitor', 'Site availability check', 'PRO', false, true),
-
-		// 50
 		self::create_plugin('wpsmx', 'sitemap', 'Generates a static sitemap.xml and serves it via PHP redirect.', 'PRO', false, true),
 		self::create_plugin('wpsr', 'search-replace', 'Search & replace in DB', 'PRO', false, true),
+
+		// 60
 		self::create_plugin('wpssl', 'ssl', 'Enforce HTTPS, fix SSL issues and detect mixed content', 'Fix mixed content', false, true),
 		self::create_plugin('wpsv', 'svg', 'Enable SVG uploads', 'PRO', false, true),
 		self::create_plugin('wpta', 'temp-admin', 'Temporary admin accounts', 'PRO', false, true),
-
 		self::create_plugin('wpts', 'translation-status', 'Diagnostic tool to check WordPress core/plugin/theme translations', 'FREE', true, true),
 		self::create_plugin('wpur', 'user-roles', 'Manage user roles/caps', 'View and edit users', false, true),
+
 		self::create_plugin('wpva', 'virtual-author', 'Adds a virtual author dropdown to posts', 'PRO', false, true),
+		self::create_plugin('wpwcl', 'woo-cleanup', 'Clean up woo tables and action scheduler', 'PRO', false, true),
 		self::create_plugin('wpwf', 'withdrawal-form', 'Adds a simple withdrawal form', 'Multi language', true, true),
 		self::create_plugin('wpwms', 'web-map-service', 'Privacy-safe web maps', 'atecmap.com API discount', true, true),
-
-		// 60
 		self::create_plugin('wpwp', 'webp', 'Auto-convert images to WebP', 'PNG, GIF, BMP support', true, true),
+	
+		// 70
 		self::create_plugin('wpmc', 'mega-cache', 'Ultra-fast page cache', '8 storage types + Woo support', true, true),
 	];
 }
@@ -143,6 +155,16 @@ public static function is_plugin_approved($slug)
 	foreach (self::$plugins as $p) 
 		if ($p->slug === $slug && $p->wp) return true; // Plugin is approved
 	return false; // Plugin is not approved
+}
+
+public static function get_attr_from_group($find, $attr)
+{
+	if (!empty(self::$plugins)) {
+		foreach (self::$plugins as $p) {
+			if ($p->name === $find) return property_exists($p, $attr) ? $p->$attr : '';
+		}
+	}
+	return '';
 }
 
 // Helper function to create a plugin using stdClass

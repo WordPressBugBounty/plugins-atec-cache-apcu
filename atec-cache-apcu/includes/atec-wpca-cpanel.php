@@ -1,50 +1,53 @@
 <?php
 defined('ABSPATH') || exit;
 
+use ATEC\CPANEL;
 use ATEC\TOOLS;
 use ATEC\WPC;
 use ATEC\WPCA;
 
-return function($una) 
+return function($una)
 {
-	TOOLS::little_block('WP & APCu '.__('Object Cache', 'atec-cache-apcu'));
+	CPANEL::cpanel_header($una, 'WP & APCu '.__('Object Cache', 'atec-cache-apcu'));
 
-	switch ($una->action)
-	{
-		case 'flush':
-			$type = TOOLS::clean_request('type');
-			if ($type==='OC_Stats') apcu_delete(ATEC_OC_KEY_SALT.':atec:atec_wpca_oc_stats');
-			else WPC::flush_cache($una, [], $type);
-			break;
-			
-		case 'flushed':
-			$tmp = __('Flushing', 'atec-cache-apcu').' '.WPC::fix_name(TOOLS::clean_request('type'), 'atec-cache-apcu').' '.__('succeeded', 'atec-cache-apcu');
-			TOOLS::msg(true, $tmp);
-			break;
-	}
-
-	global $wp_object_cache;
-
-	$enabled = [];
-	$enabled['wp'] = is_object($wp_object_cache);
-	$enabled['apcu'] = WPCA::apcu_enabled();
+	TOOLS::div('border-g');
 	
-	$cache_settings = [];
-
-	TOOLS::div('g-50');
-	
-			foreach(['WP', 'APCu'] as $type)
+		switch ($una->action)
 			{
-				WPC::cache_block(__DIR__, $una, $cache_settings, $type, $enabled);
-				TOOLS::div($type==='APCu'?-1:0);
+				case 'flush':
+					$type = TOOLS::clean_request('type');
+					if ($type==='OC_Stats') apcu_delete(ATEC_OC_KEY_SALT.':atec:atec_wpca_oc_stats');
+					else WPC::flush_cache($una, [], $type);
+					break;
+	
+				case 'flushed':
+					$tmp = __('Flushing', 'atec-cache-apcu').' '.WPC::fix_name(TOOLS::clean_request('type'), 'atec-cache-apcu').' '.__('succeeded', 'atec-cache-apcu');
+					TOOLS::msg(true, $tmp);
+					break;
 			}
 	
-			if (defined('ATEC_OC_KEY_SALT'))
-			{
-				$stats = apcu_fetch(ATEC_OC_KEY_SALT.':atec:atec_wpca_oc_stats');
-				if (!empty($stats)) TOOLS::lazy_require(__DIR__, 'atec-wpca-ocache-stats.php', $una, $stats);
-			}
+		global $wp_object_cache;
+	
+		$enabled = [];
+		$enabled['wp'] = is_object($wp_object_cache);
+		$enabled['apcu'] = WPCA::apcu_enabled();
+	
+		$cache_settings = [];
 
-	TOOLS::div(-1);
-}
-?>
+		TOOLS::div('g-25');
+	
+				foreach(['WP', 'APCu'] as $type)
+				{
+					WPC::cache_block(__DIR__, $una, $cache_settings, $type, $enabled);
+					TOOLS::div($type==='APCu'?-1:0);
+				}
+	
+				if (defined('ATEC_OC_KEY_SALT'))
+				{
+					$stats = apcu_fetch(ATEC_OC_KEY_SALT.':atec:atec_wpca_oc_stats');
+					if (!empty($stats)) TOOLS::lazy_require(__DIR__, 'atec-wpca-ocache-stats.php', $una, $stats);
+				}
+	
+	TOOLS::div(-3);
+
+};
